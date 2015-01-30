@@ -1,16 +1,32 @@
 /**
 \mainpage
-\htmlinclude manifest.html
-
-\b pr2_remote is ... 
 
 <!-- 
 Provide an overview of your package.
 -->
+PyRIDE, Python based Robot Interactive Development Environment, is a
+software development framework for rapid robot behaviour programming in Python scripting language. It is also an integration framework for bring disparate robot functional modules together. This documentation gives a detailed description of application programming interface of PyRIDE on PR2 robot.
 
+\section install Installation
+
+Compile from source on PR2
+
+-# Install dependency: <b>sudo apt-get install libccrtp-dev</b>
+-# Get source code: <b>git clone https://github.com/uts-magic-lab/pyride_pr2.git</b>
+-# Compile: <b>cd pyride_pr2; rosmake</b> NOTE: PyRIDE for PR2 is yet to be upgraded to catkin build system.
+
+\section operation Running PyRIDE
+
+On PR2/ROS:
+
+-# Log into a valid user account on PR2 with PyRIDE stack installed.
+-# Make sure robot base system is running, i.e. <b>robot start</b>.
+-# <b>roslaunch pyride_pr2 pyride.launch</b>.
 
 \section codeapi Code API
+PyPR2
 
+pr2actions.Actionlet
 <!--
 Provide links to specific auto-generated API documentation within your
 package that is of particular interest to a reader. Doxygen will
