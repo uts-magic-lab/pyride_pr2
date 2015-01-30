@@ -649,10 +649,9 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = mainpage.dox \
-                         Common/PyModulePyCommon.cpp Common/PyModuleStub.cpp \
-                         NAO/PyNAOModule.cpp \
-                         ROS/pyride_pr2/src/PyPR2Module.cpp ROS/pyride_pr2/src/PR2ProxyManager.cpp \
-                         ROS/pyride_pr2/scripts/embedded_scripts/pr2actions.py
+                         src/PyModulePyCommon.cpp src/PyModuleStub.cpp \
+                         src/PyPR2Module.cpp src/PR2ProxyManager.cpp \
+                         scripts/embedded_scripts/pr2actions.py
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is
