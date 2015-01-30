@@ -1,0 +1,38 @@
+<PyRIDE>
+  <TeamColour> blue </TeamColour>
+  <MemberID> 3 </MemberID>
+  <DefaultPosition> 30.0 0.0 </DefaultPosition>
+  <RemotePythonAccess> enable </RemotePythonAccess>
+  <DeviceInfo>
+    <Video>
+      <ID> /wide_stereo/left/image_color </ID>
+      <Name> PR2 Left Wide Stereo Camera </Name>
+      <Label> PR2 Left Wide Stereo Camera </Label>
+      <IsActive> Yes </IsActive>
+    </Video>
+    <Video>
+      <ID> /wide_stereo/right/image_color </ID>
+      <Name> PR2 Right Wide Stereo Camera </Name>
+      <Label> PR2 Right Wide Stereo Camera </Label>
+      <IsActive> Yes </IsActive>
+    </Video>
+    <Video>
+      <ID> /l_forearm_cam/image_color </ID>
+      <Name> PR2 Left Forearm Camera </Name>
+      <Label> PR2 Left Forearm Camera </Label>
+      <IsActive> Yes </IsActive>
+    </Video>
+    <Video>
+      <ID> /r_forearm_cam/image_color </ID>
+      <Name> PR2 Right Forearm Camera </Name>
+      <Label> PR2 Right Forearm Camera </Label>
+      <IsActive> Yes </IsActive>
+    </Video>
+    <Video>
+      <ID> /narrow_stereo/left/image_mono </ID>
+      <Name> PR2 Left Narrow Stereo Camera </Name>
+      <Label> PR2 Left Narrow Stereo Camera </Label>
+      <IsActive> Yes </IsActive>
+    </Video>
+  </DeviceInfo>
+</PyRIDE>
