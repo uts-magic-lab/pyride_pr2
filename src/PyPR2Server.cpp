@@ -41,8 +41,10 @@ bool PyPR2Server::init()
   NodeHandle priNh( "~" );
   std::string filename;
   bool useOptionNodes = false;
+  bool useMoveIt = false;
   
   priNh.param<bool>( "use_optional_nodes", useOptionNodes, false );
+  priNh.param<bool>( "use_moveit", useMoveIt, false );
   priNh.param<std::string>( "config_file", filename, "pyrideconfig.xml" );
   AppConfigManager::instance()->loadConfigFromFile( filename.c_str() );
 
@@ -52,7 +54,7 @@ bool PyPR2Server::init()
 
   nodeStatusSub_ = hcNodeHandle_->subscribe( "pyride_status", 1, &PyPR2Server::nodeStatusCB, this );
 
-  PR2ProxyManager::instance()->initWithNodeHandle( hcNodeHandle_, useOptionNodes );
+  PR2ProxyManager::instance()->initWithNodeHandle( hcNodeHandle_, useOptionNodes, useMoveIt );
   ServerDataProcessor::instance()->init( activeVideoDevices_, activeAudioDevices_ );
   ServerDataProcessor::instance()->addCommandHandler( this );
   ServerDataProcessor::instance()->setClientID( AppConfigManager::instance()->clientID() );

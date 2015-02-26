@@ -41,7 +41,7 @@ rosbuild_add_executable(${PROJECT_NAME} src/AppConfigManager.cpp
 
 add_definitions(-DROS_BUILD -DUSE_ENCRYPTION)
 include_directories( include /usr/include/python2.7 )
-target_link_libraries(${PROJECT_NAME} ccrtp1 ccgnu2 crypto python2.7 celt0 jpeg tinyxml )
+target_link_libraries(${PROJECT_NAME} ccrtp1 ccgnu2 crypto python2.7 celt0 jpeg tinyxml moveit_move_group_interface moveit_planning_scene_interface)
 
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #target_link_libraries(example ${PROJECT_NAME})

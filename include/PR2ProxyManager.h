@@ -27,7 +27,6 @@
 #include <pr2_controllers_msgs/JointTrajectoryAction.h>
 
 #include <move_base_msgs/MoveBaseAction.h>
-#include <arm_navigation_msgs/MoveArmAction.h>
 
 #include <sensor_msgs/JointState.h>
 #include <sensor_msgs/PointCloud.h>
@@ -45,11 +44,9 @@
 #include <tf/transform_listener.h>
 
 
-// tabletop manipulations
-#include <tabletop_object_detector/TabletopDetection.h>
-#include <tabletop_collision_map_processing/TabletopCollisionMapProcessing.h>
-#include <object_manipulation_msgs/PickupAction.h>
-#include <object_manipulation_msgs/PlaceAction.h>
+// moveit interface
+#include <moveit/move_group_interface/move_group.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
 
 #ifdef WITH_PR2HT
 #include <pr2ht/TrackedObjectStatusChange.h>
@@ -62,9 +59,7 @@ using namespace std;
 using namespace ros;
 using namespace pr2_controllers_msgs;
 using namespace pr2_common_action_msgs;
-using namespace object_manipulation_msgs;
 using namespace move_base_msgs;
-using namespace arm_navigation_msgs;
 
 namespace pyride {
 
@@ -72,10 +67,7 @@ typedef actionlib::SimpleActionClient<pr2_controllers_msgs::SingleJointPositionA
 typedef actionlib::SimpleActionClient<pr2_controllers_msgs::PointHeadAction> PointHeadClient;
 typedef actionlib::SimpleActionClient<pr2_controllers_msgs::Pr2GripperCommandAction> GripperClient;
 typedef actionlib::SimpleActionClient<pr2_common_action_msgs::TuckArmsAction> TuckArmsActionClient;
-typedef actionlib::SimpleActionClient<arm_navigation_msgs::MoveArmAction> MoveArmActionClient;
 typedef actionlib::SimpleActionClient<pr2_controllers_msgs::JointTrajectoryAction> TrajectoryClient;
-typedef actionlib::SimpleActionClient<object_manipulation_msgs::PickupAction> PickupActionClient;
-typedef actionlib::SimpleActionClient<object_manipulation_msgs::PlaceAction> PlaceActionClient;
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
   
 class PR2ProxyManager
@@ -84,7 +76,7 @@ public:
   static PR2ProxyManager * instance();
   ~PR2ProxyManager();
 
-  void initWithNodeHandle( NodeHandle * nodeHandle, bool useOptionNodes );
+  void initWithNodeHandle( NodeHandle * nodeHandle, bool useOptionNodes = false, bool useMoveIt = false );
     
   void sayWithVolume( const std::string & text, float volume  = 0.0, bool toBlock = false );
   void setAudioVolume( const float vol );
@@ -106,7 +98,7 @@ public:
   void updateHeadPose( float yaw, float pitch );
   
   bool tuckArms( bool tuckleft, bool tuckright );
-  void moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
+  bool moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
                            std::vector<double> & orientation,
                            float time_to_reach = 10.0 );
   void moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions,
@@ -202,7 +194,6 @@ private:
   bool rGripperCtrl_;
   bool lArmCtrl_;
   bool rArmCtrl_;
-  bool pickupOrPlaceCtrl_;
   
   float lArmActionTimeout_;
   float rArmActionTimeout_;
@@ -222,16 +213,13 @@ private:
   TuckArmsActionClient * tacClient_;
   GripperClient * lgripperClient_;
   GripperClient * rgripperClient_;
-  MoveArmActionClient * mlapClient_;
-  MoveArmActionClient * mrapClient_;
   
+  moveit::planning_interface::MoveGroup * rarmGroup_;
+  moveit::planning_interface::MoveGroup * larmGroup_;
+  //moveit::planning_interface::PlanningSceneInterface planningSceneInf_;
+
   TrajectoryClient * mlacClient_;
   TrajectoryClient * mracClient_;
-  
-  ServiceClient objDetectService_;
-  ServiceClient collideProcService_;
-  PickupActionClient * pickupClient_;
-  PlaceActionClient * placeClient_;
   
   MoveBaseClient * moveBaseClient_;
   
@@ -265,12 +253,7 @@ private:
   
   void doneTuckArmAction( const actionlib::SimpleClientGoalState & state,
                          const TuckArmsResultConstPtr & result );
-  
-  void doneMoveLArmPoseAction( const actionlib::SimpleClientGoalState & state,
-                              const MoveArmResultConstPtr & result );
-  void doneMoveRArmPoseAction( const actionlib::SimpleClientGoalState & state,
-                              const MoveArmResultConstPtr & result );
-  
+
   void doneMoveLArmAction( const actionlib::SimpleClientGoalState & state,
                           const JointTrajectoryResultConstPtr & result );
   void doneMoveRArmAction( const actionlib::SimpleClientGoalState & state,
@@ -280,26 +263,13 @@ private:
                           const Pr2GripperCommandResultConstPtr & result );
   void doneRGripperAction( const actionlib::SimpleClientGoalState & state,
                           const Pr2GripperCommandResultConstPtr & result );
-  
-  void doneLPickupAction( const actionlib::SimpleClientGoalState & state,
-                         const PickupResultConstPtr & result );
-  void doneRPickupAction( const actionlib::SimpleClientGoalState & state,
-                         const PickupResultConstPtr & result );
-  
-  void doneLPlaceAction( const actionlib::SimpleClientGoalState & state,
-                        const PlaceResultConstPtr & result );
-  void doneRPlaceAction( const actionlib::SimpleClientGoalState & state,
-                        const PlaceResultConstPtr & result );
-  
+
   void doneNavgiateBodyAction( const actionlib::SimpleClientGoalState & state,
                               const MoveBaseResultConstPtr & result );
   
   void moveLArmActionFeedback( const JointTrajectoryFeedbackConstPtr & feedback );
   void moveRArmActionFeedback( const JointTrajectoryFeedbackConstPtr & feedback );
-  
-  void moveLArmPoseActionFeedback( const MoveArmFeedbackConstPtr & feedback );
-  void moveRArmPoseActionFeedback( const MoveArmFeedbackConstPtr & feedback );
-  
+
   void jointStateDataCB( const sensor_msgs::JointStateConstPtr & msg );
   void powerStateDataCB( const pr2_msgs::PowerStateConstPtr & msg );
   void baseScanDataCB( const sensor_msgs::LaserScanConstPtr & msg );

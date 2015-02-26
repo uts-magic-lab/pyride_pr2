@@ -788,8 +788,12 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
     orientation[i] = PyFloat_AsDouble( tmpObj );
   }
   
-  PR2ProxyManager::instance()->moveArmWithGoalPose( PyObject_IsTrue( armselObj ), position, orientation, time_to_reach );
-  Py_RETURN_NONE;
+  if (PR2ProxyManager::instance()->moveArmWithGoalPose( PyObject_IsTrue( armselObj ), position, orientation, time_to_reach )) {
+    Py_RETURN_TRUE;
+  }
+  else {
+    Py_RETURN_FALSE;
+  }
 }
 
 /*! \fn moveArmWithJointPos(joint_position, time_to_reach)

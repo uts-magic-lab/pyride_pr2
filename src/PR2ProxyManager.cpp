@@ -85,7 +85,6 @@ PR2ProxyManager::PR2ProxyManager() :
   rGripperCtrl_( false ),
   lArmCtrl_( false ),
   rArmCtrl_( false ),
-  pickupOrPlaceCtrl_( false ),
   lArmActionTimeout_( 20 ),
   rArmActionTimeout_( 20 ),
   bodyActionTimeout_( 100 ),
@@ -94,12 +93,10 @@ PR2ProxyManager::PR2ProxyManager() :
   tacClient_( NULL ),
   lgripperClient_( NULL ),
   rgripperClient_( NULL ),
-  mlapClient_( NULL ),
-  mrapClient_( NULL ),
+  rarmGroup_( NULL ),
+  larmGroup_( NULL ),
   mlacClient_( NULL ),
   mracClient_( NULL ),
-  pickupClient_( NULL ),
-  placeClient_( NULL ),
   moveBaseClient_( NULL ),
   isCharging_( true ),
   batCapacity_( 100 ),
@@ -120,7 +117,7 @@ PR2ProxyManager * PR2ProxyManager::instance()
   return s_pPR2ProxyManager;
 }
 
-void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptionNodes )
+void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptionNodes, bool useMoveIt )
 {
   mCtrlNode_ = nodeHandle;
 
@@ -231,30 +228,6 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
 
   if (useOptionNodes) {
     trials = 0;
-    mlapClient_ = new MoveArmActionClient( "move_left_arm", true );
-    while (!mlapClient_->waitForServer( ros::Duration( 2.0 ) ) && trials < 2) {
-      ROS_INFO( "Waiting for move left arm by pose action server to come up." );
-      trials++;
-    }
-    if (!mlapClient_->isServerConnected()) {
-      ROS_INFO( "Move left arm by pose action server is down." );
-      delete mlapClient_;
-      mlapClient_ = NULL;
-    }
-    
-    trials = 0;
-    mrapClient_ = new MoveArmActionClient( "move_right_arm", true );
-    while (!mrapClient_->waitForServer( ros::Duration( 2.0 ) ) && trials < 2) {
-      ROS_INFO( "Waiting for move right arm by pose action server to come up." );
-      trials++;
-    }
-    if (!mrapClient_->isServerConnected()) {
-      ROS_INFO( "Move right arm by pose action server is down." );
-      delete mrapClient_;
-      mrapClient_ = NULL;
-    }
-    
-    trials = 0;
     moveBaseClient_ = new MoveBaseClient( "move_base", true );
     while (!moveBaseClient_->waitForServer( ros::Duration( 2.0 ) ) && trials < 2) {
       ROS_INFO( "Waiting for move base server to come up." );
@@ -265,65 +238,27 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
       delete moveBaseClient_;
       moveBaseClient_ = NULL;
     }
-    
-    trials = 0;
-    while (!service::waitForService( "/object_detection", ros::Duration(2.0)) &&
-           trials < 2 )
-    {
-      ROS_INFO( "Waiting for object detection service to come up." );
-      trials++;
-    }
-    
-    if (!service::exists( "/object_detection", true )) {
-      ROS_INFO( "No object detection service available." );
-      goto doneInit;  // I know
-    }
-    
-    //wait for collision map processing client
-    trials = 0;
-    while (!service::waitForService( "/tabletop_collision_map_processing/tabletop_collision_map_processing",
-                                    ros::Duration(2.0)) && trials < 2)
-    {
-      ROS_INFO( "Waiting for collision processing service to come up." );
-      trials++;
-    }
-    
-    if (!service::exists( "/tabletop_collision_map_processing/tabletop_collision_map_processing", true )) {
-      ROS_INFO( "No collision processing service available." );
-      goto doneInit;  // I know
-    }
-    
-    objDetectService_ = mCtrlNode_->serviceClient<tabletop_object_detector::TabletopDetection>( "/object_detection", true );
-    
-    collideProcService_ = mCtrlNode_->serviceClient<tabletop_collision_map_processing::TabletopCollisionMapProcessing>
-    ( "/tabletop_collision_map_processing/tabletop_collision_map_processing", true );
-    
-    //wait for pickup client
-    trials = 0;
-    pickupClient_ = new PickupActionClient( "/object_manipulator/object_manipulator_pickup", true );
-    while (!pickupClient_->waitForServer( ros::Duration( 2.0 ) ) && trials < 2) {
-      ROS_INFO( "Waiting for pickup action server to come up." );
-      trials++;
-    }
-    if (!pickupClient_->isServerConnected()) {
-      ROS_INFO( "Pickup action server is down." );
-      delete pickupClient_;
-      pickupClient_ = NULL;
-    }
-    
-    trials = 0;
-    placeClient_ = new PlaceActionClient( "/object_manipulator/object_manipulator_place", true );
-    while (!placeClient_->waitForServer( ros::Duration( 2.0 ) ) && trials < 2) {
-      ROS_INFO( "Waiting for place action server to come up." );
-      trials++;
-    }
-    if (!placeClient_->isServerConnected()) {
-      ROS_INFO( "Place action server is down." );
-      delete placeClient_;
-      placeClient_ = NULL;
-    }
   }
 
+  if (useMoveIt) {
+    ROS_INFO( "Loading MoveIt service..." );
+    try {
+      rarmGroup_ = new moveit::planning_interface::MoveGroup( "right_arm",
+          boost::shared_ptr<tf::Transformer>(), ros::Duration( 2, 0 ) );
+      larmGroup_ = new moveit::planning_interface::MoveGroup( "left_arm",
+        boost::shared_ptr<tf::Transformer>(), ros::Duration( 2, 0 ) );
+    }
+    catch (...) {
+      try {
+        delete rarmGroup_;
+        rarmGroup_ = NULL;
+        delete larmGroup_;
+        larmGroup_ = NULL;
+      }
+      catch (...) {}
+      ROS_WARN( "Moveit server is down." );
+    }
+  }
 doneInit:
   this->getHeadPos( reqHeadYaw_, reqHeadPitch_ );
   
@@ -332,6 +267,18 @@ doneInit:
 
 void PR2ProxyManager::fini()
 {
+  if (rarmGroup_) {
+    rarmGroup_->stop();
+    rarmGroup_->clearPoseTargets();
+    delete rarmGroup_;
+    rarmGroup_ = NULL;
+  }
+  if (larmGroup_) {
+    larmGroup_->stop();
+    larmGroup_->clearPoseTargets();
+    delete larmGroup_;
+    larmGroup_ = NULL;
+  }
   if (phClient_) {
     delete phClient_;
     phClient_ = NULL;
@@ -348,14 +295,6 @@ void PR2ProxyManager::fini()
     delete rgripperClient_;
     rgripperClient_ = NULL;
   }
-  if (mlapClient_) {
-    delete mlapClient_;
-    mlapClient_ = NULL;
-  }
-  if (mrapClient_) {
-    delete mrapClient_;
-    mrapClient_ = NULL;
-  }
   if (mlacClient_) {
     delete mlacClient_;
     mlacClient_ = NULL;
@@ -363,14 +302,6 @@ void PR2ProxyManager::fini()
   if (mracClient_) {
     delete mracClient_;
     mracClient_ = NULL;
-  }
-  if (pickupClient_) {
-    delete pickupClient_;
-    pickupClient_ = NULL;
-  }
-  if (placeClient_) {
-    delete placeClient_;
-    placeClient_ = NULL;
   }
   if (moveBaseClient_) {
     delete moveBaseClient_;
@@ -430,64 +361,6 @@ void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState 
   PyGILState_Release( gstate );
   
   ROS_INFO( "Tuck arm action finished in state [%s]", state.toString().c_str());
-}
-  
-/*! \typedef onMoveArmPoseActionSuccess(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.moveArmPoseTo method call is successful.
- *  \param bool is_left_arm. True = left arm; False = right arm.
- *  \return None.
- */
-/*! \typedef onMoveArmPoseActionFailed(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.moveArmPoseTo method call is failed.
- *  \param bool is_left_arm. True = left arm; False = right arm.
- *  \return None.
- */
-void PR2ProxyManager::doneMoveLArmPoseAction( const actionlib::SimpleClientGoalState & state,
-                                         const MoveArmResultConstPtr & result)
-{
-  lArmCtrl_ = false;
-  
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_True );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
-}
-
-void PR2ProxyManager::doneMoveRArmPoseAction( const actionlib::SimpleClientGoalState & state,
-                                         const MoveArmResultConstPtr & result)
-{
-  rArmCtrl_ = false;
-  
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_False );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
 }
 
 /*! \typedef onMoveArmActionSuccess(is_left_arm)
@@ -655,46 +528,6 @@ void PR2ProxyManager::moveRArmActionFeedback( const JointTrajectoryFeedbackConst
    */
 }
 
-void PR2ProxyManager::moveLArmPoseActionFeedback( const MoveArmFeedbackConstPtr & feedback )
-{
-  if (feedback->time_to_completion.toSec() > lArmActionTimeout_) {
-    ROS_INFO( "Left arm movement by pose action will exceed %f seconds, force cancellation.", lArmActionTimeout_);
-    mlapClient_->cancelGoal();
-    lArmCtrl_ = false;
-    
-    PyGILState_STATE gstate;
-    gstate = PyGILState_Ensure();
-   
-    PyObject * arg = Py_BuildValue( "(O)", Py_True );
-   
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionFailed", arg );
-    
-    Py_DECREF( arg );
-   
-    PyGILState_Release( gstate );
-  }
-}
-
-void PR2ProxyManager::moveRArmPoseActionFeedback( const MoveArmFeedbackConstPtr & feedback )
-{
-  if (feedback->time_to_completion.toSec() > rArmActionTimeout_) {
-    ROS_INFO( "Right arm movement by pose action will exceed %f seconds, force cancellation.", rArmActionTimeout_);
-    mrapClient_->cancelGoal();
-    rArmCtrl_ = false;
-    
-    PyGILState_STATE gstate;
-    gstate = PyGILState_Ensure();
-    
-    PyObject * arg = Py_BuildValue( "(O)", Py_False );
-    
-    PyPR2Module::instance()->invokeCallback( "onMoveArmPoseActionFailed", arg );
-    
-    Py_DECREF( arg );
-    
-    PyGILState_Release( gstate );
-  }
-}
-
 /*! \typedef onGripperActionSuccess(is_left_gripper)
  *  \memberof PyPR2.
  *  \brief Callback function when PyPR2.openGripper, PyPR2.closeGripper and PyPR2.setGripperPosition method call is successful.
@@ -751,114 +584,6 @@ void PR2ProxyManager::doneRGripperAction( const actionlib::SimpleClientGoalState
   PyGILState_Release( gstate );
   
   ROS_INFO( "Right gripper action finished in state [%s]", state.toString().c_str());
-}
-
-/*! \typedef onPickupActionSuccess(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.detectAndPickupObject method call is successful.
- *  \param bool is_left_arm. True means left arm; False means right arm.
- *  \return None.
- */
-/*! \typedef onPickupActionFailed(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.detectAndPickupObject method call is failed.
- *  \param bool is_left_arm. True means left arm; False means right arm.
- *  \return None.
- */
-void PR2ProxyManager::doneLPickupAction( const actionlib::SimpleClientGoalState & state,
-                                       const PickupResultConstPtr & result )
-{
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_True );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onPickupActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onPickupActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("Left arm pick up action finished in state [%s]", state.toString().c_str());
-}
-
-void PR2ProxyManager::doneRPickupAction( const actionlib::SimpleClientGoalState & state,
-                                        const PickupResultConstPtr & result )
-{
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_False );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onPickupActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onPickupActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("Right arm pick up action finished in state [%s]", state.toString().c_str());
-}
-
-/*! \typedef onPlaceActionSuccess(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.detectAndPickupObject method call is successful.
- *  \param bool is_left_arm. True means left arm; False means right arm.
- *  \return None.
- */
-/*! \typedef onPlaceActionFailed(is_left_arm)
- *  \memberof PyPR2.
- *  \brief Callback function when PyPR2.detectAndPickupObject method call is failed.
- *  \param bool is_left_arm. True means left arm; False means right arm.
- *  \return None.
- */
-void PR2ProxyManager::doneRPlaceAction( const actionlib::SimpleClientGoalState & state,
-                                      const PlaceResultConstPtr & result )
-{
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_False );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onPlaceActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onPlaceActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("Right arm place action finished in state [%s]", state.toString().c_str());
-}
-  
-void PR2ProxyManager::doneLPlaceAction( const actionlib::SimpleClientGoalState & state,
-                                       const PlaceResultConstPtr & result )
-{
-  PyGILState_STATE gstate;
-  gstate = PyGILState_Ensure();
-  
-  PyObject * arg = Py_BuildValue( "(O)", Py_True );
-  
-  if (state == actionlib::SimpleClientGoalState::SUCCEEDED) {
-    PyPR2Module::instance()->invokeCallback( "onPlaceActionSuccess", arg );
-  }
-  else {
-    PyPR2Module::instance()->invokeCallback( "onPlaceActionFailed", arg );
-  }
-  Py_DECREF( arg );
-  
-  PyGILState_Release( gstate );
-  
-  ROS_INFO("Left arm place action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::sayWithVolume( const std::string & text, float volume, bool toBlock )
@@ -1397,7 +1122,7 @@ bool PR2ProxyManager::pointHeadTo( const std::string & frame, float x, float y, 
 
 bool PR2ProxyManager::tuckArms( bool tuckleft, bool tuckright )
 {
-  if (!tacClient_ || tuckArmCtrl_ || lArmCtrl_ || rArmCtrl_ || pickupOrPlaceCtrl_)
+  if (!tacClient_ || tuckArmCtrl_ || lArmCtrl_ || rArmCtrl_)
     return false;
   
   pr2_common_action_msgs::TuckArmsGoal goal;
@@ -1416,127 +1141,20 @@ bool PR2ProxyManager::tuckArms( bool tuckleft, bool tuckright )
   
 bool PR2ProxyManager::detectAndPickupObject( bool isLeftArm, int objNo )
 {
-  if (tuckArmCtrl_ || pickupOrPlaceCtrl_ || lArmCtrl_ || rArmCtrl_) {
+  if (!larmGroup_ || !rarmGroup_)
+    return false;
+
+  if (tuckArmCtrl_ || lArmCtrl_ || rArmCtrl_) {
     ROS_ERROR( "Existing motion is in progress." );
     return false;
   }
   
-  if (!pickupClient_) {
-    ROS_ERROR( "No active pickup client." );
-    return false;
-  }
-  
-  if (objNo < 1) {
-    return false;
-  }
-  int objid = objNo - 1;
-
-  //call the tabletop detection
-  ROS_INFO( "Calling tabletop detector." );
-  
-  tabletop_object_detector::TabletopDetection tbdetect;
-  //we want recognized database objects returned
-  //set this to false if you are using the pipeline without the database
-  tbdetect.request.return_clusters = true;
-  //we want the individual object point clouds returned as well
-  tbdetect.request.return_models = false;
-  tbdetect.request.num_models = 1;
-  
-  if (!objDetectService_.call( tbdetect )) {
-    ROS_ERROR( "Tabletop detection service failed" );
-    return false;
-  }
-  if (tbdetect.response.detection.result !=
-      tbdetect.response.detection.SUCCESS)
-  {
-    ROS_ERROR("Tabletop detection returned error code %d",
-              tbdetect.response.detection.result);
-    return false;
-  }
-  if (tbdetect.response.detection.clusters.empty() &&
-      tbdetect.response.detection.models.empty() )
-  {
-    ROS_ERROR( "The tabletop detector detected the table, "
-              "but found no objects" );
-    return false;
-  }
-  
-  //call collision map processing
-  ROS_INFO( "Calling collision map processing" );
-  tabletop_collision_map_processing::TabletopCollisionMapProcessing cmproc;
-  
-  //pass the result of the tabletop detection
-  
-  cmproc.request.detection_result = tbdetect.response.detection;
-  //ask for the existing map and collision models to be reset
-  cmproc.request.reset_collision_models = true;
-  cmproc.request.reset_attached_models = true;
-  
-  //ask for the results to be returned in base link frame
-  cmproc.request.desired_frame = "base_link";
-  
-  if (!collideProcService_.call( cmproc )) {
-    ROS_ERROR( "Collision map processing service failed" );
-    return false;
-  }
-  //the collision map processor returns instances of graspable objects
-  if (cmproc.response.graspable_objects.size() < (size_t)objid) {
-    ROS_ERROR( "Collision map processing returned less or no graspable objects w.r.t. objID." );
-    return false;
-  }
-
-  //call object pickup
-  ROS_INFO( "Calling the pickup action" );
-  object_manipulation_msgs::PickupGoal goal;
-  
-  //pass one of the graspable objects returned
-  //by the collision map processor
-  goal.target = cmproc.response.graspable_objects.at( objid );
-  
-  //pass the name that the object has in the collision environment
-  //this name was also returned by the collision map processor
-  goal.collision_object_name = cmproc.response.collision_object_names.at( objid );
-  //pass the collision name of the table, also returned by the collision
-  //map processor
-  goal.collision_support_surface_name = cmproc.response.collision_support_surface_name;
-  //pick up the object with the right arm
-  //we will be lifting the object along the "vertical" direction
-  //which is along the z axis in the base_link frame
-  geometry_msgs::Vector3Stamped direction;
-  direction.header.stamp = ros::Time::now();
-  direction.header.frame_id = "base_link";
-  direction.vector.x = 0;
-  direction.vector.y = 0;
-  direction.vector.z = 1;
-  goal.lift.direction = direction;
-  
-  //request a vertical lift of 10cm after grasping the object
-  goal.lift.desired_distance = 0.1;
-  goal.lift.min_distance = 0.05;
-  //do not use tactile-based grasping or tactile-based lift
-  goal.use_reactive_lift = false;
-  goal.use_reactive_execution = false;
-  
-  if (isLeftArm) {
-    goal.arm_name = "left_arm";
-    pickupClient_->sendGoal( goal,
-                          boost::bind( &PR2ProxyManager::doneLPickupAction, this, _1, _2 ),
-                          PickupActionClient::SimpleActiveCallback(),
-                          PickupActionClient::SimpleFeedbackCallback() );
-  }
-  else {
-    goal.arm_name = "right_arm";
-    pickupClient_->sendGoal( goal,
-                          boost::bind( &PR2ProxyManager::doneRPickupAction, this, _1, _2 ),
-                          PickupActionClient::SimpleActiveCallback(),
-                          PickupActionClient::SimpleFeedbackCallback() );
-  }
   return true;
 }
 
 void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions, float time_to_reach )
 {
-  if (positions.size() != 7 || tuckArmCtrl_ || pickupOrPlaceCtrl_) {
+  if (positions.size() != 7 || tuckArmCtrl_) {
     return;
   }
   
@@ -1613,7 +1231,7 @@ void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> &
 void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< std::vector<double> > & trajectory,
                                                   std::vector<float> & times_to_reach )
 {
-  if (tuckArmCtrl_ || pickupOrPlaceCtrl_) {
+  if (tuckArmCtrl_) {
     return;
   }
   
@@ -1693,7 +1311,7 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
                                         std::vector< std::vector<double> > & joint_velocities,
                                         std::vector<float> & times_to_reach )
 {
-  if (tuckArmCtrl_ || pickupOrPlaceCtrl_) {
+  if (tuckArmCtrl_) {
     return;
   }
   
@@ -1768,95 +1386,74 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
   }
 }
 
-void PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
+bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
                                           std::vector<double> & orientation,
                                           float time_to_reach )
 {
-  if (position.size() != 3 || orientation.size() != 4 || tuckArmCtrl_ || pickupOrPlaceCtrl_) {
-    return;
+  if (!rarmGroup_ || larmGroup_)
+    return false;
+
+  if (position.size() != 3 || orientation.size() != 4 || tuckArmCtrl_) {
+    return false;
   }
 
-  arm_navigation_msgs::MoveArmGoal goal;
-  
-  goal.motion_plan_request.num_planning_attempts = 1;
-  goal.motion_plan_request.planner_id = std::string("");
-  goal.planner_service_name = std::string( "ompl_planning/plan_kinematic_path" );
-  goal.motion_plan_request.allowed_planning_time = ros::Duration(5.0);
+  geometry_msgs::Pose targetPose;
+  targetPose.position.x = position[0];
+  targetPose.position.y = position[1];
+  targetPose.position.z = position[2];
 
-  goal.motion_plan_request.goal_constraints.position_constraints.resize( 1 );
-  goal.motion_plan_request.goal_constraints.orientation_constraints.resize( 1 );
+  targetPose.orientation.w = orientation[0];
+  targetPose.orientation.x = orientation[1];
+  targetPose.orientation.y = orientation[2];
+  targetPose.orientation.z = orientation[3];
 
-  goal.motion_plan_request.goal_constraints.position_constraints[0].header.stamp = ros::Time::now();
-  goal.motion_plan_request.goal_constraints.position_constraints[0].header.frame_id = "torso_lift_link";
-  
-  goal.motion_plan_request.goal_constraints.position_constraints[0].position.x = position[0];
-  goal.motion_plan_request.goal_constraints.position_constraints[0].position.y = position[1];
-  goal.motion_plan_request.goal_constraints.position_constraints[0].position.z = position[2];
-  
-  goal.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.type = arm_navigation_msgs::Shape::BOX;
-  goal.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back( 0.02 ) ;
-  goal.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back( 0.02 );
-  goal.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_shape.dimensions.push_back( 0.02 );
-  
-  goal.motion_plan_request.goal_constraints.position_constraints[0].constraint_region_orientation.w = orientation[0];
-  goal.motion_plan_request.goal_constraints.position_constraints[0].weight = 1.0;
-  
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].header.stamp = ros::Time::now();
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].header.frame_id = "torso_lift_link";
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.w = orientation[0];
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.x = orientation[1];
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.y = orientation[2];
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].orientation.z = orientation[3];
-  
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_roll_tolerance = 0.04;
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_pitch_tolerance = 0.04;
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].absolute_yaw_tolerance = 0.04;
-  
-  goal.motion_plan_request.goal_constraints.orientation_constraints[0].weight = 1.0;
-  
-  // First, the joint names, which apply to all waypoints
+  moveit::planning_interface::MoveGroup::Plan movePlan;
+
+  bool success = false;
   if (isLeftArm) {
-    if (!mlapClient_) {
-      return;
-    }
     if (lArmCtrl_) {
       ROS_WARN( "Left arm is in motion." );
-      return;
+      return false;
     }
-    goal.motion_plan_request.group_name = "left_arm";
-    goal.motion_plan_request.goal_constraints.position_constraints[0].link_name = "l_wrist_roll_link";
-    goal.motion_plan_request.goal_constraints.orientation_constraints[0].link_name = "l_wrist_roll_link";
-    lArmCtrl_ = true;
+    larmGroup_->setPlanningTime( 5.0 );
+    larmGroup_->allowReplanning( true );
+    larmGroup_->setPoseTarget( targetPose );
+    success = larmGroup_->plan( movePlan );
   }
-  else {
-    if (!mrapClient_) {
-      return;
-    }
+  else  {
     if (rArmCtrl_) {
       ROS_WARN( "Right arm is in motion." );
-      return;
+      return false;
     }
-    goal.motion_plan_request.group_name = "right_arm";
-    goal.motion_plan_request.goal_constraints.position_constraints[0].link_name = "r_wrist_roll_link";
-    goal.motion_plan_request.goal_constraints.orientation_constraints[0].link_name = "r_wrist_roll_link";
-    rArmCtrl_ = true;
+    rarmGroup_->setPlanningTime( 5.0 );
+    rarmGroup_->allowReplanning( true );
+    rarmGroup_->setPoseTarget( targetPose );
+    success = rarmGroup_->plan( movePlan );
   }
-  
-  
+
+  if (!success) {
+    ROS_ERROR( "Unable to generate successful motion plan for %s arm",
+        isLeftArm ? "left" : "right" );
+    return false;
+  }
+
+  success = false;
+
   if (isLeftArm) {
-    lArmActionTimeout_ = time_to_reach;
-    mlapClient_->sendGoal( goal,
-                          boost::bind( &PR2ProxyManager::doneMoveLArmPoseAction, this, _1, _2 ),
-                          MoveArmActionClient::SimpleActiveCallback(),
-                          boost::bind( &PR2ProxyManager::moveLArmPoseActionFeedback, this, _1 ) );
+    //lArmCtrl_ = true; //no callback is bad!
+    success = larmGroup_->asyncExecute( movePlan );
   }
   else {
-    rArmActionTimeout_ = time_to_reach;
-    mrapClient_->sendGoal( goal,
-                          boost::bind( &PR2ProxyManager::doneMoveRArmPoseAction, this, _1, _2 ),
-                          MoveArmActionClient::SimpleActiveCallback(),
-                          boost::bind( &PR2ProxyManager::moveRArmPoseActionFeedback, this, _1 ) );
+    //rArmCtrl_ = true;
+    success = rarmGroup_->asyncExecute( movePlan );
   }
+
+  if (!success) {
+    ROS_ERROR( "Unable to start executing move plan for %s arm",
+        isLeftArm ? "left" : "right" );
+    return false;
+  }
+  return true;
 }
 
 void PR2ProxyManager::cancelArmMovement( bool isLeftArm )
