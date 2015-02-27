@@ -47,6 +47,8 @@
 // moveit interface
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit/planning_scene_monitor/planning_scene_monitor.h>
+#include <shape_tools/solid_primitive_dims.h>
 
 #ifdef WITH_PR2HT
 #include <pr2ht/TrackedObjectStatusChange.h>
@@ -113,7 +115,18 @@ public:
 
   void cancelArmMovement( bool isLeftArm );
   
-  bool detectAndPickupObject( bool isLeftArm, int objNo );
+  bool addSolidObject( const std::string & name, std::vector<double> & volume,
+      std::vector<double> & position, std::vector<double> & orientation );
+
+  void removeSolidObject( const std::string & name );
+
+  std::vector<std::string> & listSolidObjects() { return solidObjectsInScene_; }
+
+  bool pickupObject( const std::string & name, const std::string & place, std::vector<double> & grasp_pose,
+      bool isLeftArm = false, double approach_dist = 0.4 );
+
+  bool placeObject( const std::string & name, const std::string & place, std::vector<double> & place_pose,
+      bool isLeftArm = false, double approach_dist = 0.4 );
 
   bool setGripperPosition( int whichgripper, double position );
   bool setTiltLaserPeriodicCmd( double amp, double period, double offset = 0.0 );
@@ -158,6 +171,7 @@ private:
   Publisher mPub_;
   Publisher torsoPub_;
   Publisher hPub_;
+  Publisher colObjPub_;
   Subscriber jointSub_;
   Subscriber powerSub_;
 
@@ -216,6 +230,9 @@ private:
   
   moveit::planning_interface::MoveGroup * rarmGroup_;
   moveit::planning_interface::MoveGroup * larmGroup_;
+
+  std::vector<std::string> solidObjectsInScene_;
+
   //moveit::planning_interface::PlanningSceneInterface planningSceneInf_;
 
   TrajectoryClient * mlacClient_;
@@ -274,6 +291,8 @@ private:
   void powerStateDataCB( const pr2_msgs::PowerStateConstPtr & msg );
   void baseScanDataCB( const sensor_msgs::LaserScanConstPtr & msg );
   void tiltScanDataCB( const sensor_msgs::LaserScanConstPtr & msg );
+
+  bool findSolidObjectInScene( const std::string & name );
 
 #ifdef WITH_PR2HT
   void htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConstPtr & msg );

@@ -258,6 +258,9 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
       catch (...) {}
       ROS_WARN( "Moveit server is down." );
     }
+    if (rarmGroup_) {
+      colObjPub_ = mCtrlNode_->advertise<moveit_msgs::CollisionObject>( "collision_object", 2 );
+    }
   }
 doneInit:
   this->getHeadPos( reqHeadYaw_, reqHeadPitch_ );
@@ -1136,19 +1139,6 @@ bool PR2ProxyManager::tuckArms( bool tuckleft, bool tuckright )
                        boost::bind( &PR2ProxyManager::doneTuckArmAction, this, _1, _2 ),
                        TuckArmsActionClient::SimpleActiveCallback(),
                        TuckArmsActionClient::SimpleFeedbackCallback() );
-  return true;
-}
-  
-bool PR2ProxyManager::detectAndPickupObject( bool isLeftArm, int objNo )
-{
-  if (!larmGroup_ || !rarmGroup_)
-    return false;
-
-  if (tuckArmCtrl_ || lArmCtrl_ || rArmCtrl_) {
-    ROS_ERROR( "Existing motion is in progress." );
-    return false;
-  }
-  
   return true;
 }
 
@@ -2032,6 +2022,244 @@ bool PR2ProxyManager::isTFFrameSupported( const char * frame_name )
   }
   return false;
 }
-  
+
+bool PR2ProxyManager::addSolidObject( const std::string & name, std::vector<double> & volume,
+    std::vector<double> & position, std::vector<double> & orientation )
+{
+  if (!rarmGroup_ || !larmGroup_) {
+    ROS_ERROR( "addSolidObject: MoveIt is not in use." );
+    return false;
+  }
+
+  if (findSolidObjectInScene( name )) {
+    ROS_ERROR( "addSolidObject: Solid object %s already exists in the scene.", name.c_str() );
+    return false;
+  }
+
+  moveit_msgs::CollisionObject co;
+  co.header.stamp = ros::Time::now();
+  co.header.frame_id = "base_footprint";
+
+  co.id = name;
+  co.operation = moveit_msgs::CollisionObject::ADD;
+  co.primitives.resize(1);
+  co.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
+  co.primitives[0].dimensions.resize( shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value );
+  co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = volume[0];
+  co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = volume[1];
+  co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = volume[2];
+
+  co.primitive_poses.resize( 1 );
+  co.primitive_poses[0].position.x = position[0];
+  co.primitive_poses[0].position.y = position[1];
+  co.primitive_poses[0].position.z = position[2];
+  co.primitive_poses[0].orientation.w = orientation[0];
+  co.primitive_poses[0].orientation.x = orientation[1];
+  co.primitive_poses[0].orientation.y = orientation[2];
+  co.primitive_poses[0].orientation.z = orientation[3];
+
+  colObjPub_.publish( co );
+  return true;
+}
+
+void PR2ProxyManager::removeSolidObject( const std::string & name )
+{
+  if (!rarmGroup_ || !larmGroup_) {
+    ROS_ERROR( "removeSolidObject: MoveIt is not in use." );
+    return;
+  }
+
+  if (!findSolidObjectInScene( name )) {
+    ROS_ERROR( "removeSolidObject: Solid object %s does not exist in the scene.", name.c_str() );
+    return;
+  }
+
+  moveit_msgs::CollisionObject co;
+  co.header.stamp = ros::Time::now();
+  co.header.frame_id = "base_footprint";
+
+  co.id = name;
+  co.operation = moveit_msgs::CollisionObject::REMOVE;
+  colObjPub_.publish(co);
+}
+
+bool PR2ProxyManager::pickupObject( const std::string & name, const std::string & place, std::vector<double> & grasp_pose,
+    bool isLeftArm, double approach_dist )
+{
+  if (!rarmGroup_ || !larmGroup_) {
+    ROS_ERROR( "pickupObject: MoveIt is not in use." );
+    return false;
+  }
+
+  if (!findSolidObjectInScene( name ) || !findSolidObjectInScene( place )) {
+    ROS_ERROR( "pickupObject: Solid object %s and/or %s do not exist in the scene.",
+        name.c_str(), place.c_str() );
+    return false;
+  }
+
+  std::vector<moveit_msgs::Grasp> grasps;
+
+  geometry_msgs::PoseStamped p;
+
+  p.header.frame_id = "base_footprint";
+  p.pose.position.x = grasp_pose[0];
+  p.pose.position.y = grasp_pose[1];
+  p.pose.position.z = grasp_pose[2];
+
+  p.pose.orientation.w = grasp_pose[3];
+  p.pose.orientation.x = grasp_pose[4];
+  p.pose.orientation.y = grasp_pose[5];
+  p.pose.orientation.z = grasp_pose[6];
+
+  moveit_msgs::Grasp g;
+  g.grasp_pose = p;
+
+  g.pre_grasp_approach.direction.vector.x = 1.0;
+  g.pre_grasp_approach.min_distance = approach_dist / 2.0;
+  g.pre_grasp_approach.desired_distance = approach_dist;
+  g.post_grasp_retreat.direction.header.frame_id = "base_footprint";
+  g.post_grasp_retreat.direction.vector.z = 1.0;
+  g.post_grasp_retreat.min_distance = approach_dist / 2.0;
+  g.post_grasp_retreat.desired_distance = approach_dist;
+  g.pre_grasp_posture.points.resize(1);
+  g.pre_grasp_posture.points[0].positions.resize(1);
+  g.pre_grasp_posture.points[0].positions[0] = 1;
+  g.grasp_posture.points.resize(1);
+  g.grasp_posture.points[0].positions.resize(1);
+  g.grasp_posture.points[0].positions[0] = 0;
+
+  g.pre_grasp_approach.direction.vector.x = 1.0;
+  g.pre_grasp_approach.min_distance = approach_dist / 2.0;
+  g.pre_grasp_approach.desired_distance = approach_dist;
+
+  if (isLeftArm) {
+    g.pre_grasp_approach.direction.header.frame_id = "l_wrist_roll_link";
+    g.pre_grasp_posture.joint_names.resize( 1, "l_gripper_joint" );
+    g.grasp_posture.joint_names.resize( 1, "l_gripper_joint" );
+  }
+  else {
+    g.pre_grasp_approach.direction.header.frame_id = "r_wrist_roll_link";
+    g.pre_grasp_posture.joint_names.resize( 1, "r_gripper_joint" );
+    g.grasp_posture.joint_names.resize( 1, "r_gripper_joint" );
+  }
+
+  grasps.push_back( g );
+
+  bool success = false;
+
+  if (isLeftArm) {
+    larmGroup_->setPlanningTime( 20.0 ); //TODO make it more flexible
+    larmGroup_->setSupportSurfaceName( place );
+    success = larmGroup_->pick( name, grasps );
+  }
+  else {
+    rarmGroup_->setPlanningTime( 20.0 ); //TODO make it more flexible
+    rarmGroup_->setSupportSurfaceName( place );
+    success = rarmGroup_->pick( name, grasps );
+  }
+  return success;
+}
+
+bool PR2ProxyManager::placeObject( const std::string & name, const std::string & place, std::vector<double> & place_pose,
+    bool isLeftArm, double approach_dist )
+{
+  if (!rarmGroup_ || !larmGroup_) {
+    ROS_ERROR( "placeObject: MoveIt is not in use." );
+    return false;
+  }
+
+  if (!findSolidObjectInScene( name ) || !findSolidObjectInScene( place )) {
+    ROS_ERROR( "placeObject: Solid object %s and/or %s do not exist in the scene.",
+        name.c_str(), place.c_str() );
+    return false;
+  }
+
+  std::vector<moveit_msgs::PlaceLocation> location;
+  geometry_msgs::PoseStamped p;
+
+  p.header.frame_id = "base_footprint";
+  p.pose.position.x = place_pose[0];
+  p.pose.position.y = place_pose[1];
+  p.pose.position.z = place_pose[2];
+
+  p.pose.orientation.w = place_pose[3];
+  p.pose.orientation.x = place_pose[4];
+  p.pose.orientation.y = place_pose[5];
+  p.pose.orientation.z = place_pose[6];
+
+  moveit_msgs::PlaceLocation g;
+  g.place_pose = p;
+
+  g.pre_place_approach.direction.vector.z = -1.0;
+  g.post_place_retreat.direction.vector.x = -1.0;
+  g.post_place_retreat.direction.header.frame_id = "base_footprint";
+  g.pre_place_approach.min_distance = approach_dist / 2.0;
+  g.pre_place_approach.desired_distance = approach_dist;
+  g.post_place_retreat.min_distance = approach_dist / 2.0;
+  g.post_place_retreat.desired_distance = approach_dist;
+
+  g.post_place_posture.points.resize(1);
+  g.post_place_posture.points[0].positions.resize(1);
+  g.post_place_posture.points[0].positions[0] = 1;
+
+  if (isLeftArm) {
+    g.pre_place_approach.direction.header.frame_id = "l_wrist_roll_link";
+    g.post_place_posture.joint_names.resize( 1, "l_gripper_joint" );
+  }
+  else {
+    g.pre_place_approach.direction.header.frame_id = "r_wrist_roll_link";
+    g.post_place_posture.joint_names.resize( 1, "r_gripper_joint" );
+  }
+  location.push_back( g );
+
+  // add path constraints
+  moveit_msgs::Constraints constr;
+  constr.orientation_constraints.resize( 1 );
+  moveit_msgs::OrientationConstraint &ocm = constr.orientation_constraints[0];
+  ocm.header.frame_id = p.header.frame_id;
+  ocm.orientation.x = 0.0;
+  ocm.orientation.y = 0.0;
+  ocm.orientation.z = 0.0;
+  ocm.orientation.w = 1.0;
+  ocm.absolute_x_axis_tolerance = 0.2;
+  ocm.absolute_y_axis_tolerance = 0.2;
+  ocm.absolute_z_axis_tolerance = M_PI;
+  ocm.weight = 1.0;
+
+  bool success = false;
+
+  if (isLeftArm) {
+    ocm.link_name = "l_wrist_roll_link";
+    larmGroup_->setPlanningTime( 20.0 ); //TODO make it more flexible
+    larmGroup_->setSupportSurfaceName( place );
+    larmGroup_->setPathConstraints( constr );
+
+    larmGroup_->setPlannerId( "RRTConnectkConfigDefault" );
+    success = larmGroup_->place( name, location );
+  }
+  else {
+    ocm.link_name = "r_wrist_roll_link";
+    rarmGroup_->setPlanningTime( 20.0 ); //TODO make it more flexible
+    rarmGroup_->setSupportSurfaceName( place );
+    rarmGroup_->setPathConstraints( constr );
+
+    rarmGroup_->setPlannerId( "RRTConnectkConfigDefault" );
+    success = rarmGroup_->place( name, location );
+  }
+  return success;
+}
+
+bool PR2ProxyManager::findSolidObjectInScene( const std::string & name )
+{
+  bool found = false;
+  size_t ssize = solidObjectsInScene_.size();
+  for (size_t i = 0; i < ssize; ++i) {
+    found = (name.compare( solidObjectsInScene_[i] ) == 0);
+    if (found)
+      break;
+  }
+  return found;
+}
+
 /**@}*/
 } // namespace pyride

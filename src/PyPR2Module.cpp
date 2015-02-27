@@ -1152,39 +1152,6 @@ static PyObject * PyModule_PR2SetGripperPosition( PyObject * self, PyObject * ar
     Py_RETURN_FALSE;
 }
 
-/*! \fn detectAndPickupObject(use_left_arm, target_object_id)
- *  \memberof PyPR2
- *  \brief Let PR2 detect tabletop objects and pick one object up according to its object ID.
- *  \param bool use_left_arm. True for using the left arm; False for using the right arm.
- *  \param int target_object_id. ID number for detected objects.
- *  \return bool. True == valid command; False == invalid command.
- *  \note Must have PR2 object detection and pickup stack running prior the start of PyRIDE.
- *  \todo This is an experimental feature and has not been fully tested. Very buggy.
- */
-static PyObject * PyModule_PR2DetectAndPickupObject( PyObject * self, PyObject * args )
-{
-  PyObject * armsel = NULL;
-  int objno = 1;
-  
-  if (!PyArg_ParseTuple( args, "O|i", &armsel, &objno )) {
-    // PyArg_ParseTuple will set the error status.
-    return NULL;
-  }
-  
-  if (!PyBool_Check( armsel )) {
-    PyErr_Format( PyExc_ValueError, "PyPR2.detectAndPickupObject: first parameter must be a boolean!" );
-    return NULL;
-  }
-  if (objno < 1) {
-    PyErr_Format( PyExc_ValueError, "PyPR2.detectAndPickupObject: second parameter must be an integer >= 1!" );
-    return NULL;
-  }
-  if (PR2ProxyManager::instance()->detectAndPickupObject( PyObject_IsTrue( armsel ), objno ))
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
-}
-
 /*! \fn setTiltLaserPeriodic(amplitude, period)
  *  \memberof PyPR2
  *  \brief Set the PR2 tilt laser in a pure periodic movement.
@@ -1469,8 +1436,6 @@ static PyMethodDef PyModule_methods[] = {
     "Close one or both PR2 grippers." },
   { "setGripperPosition", (PyCFunction)PyModule_PR2SetGripperPosition, METH_VARARGS,
     "Set specific position on one or both PR2 grippers." },
-  { "detectAndPickupObject", (PyCFunction)PyModule_PR2DetectAndPickupObject, METH_VARARGS,
-    "Detect objects on a table and pick up one of them." },
   { "setTiltLaserPeriodic", (PyCFunction)PyModule_PR2SetTiltLaserPeriodic, METH_VARARGS,
     "Set periodic movement on PR2 tilt laser." },
   { "setTiltLaserTraj", (PyCFunction)PyModule_PR2SetTiltLaserTraj, METH_VARARGS,
