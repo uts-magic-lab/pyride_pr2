@@ -2083,6 +2083,15 @@ void PR2ProxyManager::removeSolidObject( const std::string & name )
   colObjPub_.publish(co);
 }
 
+void PR2ProxyManager::listSolidObjects( std::vector<std::string> & list )
+{
+  list.clear();
+  size_t ssize = solidObjectsInScene_.size();
+  for (int i = 0; i < ssize ; ++i) {
+    list.push_back( solidObjectsInScene_[i] );
+  }
+}
+
 bool PR2ProxyManager::pickupObject( const std::string & name, const std::string & place, std::vector<double> & grasp_pose,
     bool isLeftArm, double approach_dist )
 {

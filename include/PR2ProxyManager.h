@@ -120,7 +120,7 @@ public:
 
   void removeSolidObject( const std::string & name );
 
-  std::vector<std::string> & listSolidObjects() { return solidObjectsInScene_; }
+  void listSolidObjects( std::vector<std::string> & list );
 
   bool pickupObject( const std::string & name, const std::string & place, std::vector<double> & grasp_pose,
       bool isLeftArm = false, double approach_dist = 0.4 );

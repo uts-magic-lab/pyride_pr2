@@ -27,8 +27,9 @@ PyPR2Module * PyPR2Module::s_pyPR2Module = NULL;
 static const char *kLeftArmKWlist[] = { "l_shoulder_pan_joint", "l_shoulder_lift_joint", "l_upper_arm_roll_joint", "l_elbow_flex_joint", "l_forearm_roll_joint", "l_wrist_flex_joint", "l_wrist_roll_joint", "time_to_reach", NULL };
 static const char *kRightArmKWlist[] = { "r_shoulder_pan_joint", "r_shoulder_lift_joint", "r_upper_arm_roll_joint", "r_elbow_flex_joint", "r_forearm_roll_joint", "r_wrist_flex_joint", "r_wrist_roll_joint", "time_to_reach", NULL };
 static const char *kPoseKWlist[] = { "position", "orientation", NULL };
+static const char *kPickAndPlaceKWlist[] = { "name", "place", "grasp_position", "grasp_orientation", "use_left_arm", "distance_from", NULL };
+static const char *kObjectKWlist[] = { "name", "volume", "position", "orientation", NULL };
 static const char *kArmPoseKWlist[] = { "position", "orientation", "use_left_arm", "time_to_reach", NULL };
-  
 
 static PyObject * PyModule_write( PyObject *self, PyObject * args )
 {
@@ -267,6 +268,7 @@ static PyObject * PyModule_PR2ListTFFrames( PyObject * self )
 /*! \fn isSupportedTFFrame()
  *  \memberof PyPR2
  *  \brief Check whether the input TF frame is supported in the current system.
+ *  \param string frame. Name of the TF frame.
  *  \return bool. True == supported; False == not supported.
  */
 static PyObject * PyModule_PR2CheckTFFrame( PyObject * self, PyObject * args )
@@ -1334,6 +1336,230 @@ static PyObject * PyModule_PR2RegisterTiltScanData( PyObject * self, PyObject * 
   Py_RETURN_NONE;
 }
 
+/*! \fn addSolidObject(name,volume,position,orientation)
+ *  \memberof PyPR2
+ *  \brief Move a PR2 arm to a specified pose within a time frame.
+ *  \param string name. Name of the solid object.
+ *  \param tuple volume. The volume of the object in (width,height,depth).
+ *  \param tuple position. Position of the object in (x,y,z).
+ *  \param tuple orientation. Orientation of the object in quarternion form (w,x,y,z).
+ *  \return bool. True == success; False == otherwise.
+ *  \note Require MoveIt! to be running prior the start of PyRIDE.
+ */
+static PyObject * PyModule_PR2AddSolidObject( PyObject * self, PyObject * args, PyObject * keywds )
+{
+  char * objName = NULL;
+  PyObject * volObj = NULL;
+  PyObject * posObj = NULL;
+  PyObject * orientObj = NULL;
+
+  if (!PyArg_ParseTupleAndKeywords( args, keywds, "sOOO", (char**)kObjectKWlist, &objName, &volObj, &posObj, &orientObj ) ||
+      !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyTuple_Check( volObj ))
+  {
+    PyErr_Format( PyExc_ValueError, "PyPR2.addSolidObject: input parameter must be a dictionary with volume, position, orientation tuples." );
+    return NULL;
+  }
+
+  if (PyTuple_Size( posObj ) != (Py_ssize_t)3 ||
+      PyTuple_Size( volObj ) != (Py_ssize_t)3 ||
+      PyTuple_Size( orientObj ) != (Py_ssize_t)4)
+  {
+    PyErr_Format( PyExc_ValueError,
+                 "PyPR2.addSolidObject: volume and position must be tuples of 3 and orientation must be a tuple of 4." );
+    return NULL;
+  }
+
+  std::vector<double> volume(3, 0.0);
+  std::vector<double> position(3, 0.0);
+  std::vector<double> orientation(4, 0.0);
+
+  PyObject * tmpObj = NULL;
+
+  for (int i = 0; i < 3; i++) {
+    tmpObj = PyTuple_GetItem( volObj, i );
+    if (!PyFloat_Check( tmpObj )) {
+      PyErr_Format( PyExc_ValueError,
+                   "PyPR2.addSolidObject: volume tuple must have float numbers." );
+      return NULL;
+    }
+    volume[i] = PyFloat_AsDouble( tmpObj );
+
+    tmpObj = PyTuple_GetItem( posObj, i );
+    if (!PyFloat_Check( tmpObj )) {
+      PyErr_Format( PyExc_ValueError,
+                   "PyPR2.addSolidObject: position tuple must have float numbers." );
+      return NULL;
+    }
+    position[i] = PyFloat_AsDouble( tmpObj );
+  }
+
+  for (int i = 0; i < 4; i++) {
+    tmpObj = PyTuple_GetItem( orientObj, i );
+    if (!PyFloat_Check( tmpObj )) {
+      PyErr_Format( PyExc_ValueError,
+                   "PyPR2.addSolidObject: orientation tuple must have float numbers." );
+      return NULL;
+    }
+    orientation[i] = PyFloat_AsDouble( tmpObj );
+  }
+
+  if (PR2ProxyManager::instance()->addSolidObject( objName, volume, position, orientation )) {
+    Py_RETURN_TRUE;
+  }
+  else {
+    Py_RETURN_FALSE;
+  }
+}
+
+/*! \fn delSolidObject()
+ *  \memberof PyPR2
+ *  \brief Delete a existing solid object from the current collision scene.
+ *  \param string name. Name of the solid object.
+ *  \return None.
+ *  \note Require MoveIt! to be running prior the start of PyRIDE.
+ */
+static PyObject * PyModule_PR2DelSolidObject( PyObject * self, PyObject * args )
+{
+  char * objName = NULL;
+
+  if (!PyArg_ParseTuple( args, "s", &objName )) {
+    // PyArg_ParseTuple will set the error status.
+    return NULL;
+  }
+
+  PR2ProxyManager::instance()->removeSolidObject( objName );
+  Py_RETURN_NONE;
+}
+
+/*! \fn listSolidObjects()
+ *  \memberof PyPR2
+ *  \brief Return a list of known solid objects in the collision scene.
+ *  \return list(name of solid objects).
+ *  \note Require MoveIt! to be running prior the start of PyRIDE.
+ */
+static PyObject * PyModule_PR2ListSolidObjects( PyObject * self )
+{
+  std::vector<std::string> objlist;
+
+  PR2ProxyManager::instance()->listSolidObjects( objlist );
+  int fsize = (int)objlist.size();
+  PyObject * retObj = PyList_New( fsize );
+  for (int i = 0; i < fsize; ++i) {
+    PyList_SetItem( retObj, i, PyString_FromString( objlist[i].c_str() ) );
+  }
+  return retObj;
+}
+
+/*! \fn pickUpObject(name,place,grasp_position,grasp_orientation,use_left_arm,distance_from)
+ *  \memberof PyPR2
+ *  \brief Pickup a solid object from a location (another solid object) use a specific grasp pose and approaching distance.
+ *  \param string name. Name of the solid object.
+ *  \param string name. Name of the object from where the target object is picked up from.
+ *  \param tuple grasp_position. Grasp position (x,y,z).
+ *  \param tuple grasp_orientation. Grasp orientation in quarternion form (w,x,y,z).
+ *  \param bool use_left_arm. True == use the left arm; False = use the right arm.
+ *  \param float distance_from. Approaching distance from the object.
+ *  \return bool. True == success; False == otherwise.
+ *  \warning Not fully tested!
+ *  \note Require MoveIt! to be running prior the start of PyRIDE.
+ */
+/*! \fn placeObject(name,place,place_position,place_orientation,use_left_arm,distance_from)
+ *  \memberof PyPR2
+ *  \brief Place a solid object to a location (another solid object) use a specific place pose and retreating distance.
+ *  \param string name. Name of the solid object.
+ *  \param string name. Name of the object from where the target object is placed to.
+ *  \param tuple place_position. Place position (x,y,z).
+ *  \param tuple place_orientation. Place orientation in quarternion form (w,x,y,z).
+ *  \param bool use_left_arm. True == use the left arm; False = use the right arm.
+ *  \param float distance_from. Retreating distance from the object.
+ *  \return bool. True == success; False == otherwise.
+ *  \warning Not fully tested!
+ *  \note Require MoveIt! to be running prior the start of PyRIDE.
+ */
+
+static PyObject * PyModule_PR2PickUpAndPlaceObject( bool to_place, PyObject * self, PyObject * args, PyObject * keywds )
+{
+  char * objName = NULL;
+  char * placeName = NULL;
+  PyObject * armselObj = NULL;
+  PyObject * posObj = NULL;
+  PyObject * orientObj = NULL;
+  double distance = 5.0;
+
+  if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOf", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
+      !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
+  {
+    PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must be a dictionary with position, "
+        "orientation tuples and and use_left_arm boolean flag.",
+        to_place ? "placeObject" : "pickUpObject" );
+    return NULL;
+  }
+
+  if (PyTuple_Size( posObj ) != (Py_ssize_t)3 ||
+      PyTuple_Size( orientObj ) != (Py_ssize_t)4)
+  {
+    PyErr_Format( PyExc_ValueError,
+                 "PyPR2.%s: position must be tuples of 3 and orientation must be a tuple of 4.",
+                 to_place ? "placeObject" : "pickUpObject" );
+    return NULL;
+  }
+
+  std::vector<double> pose(7, 0.0);
+
+  PyObject * tmpObj = NULL;
+
+  for (int i = 0; i < 3; i++) {
+    tmpObj = PyTuple_GetItem( posObj, i );
+    if (!PyFloat_Check( tmpObj )) {
+      PyErr_Format( PyExc_ValueError,
+                   "PyPR2.%s: position tuple must have float numbers.",
+                   to_place ? "placeObject" : "pickUpObject" );
+
+      return NULL;
+    }
+    pose[i] = PyFloat_AsDouble( tmpObj );
+  }
+
+  for (int i = 0; i < 4; i++) {
+    tmpObj = PyTuple_GetItem( orientObj, i );
+    if (!PyFloat_Check( tmpObj )) {
+      PyErr_Format( PyExc_ValueError,
+                   "PyPR2.%s: orientation tuple must have float numbers.",
+                   to_place ? "placeObject" : "pickUpObject" );
+      return NULL;
+    }
+    pose[3+i] = PyFloat_AsDouble( tmpObj );
+  }
+
+  if (to_place) {
+    if (PR2ProxyManager::instance()->placeObject( objName, placeName, pose, PyObject_IsTrue( armselObj ), distance )) {
+      Py_RETURN_TRUE;
+    }
+    else {
+      Py_RETURN_FALSE;
+    }
+  }
+  else {
+    if (PR2ProxyManager::instance()->pickupObject( objName, placeName, pose, PyObject_IsTrue( armselObj ), distance )) {
+      Py_RETURN_TRUE;
+    }
+    else {
+      Py_RETURN_FALSE;
+    }
+  }
+  Py_RETURN_FALSE;
+}
+
+static PyObject * PyModule_PR2PickUpObject( PyObject * self, PyObject * args, PyObject * keywds )
+{
+  return PyModule_PR2PickUpAndPlaceObject( false, self, args, keywds );
+}
+
+static PyObject * PyModule_PR2PlaceObject( PyObject * self, PyObject * args, PyObject * keywds )
+{
+  return PyModule_PR2PickUpAndPlaceObject( true, self, args, keywds );
+}
+
 #ifdef WITH_PR2HT
 /*! \fn registerHumanDetectTracking( detection_callback, tracking_callback )
  *  \memberof PyPR2
@@ -1450,6 +1676,16 @@ static PyMethodDef PyModule_methods[] = {
     "List supported PR2 TF frames." },
   { "isSupportedTFFrame", (PyCFunction)PyModule_PR2CheckTFFrame, METH_VARARGS,
     "Check whether the input TF frames is supported." },
+  { "addSolidObject", (PyCFunction)PyModule_PR2AddSolidObject, METH_VARARGS|METH_KEYWORDS,
+    "Add a solid object into the collision scene." },
+  { "delSolidObject", (PyCFunction)PyModule_PR2DelSolidObject, METH_VARARGS,
+    "Remove an existing solid object from the collision scene." },
+  { "listSolidObjects", (PyCFunction)PyModule_PR2ListSolidObjects, METH_NOARGS,
+    "List all known solid objects in the collision scene." },
+  { "pickUpObject", (PyCFunction)PyModule_PR2PickUpObject, METH_VARARGS|METH_KEYWORDS,
+    "Pick a known object from a known place." },
+  { "placeObject", (PyCFunction)PyModule_PR2PlaceObject, METH_VARARGS|METH_KEYWORDS,
+    "Place a known object to a known place." },
   { "registerBaseScanCallback", (PyCFunction)PyModule_PR2RegisterBaseScanData, METH_VARARGS,
     "Register (or deregister) a callback function to get base laser scan data. If target frame is not given, raw data is returned." },
   { "registerTiltScanCallback", (PyCFunction)PyModule_PR2RegisterTiltScanData, METH_VARARGS,
