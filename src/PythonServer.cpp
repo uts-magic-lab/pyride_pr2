@@ -827,6 +827,7 @@ void PythonSession::connectReady()
   unsigned char options[] =
   {
     TELNET_IAC, TELNET_DO, TELNET_LINEMODE,
+    TELNET_IAC, TELNET_SB, TELNET_LINEMODE, 1, 4, TELNET_IAC, TELNET_SE,
     TELNET_IAC, TELNET_WILL, TELNET_ECHO, 0
   };
 
@@ -890,7 +891,14 @@ void PythonSession::processInput( PythonServer::ClientItem * client, unsigned ch
 
       case KEY_HTAB:
         this->handleTab();
-      break;
+        break;
+
+      case KEY_CTRL_A:
+        this->handleHome();
+        break;
+      case KEY_CTRL_E:
+        this->handleEnd();
+        break;
 
       case KEY_CTRL_C:
       case KEY_CTRL_D:
@@ -1147,7 +1155,6 @@ void PythonSession::handleDown()
   }
 }
 
-
 /**
  *   This method handles a key left event.
  */
@@ -1159,7 +1166,6 @@ void PythonSession::handleLeft()
   }
 }
 
-
 /**
  *   This method handles a key left event.
  */
@@ -1169,6 +1175,35 @@ void PythonSession::handleRight()
     charPos_++;
     this->write( "\033[C" );
   }
+}
+
+/**
+ *   This method handles a key home/control a event.
+ */
+void PythonSession::handleHome()
+{
+  if (charPos_ > 0) {
+    char ctrl[20];
+    snprintf( ctrl, 20, "\033[%03dD", charPos_ );
+    this->write( ctrl );
+    charPos_ = 0;
+  }
+  readBuffer_.pop_front();
+}
+
+/**
+ *   This method handles a key end/control e event.
+ */
+void PythonSession::handleEnd()
+{
+  if (charPos_ < currentLine_.length()) {
+    int diff = currentLine_.length() - charPos_;
+    char ctrl[20];
+    snprintf( ctrl, 20, "\033[%03dC", diff );
+    this->write( ctrl );
+    charPos_ = currentLine_.length();
+  }
+  readBuffer_.pop_front();
 }
 
 void PythonSession::write( const char * str )

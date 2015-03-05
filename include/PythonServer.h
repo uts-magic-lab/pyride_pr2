@@ -40,8 +40,10 @@
 
 #define ERASE_EOL       "\033[K"
 
+#define KEY_CTRL_A      1
 #define KEY_CTRL_C      3
 #define KEY_CTRL_D      4
+#define KEY_CTRL_E      5
 #define KEY_BACKSPACE   8
 #define KEY_HTAB        9
 #define KEY_DEL         127
@@ -193,6 +195,8 @@ private:
   void  handleDown();
   void  handleLeft();
   void  handleRight();
+  void  handleHome();
+  void  handleEnd();
 };
 } //namespace pyride
 #endif // PythonServer_h_DEFINED
