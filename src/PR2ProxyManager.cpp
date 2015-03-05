@@ -1380,7 +1380,7 @@ bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> &
                                           std::vector<double> & orientation,
                                           float time_to_reach )
 {
-  if (!rarmGroup_ || larmGroup_)
+  if (!rarmGroup_ || !larmGroup_)
     return false;
 
   if (position.size() != 3 || orientation.size() != 4 || tuckArmCtrl_) {
