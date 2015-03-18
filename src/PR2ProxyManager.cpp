@@ -33,12 +33,14 @@ static const double kMaxTorsoHeight = 1.06; // w.r.t. base_link frame
 static const double kMinTorsoHeight = 0.75;
 
 static const char *kPR2TFFrameList[] = { "map", "odom_combined", "base_footprint", "base_link",
-  "torso_lift_link", "head_pan_link", "head_tilt_link", "double_stereo_link",
-  "r_forearm_cam", "l_forearm_cam", "wide_stereo_r_stereo_camera_frame",
-  "wide_stereo_l_stereo_camera_frame", "narrow_stereo_r_stereo_camera_frame",
-  "narrow_stereo_l_stereo_camera_frame","wide_stereo_link", "narrow_stereo_link",
+  "torso_lift_link", "head_pan_link", "head_tilt_link", "head_mount_link", "double_stereo_link",
+  "r_forearm_cam_frame", "l_forearm_cam_frame", "r_forearm_link", "l_forearm_link",
+  "r_upper_arm_link", "l_upper_arm_link", "r_gripper_tool_frame", "l_gripper_tool_frame",
+  "wide_stereo_r_stereo_camera_frame", "wide_stereo_l_stereo_camera_frame",
+  "narrow_stereo_r_stereo_camera_frame", "narrow_stereo_l_stereo_camera_frame",
+  "wide_stereo_link", "narrow_stereo_link", "high_def_frame", "high_def_optical_frame",
   "wide_stereo_optical_frame", "narrow_stereo_optical_frame", "imu_link", "sensor_mount_link",
-  "high_def_frame", "high_def_optical_frame", "laser_tilt_link", "base_laser_link",
+  "laser_tilt_link", "base_laser_link",
   NULL };
 
 static const int kPR2TFFrameListSize = sizeof( kPR2TFFrameList ) / sizeof( kPR2TFFrameList[0] );
@@ -260,6 +262,7 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
     }
     if (rarmGroup_) {
       colObjPub_ = mCtrlNode_->advertise<moveit_msgs::CollisionObject>( "collision_object", 2 );
+      ROS_INFO("MoveIt planning reference frame: %s", rarmGroup_->getPlanningFrame().c_str());
     }
   }
 doneInit:
@@ -1377,8 +1380,7 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
 }
 
 bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
-                                          std::vector<double> & orientation,
-                                          float time_to_reach )
+                                          std::vector<double> & orientation, float time_to_reach )
 {
   if (!rarmGroup_ || !larmGroup_)
     return false;
@@ -2010,7 +2012,7 @@ void PR2ProxyManager::getTFFrameList( std::vector<std::string> & list )
   
 bool PR2ProxyManager::isTFFrameSupported( const char * frame_name )
 {
-  if (!frame_name || strlen( frame_name ) > 40) { //rudimentary check
+  if (!frame_name || strlen( frame_name ) == 0 || strlen( frame_name ) > 40) { //rudimentary check
     return false;
   }
   int i = 0;

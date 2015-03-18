@@ -414,10 +414,12 @@ static PyObject * PyModule_PR2PointHeadTo( PyObject * self, PyObject * args )
     // PyArg_ParseTuple will set the error status.
     return NULL;
   }
-  if (strlen(reqframe) == 0) {
-    PyErr_Format( PyExc_ValueError, "PyPR2.pointHeadTo: request frame must not be empty string." );
+
+  if (!PR2ProxyManager::instance()->isTFFrameSupported( reqframe )) {
+    PyErr_Format( PyExc_ValueError, "PyPR2.pointHeadTo: requested reference frame is not supported." );
     return NULL;
   }
+
   if (PR2ProxyManager::instance()->pointHeadTo( reqframe, xcoord, ycoord, zcoord ))
     Py_RETURN_TRUE;
   else
@@ -764,7 +766,7 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
                  "PyPR2.moveArmPoseTo: position must be a tuple of 3 and orientation must be a tuple of 4." );
     return NULL;
   }
-  
+
   std::vector<double> position(3, 0.0);
   std::vector<double> orientation(4, 0.0);
   
@@ -790,12 +792,13 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
     orientation[i] = PyFloat_AsDouble( tmpObj );
   }
   
-  if (PR2ProxyManager::instance()->moveArmWithGoalPose( PyObject_IsTrue( armselObj ), position, orientation, time_to_reach )) {
+  if (PR2ProxyManager::instance()->moveArmWithGoalPose( PyObject_IsTrue( armselObj ),
+        position, orientation, time_to_reach ))
+  {
     Py_RETURN_TRUE;
   }
-  else {
-    Py_RETURN_FALSE;
-  }
+
+  Py_RETURN_FALSE;
 }
 
 /*! \fn moveArmWithJointPos(joint_position, time_to_reach)

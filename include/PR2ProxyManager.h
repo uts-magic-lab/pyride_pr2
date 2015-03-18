@@ -101,8 +101,7 @@ public:
   
   bool tuckArms( bool tuckleft, bool tuckright );
   bool moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
-                           std::vector<double> & orientation,
-                           float time_to_reach = 10.0 );
+                           std::vector<double> & orientation, float time_to_reach = 10.0 );
   void moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions,
                            float time_to_reach = 5.0 );
   void moveArmWithJointTrajectory( bool isLeftArm,
