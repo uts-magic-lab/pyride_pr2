@@ -263,6 +263,8 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
     if (rarmGroup_) {
       colObjPub_ = mCtrlNode_->advertise<moveit_msgs::CollisionObject>( "collision_object", 2 );
       ROS_INFO("MoveIt planning reference frame: %s", rarmGroup_->getPlanningFrame().c_str());
+      ROS_INFO("Right arm end effector %s, left arm end effector %s.",
+          rarmGroup_->getEndEffectorLink().c_str(), larmGroup_->getEndEffectorLink().c_str() );
     }
   }
 doneInit:
