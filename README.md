@@ -12,7 +12,7 @@ programs interactively in the same way as using the standard Python interactive 
 Programs can transit seamlessly from development to deployment with a bootstrap mechanism.
 PyRIDE also provides remote user level accesses of the robot functionalities, e.g. real-time
 robot camera image data, through a client-server mechanism. You can view a tech demo 
-[here](http://https://www.youtube.com/watch?v=0DTB62lm8z4).
+[here](https://www.youtube.com/watch?v=0DTB62lm8z4).
 
 Finally, PyRIDE is written in portable C++ and can be ported to various robot platform with 
 relative ease. Currently, PyRIDE runs on NAO, ROS/PR2 and iOS/ROMO platforms. This repository 
