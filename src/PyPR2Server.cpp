@@ -119,7 +119,7 @@ bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command,
       yaw = kHFOV_Wide * yaw * kDegreeToRAD;
       pitch = kHFOV_Wide * pitch * kDegreeToRAD;
 
-      status = PR2ProxyManager::instance()->moveHeadTo( yaw, pitch );
+      status = PR2ProxyManager::instance()->moveHeadTo( yaw, pitch, true );
     }
       break;
     case UPDATE_HEAD_POSE: // velocity vector

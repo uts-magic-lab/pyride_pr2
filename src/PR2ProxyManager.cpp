@@ -20,9 +20,9 @@ namespace pyride {
 static const float kMaxWalkSpeed = 1.0;
 static const float kYawRate = 0.7;  // ~ 45 degree
 static const float kTorsoMoveRate = 0.05; // 5cm/s
-static const float kHeadYawRate = 0.7;
-static const float kHeadPitchRate = 0.7;
-static const float kHeadPosTolerance = 0.01;
+static const float kHeadYawRate = 1.0;
+static const float kHeadPitchRate = 1.0;
+static const float kHeadPosTolerance = 0.002; // ~0.1 degree
 static const long   kMotionCommandGapTolerance = 2 * 1000000 / kMotionCommandFreq; // 0.4 sec
 static const double kDT = 1.0/double( kPublishFreq );
 static const double kHorizon = 5.0 * kDT;
@@ -1057,16 +1057,22 @@ void PR2ProxyManager::deregisterForTiltScanData()
   }
 }
 
-bool PR2ProxyManager::moveHeadTo( double yaw, double pitch )
+bool PR2ProxyManager::moveHeadTo( double yaw, double pitch, bool relative )
 {
   if (headCtrlWithActionClient_ || headCtrlWithOdmetry_)
     return false;
   
+  double newYaw, newPitch;
   this->getHeadPos( reqHeadYaw_, reqHeadPitch_ );
   
-  double newYaw, newPitch;
-  newYaw = clamp( reqHeadYaw_ + yaw, kMaxHeadPan );
-  newPitch = reqHeadPitch_ + pitch;
+  if (relative) {
+    newYaw = clamp( reqHeadYaw_ + yaw, kMaxHeadPan );
+    newPitch = reqHeadPitch_ + pitch;
+  }
+  else {
+    newYaw = clamp( yaw, kMaxHeadPan );
+    newPitch = pitch;
+  }
   
   if (newPitch < kMinHeadTilt) {
     newPitch = kMinHeadTilt;
@@ -1078,13 +1084,20 @@ bool PR2ProxyManager::moveHeadTo( double yaw, double pitch )
   headYawRate_ = clamp( newYaw - reqHeadYaw_, kHeadYawRate );
   headPitchRate_ = clamp( newPitch - reqHeadPitch_, kHeadPitchRate );
 
-  targetYaw_ = newYaw;
-  targetPitch_ = newPitch;
+  if (fabs(headYawRate_) < kHeadPosTolerance)
+    headYawRate_ = 0.0;
+  if (fabs(headPitchRate_) < kHeadPosTolerance)
+    headPitchRate_ = 0.0;
   //ROS_INFO( "tyaw, tpitch = %f, %f", targetYaw_, targetPitch_ );
   headCtrlWithOdmetry_ = (headYawRate_ != 0.0 || headPitchRate_ != 0.0);
+  if (headCtrlWithOdmetry_) {
+    targetYaw_ = newYaw;
+    targetPitch_ = newPitch;
+    hcwoTimeToComplete_ = ros::Time::now() + ros::Duration( 2.5 );
+  }
   return true;
 }
-  
+
 bool PR2ProxyManager::pointHeadTo( const std::string & frame, float x, float y, float z )
 {
   if (headCtrlWithActionClient_ || headCtrlWithOdmetry_)
@@ -1953,9 +1966,25 @@ void PR2ProxyManager::publishCommands()
       headPitchRate_ = (reqHeadPitch_ <= targetPitch_ ? 0.0 : headPitchRate_);
     }
 
+    //printf( "corrected head move rate %f,%f\n", headYawRate_, headPitchRate_);
     headCtrlWithOdmetry_ = (headYawRate_ != 0.0 || headPitchRate_ != 0.0);
     
     if (headCtrlWithOdmetry_) {
+      /*
+      if (this->isHeadControlWithOdometryTimeExpired()) {
+        headCtrlWithOdmetry_ = false;
+        headYawRate_ = headPitchRate_ = 0.0;
+        PyGILState_STATE gstate;
+        gstate = PyGILState_Ensure();
+
+        PyPR2Module::instance()->invokeCallback( "onMoveHeadFailed", NULL );
+
+        PyGILState_Release( gstate );
+
+        ROS_INFO( "Move head action failed." );
+        return;
+      }
+      */
       trajectory_msgs::JointTrajectory traj;
       traj.header.stamp = ros::Time::now() + ros::Duration(0.01);
       traj.joint_names.push_back( "head_pan_joint" );
@@ -1973,6 +2002,16 @@ void PR2ProxyManager::publishCommands()
       reqHeadPitch_ += headPitchRate_ * kDT;
 
       hPub_.publish( traj );
+    }
+    else {
+      PyGILState_STATE gstate;
+      gstate = PyGILState_Ensure();
+
+      PyPR2Module::instance()->invokeCallback( "onMoveHeadSuccess", NULL );
+
+      PyGILState_Release( gstate );
+
+      ROS_INFO( "Move head action is finished." );
     }
   }
   else if (headYawRate_ != 0.0 || headPitchRate_ != 0.0) {
@@ -2003,7 +2042,12 @@ bool PR2ProxyManager::isBodyControlWithOdometryTimeExpired()
 {
   return (ros::Time::now() >= bcwoTimeToComplete_);
 }
-  
+
+bool PR2ProxyManager::isHeadControlWithOdometryTimeExpired()
+{
+  return (ros::Time::now() >= hcwoTimeToComplete_);
+}
+
 void PR2ProxyManager::getTFFrameList( std::vector<std::string> & list )
 {
   list.clear();

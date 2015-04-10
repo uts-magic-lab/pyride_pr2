@@ -95,7 +95,7 @@ public:
                          std::vector<double> & positions,
                          std::vector<double> & orientation );
 
-  bool moveHeadTo( double yaw, double pitch );
+  bool moveHeadTo( double yaw, double pitch, bool relative = false );
   bool pointHeadTo( const std::string & frame, float x, float y, float z );
   void updateHeadPose( float yaw, float pitch );
   
@@ -243,6 +243,7 @@ private:
 
   ros::Time cmdTimeStamp_;
   ros::Time bcwoTimeToComplete_; // time to complete bodyCtrlWithOdmetry_
+  ros::Time hcwoTimeToComplete_; // time to complete headCtrlWithOdmetry_
 
   geometry_msgs::Twist mCmd_;
   double headYawRate_, headPitchRate_;
@@ -261,6 +262,7 @@ private:
   double clamp( double val, double max );
   double max( double val1, double val2 );
   bool isBodyControlWithOdometryTimeExpired();
+  bool isHeadControlWithOdometryTimeExpired();
   
   void doneHeadAction( const actionlib::SimpleClientGoalState & state,
                       const PointHeadResultConstPtr & result );

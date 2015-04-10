@@ -375,6 +375,7 @@ static PyObject * PyModule_PR2MoveBodyWithSpeed( PyObject * self, PyObject * arg
  *  \brief Move the PR2 head to a specific yaw and pitch position.
  *  \param float head_yaw. Must be in radian.
  *  \param float head_pitch. Must be in radian.
+ *  \param bool relative. True == relative angle values; False == absolute angle values. Optional, default is False.
  *  \return bool. True == valid command; False == invalid command.
  *  \todo This function has not been fully tested on PR2 and is still buggy.
  */
@@ -382,14 +383,25 @@ static PyObject * PyModule_PR2MoveHeadTo( PyObject * self, PyObject * args )
 {
   double yaw = 0.0;
   double pitch = 0.0;
+  PyObject * boolObj = NULL;
+  bool isRelative = false;
   
-  if (!PyArg_ParseTuple( args, "dd", &yaw, &pitch )) {
+  if (!PyArg_ParseTuple( args, "dd|O", &yaw, &pitch, &boolObj )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
   }
-  if (PR2ProxyManager::instance()->moveHeadTo( yaw * kDegreeToRAD, pitch * kDegreeToRAD ))
-    Py_RETURN_TRUE;
 
+  if (boolObj) {
+    if (PyBool_Check( boolObj )) {
+      isRelative = PyObject_IsTrue( boolObj );
+    }
+    else {
+      PyErr_Format( PyExc_ValueError, "PyPR2.moveHeadTo: last input parameter must be a boolean." );
+      return NULL;
+    }
+  }
+  if (PR2ProxyManager::instance()->moveHeadTo( yaw, pitch, isRelative ))
+    Py_RETURN_TRUE;
   else
     Py_RETURN_FALSE;
 }
