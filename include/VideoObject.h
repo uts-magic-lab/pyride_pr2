@@ -31,7 +31,7 @@ namespace pyride {
 
 class VideoObject : public VideoDevice {
 public:
-  VideoObject( DeviceInfo & info, NodeHandle * nodeHandle );
+  VideoObject( DeviceInfo & info );
   
   bool initDevice();
   void finiDevice();

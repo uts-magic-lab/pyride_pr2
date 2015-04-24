@@ -18,8 +18,7 @@
 
 namespace pyride {
 
-VideoObject::VideoObject( DeviceInfo & devInfo, NodeHandle * nodeHandle ) :
-  imgSubNode_( nodeHandle ),
+VideoObject::VideoObject( DeviceInfo & devInfo ) :
   imgTrans_( priImgNode_ ),
   procThread_( NULL ),
   takeSnapShot_( false )
@@ -35,11 +34,6 @@ bool VideoObject::initDevice()
 
   if (devInfo_.deviceID.empty()) {
     ERROR_MSG( "Invalid device info." );
-    return false;
-  }
-
-  if (!imgSubNode_) {
-    ERROR_MSG( "Invalid node handle." );
     return false;
   }
 

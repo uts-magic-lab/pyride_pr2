@@ -165,7 +165,7 @@ bool PyPR2Server::initVideoDevices()
   const DeviceInfoList * devlist = AppConfigManager::instance()->deviceInfoList();
   for (size_t i = 0; i < devlist->size(); i++) {
     DeviceInfo * deviceInfo = devlist->at( i );
-    VideoObject * activeVideoObj = new VideoObject( *deviceInfo, hcNodeHandle_ );
+    VideoObject * activeVideoObj = new VideoObject( *deviceInfo );
     if (activeVideoObj->initDevice()) {
       activeVideoDevices_.push_back( activeVideoObj );
     }
