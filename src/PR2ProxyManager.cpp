@@ -15,6 +15,10 @@
 #include "pr2ht/DetectTrackControl.h"
 #endif
 
+#ifdef WITH_RHYTH_DMP
+#include "rhyth_dmp/RecallTraj.h"
+#endif
+
 namespace pyride {
 
 static const float kMaxWalkSpeed = 1.0;
@@ -136,6 +140,19 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   if (!htClient_.exists()) {
     ROS_INFO( "No human detection service is available." );
   }
+#endif
+
+#ifdef WITH_RHYTH_DMP
+  dmpClient_ = mCtrlNode_->serviceClient<rhyth_dmp::RecallTraj>( "/rhyth_dmp/recall_dmp_traj" );
+
+  if (!dmpClient_.exists()) {
+    ROS_INFO( "No rhyth_dmp service is available." );
+  }
+
+  dmpTrajThread_ = new AsyncSpinner( 1, &dmpTrajQueue_ );
+  SubscribeOptions sopts = ros::SubscribeOptions::create<rhyth_dmp::OutputTrajData>( "/rhyth_dmp/output_trajectory",
+      1, boost::bind( &PR2ProxyManager::trajectoryDataInputCB, this, _1 ), ros::VoidPtr(), &dmpTrajQueue_ );
+  dmpTrajDataSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
 #endif
 
   mCmd_.linear.x = mCmd_.linear.y = mCmd_.angular.z = 0;
@@ -316,6 +333,14 @@ void PR2ProxyManager::fini()
     moveBaseClient_ = NULL;
   }
   jointSub_.shutdown();
+  powerSub_.shutdown();
+
+#ifdef WITH_RHYTH_DMP
+  dmpTrajThread_->stop();
+  dmpTrajDataSub_->shutdown();
+  delete dmpTrajThread_;
+  delete dmpTrajDataSub_;
+#endif
 }
 
 /** @name Action Callback Functions
@@ -811,6 +836,53 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
     Py_DECREF( retList );
   
     PyGILState_Release( gstate );
+}
+#endif
+
+#ifdef WITH_RHYTH_DMP
+void PR2ProxyManager::trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataConstPtr & msg )
+{
+  PyGILState_STATE gstate;
+  gstate = PyGILState_Ensure();
+
+  PyObject * retObj = PyDict_New();
+  PyObject * elemObj = PyString_FromString( msg->traj_id.c_str() );
+  PyDict_SetItemString( retObj, "traj_id", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyInt_FromLong( msg->step );
+  PyDict_SetItemString( retObj, "step", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyTuple_New( 3 );
+  PyTuple_SetItem( elemObj, 0, PyFloat_FromDouble( msg->point.position.x ) );
+  PyTuple_SetItem( elemObj, 1, PyFloat_FromDouble( msg->point.position.y ) );
+  PyTuple_SetItem( elemObj, 2, PyFloat_FromDouble( msg->point.position.z ) );
+  PyDict_SetItemString( retObj, "position", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyTuple_New( 3 );
+  PyTuple_SetItem( elemObj, 0, PyFloat_FromDouble( msg->point.velocity.x ) );
+  PyTuple_SetItem( elemObj, 1, PyFloat_FromDouble( msg->point.velocity.y ) );
+  PyTuple_SetItem( elemObj, 2, PyFloat_FromDouble( msg->point.velocity.z ) );
+  PyDict_SetItemString( retObj, "velocity", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyTuple_New( 3 );
+  PyTuple_SetItem( elemObj, 0, PyFloat_FromDouble( msg->point.acceleration.x ) );
+  PyTuple_SetItem( elemObj, 1, PyFloat_FromDouble( msg->point.acceleration.y ) );
+  PyTuple_SetItem( elemObj, 2, PyFloat_FromDouble( msg->point.acceleration.z ) );
+  PyDict_SetItemString( retObj, "acceleration", elemObj );
+  Py_DECREF( elemObj );
+
+  PyObject * arg = Py_BuildValue( "(O)", retObj );
+
+  PyPR2Module::instance()->invokeTrajectoryInputCallback( arg );
+
+  Py_DECREF( arg );
+  Py_DECREF( retObj );
+
+  PyGILState_Release( gstate );
 }
 #endif
 
@@ -1602,6 +1674,20 @@ bool PR2ProxyManager::enableHumanDetection( bool toEnable, bool enableTrackingNo
     return true;
   }
   return false;
+}
+#endif
+
+#ifdef WITH_RHYTH_DMP
+void PR2ProxyManager::subscribeRawTrajInput( bool enable )
+{
+  if (enable) {
+    printf( "got start\n");
+    dmpTrajThread_->start();
+  }
+  else {
+    printf( "got end\n");
+    dmpTrajThread_->stop();
+  }
 }
 #endif
 

@@ -147,7 +147,6 @@ void PyModuleExtension::setTeamColour( TeamColour teamColour )
   clientID_ = (clientID_ & 0xf0) | (teamColour & 0xf);
 }
 
-
 void PyModuleExtension::invokeCallback( const char * fnName, PyObject * arg )
 {
   if (!pPyModule_)
@@ -173,7 +172,33 @@ void PyModuleExtension::invokeCallback( const char * fnName, PyObject * arg )
   Py_DECREF( callbackFn );
 }
 
-  
+// internal helper functions
+void PyModuleExtension::swapCallbackHandler( PyObject * & master, PyObject * newObj )
+{
+  if (newObj) {
+    if (master) {
+      Py_DECREF( master );
+    }
+    master = newObj;
+    Py_INCREF( master );
+  }
+  else if (master) {
+    Py_DECREF( master );
+    master = NULL;
+  }
+}
+
+void PyModuleExtension::InvokeCallbackHandler( PyObject * & cbObj, PyObject * arg )
+{
+  if (cbObj) {
+    PyObject * pResult = PyObject_CallObject( cbObj, arg );
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+    }
+    Py_XDECREF( pResult );
+  }
+}
+
 //#pragma mark PyModuleExtendedCommandHandler implmentation
 PyModuleExtendedCommandHandler::PyModuleExtendedCommandHandler( PyModuleExtension * pyExtModule )
 {
@@ -374,5 +399,4 @@ void PyModuleExtendedCommandHandler::onSnapshotImage( const string & name )
   
   PyGILState_Release( gstate );
 }
-
 } // namespace pyride

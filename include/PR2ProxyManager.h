@@ -55,6 +55,10 @@
 #include <pr2ht/TrackedObjectUpdate.h>
 #endif
 
+#ifdef WITH_RHYTH_DMP
+#include <rhyth_dmp/OutputTrajData.h>
+#endif
+
 #include "PyRideCommon.h"
 
 using namespace std;
@@ -141,9 +145,13 @@ public:
                       const std::vector<double> & orientation );
   
 #ifdef WITH_PR2HT
-  bool enableHumanDetection( bool toEnable, bool enableTrackingNotif = false );
+  bool enableHumanDetection( bool enable, bool enableTrackingNotif = false );
 #endif
   
+#ifdef WITH_RHYTH_DMP
+  void subscribeRawTrajInput( bool enable );
+#endif
+
   void cancelBodyMovement();
 
   void publishCommands();
@@ -182,6 +190,15 @@ private:
   Subscriber * htObjUpdateSub_;
 
   ServiceClient htClient_;
+#endif
+
+#ifdef WITH_RHYTH_DMP
+  Subscriber * dmpTrajDataSub_;
+  // use separate thread and message queue to cope with possible high resolution inputs
+  AsyncSpinner * dmpTrajThread_;
+  CallbackQueue dmpTrajQueue_;
+
+  ServiceClient dmpClient_;
 #endif
 
   message_filters::Subscriber<sensor_msgs::LaserScan> * baseScanSub_;
@@ -298,6 +315,10 @@ private:
 #ifdef WITH_PR2HT
   void htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConstPtr & msg );
   void htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & msg );
+#endif
+
+#ifdef WITH_RHYTH_DMP
+  void trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataConstPtr & msg );
 #endif
 
 };

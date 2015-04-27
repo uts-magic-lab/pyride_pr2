@@ -1621,6 +1621,41 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
 }
 #endif
 
+#ifdef WITH_RHYTH_DMP
+/*! \fn registerRawTrajectoryInput( traj_input_callback )
+ *  \memberof PyPR2
+ *  \brief Register callback function to receive raw trajectory input with respect to
+ *  an end effector (and its reference frame).
+ *  \param traj_input_callback function that takes a dictionaries of { 'traj_id', 'step',
+ *  'position', 'velocity', 'acceleration' (all in tuples of x,y,z) }.
+ *  \return None
+ */
+static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObject * args )
+{
+  PyObject * trajincb = NULL;
+
+  if (!PyArg_ParseTuple( args, "O", &trajincb )) {
+    // PyArg_ParseTuple will set the error status.
+    return NULL;
+  }
+
+  if (trajincb == Py_None) {
+    PyPR2Module::instance()->setTrajectoryInputCallback( NULL );
+    PR2ProxyManager::instance()->subscribeRawTrajInput( false );
+    Py_RETURN_NONE;
+  }
+
+  if (!PyCallable_Check( trajincb )) {
+    PyErr_Format( PyExc_ValueError, "Input parameter is not callable object" );
+    return NULL;
+  }
+
+  PyPR2Module::instance()->setTrajectoryInputCallback( trajincb );
+  PR2ProxyManager::instance()->subscribeRawTrajInput( true );
+  Py_RETURN_NONE;
+}
+#endif
+
 #define INCLUDE_COMMON_PYMODULE_MEHTODS
 #include "PyModulePyCommon.cpp"
 
@@ -1709,6 +1744,10 @@ static PyMethodDef PyModule_methods[] = {
   { "registerHumanDetectTracking", (PyCFunction)PyModule_PR2RegisterObjectDetectTracking, METH_VARARGS,
     "Register (or deregister) callback functions to get human detection and tracking information." },
 #endif
+#ifdef WITH_RHYTH_DMP
+  { "registerRawTrajectoryInput", (PyCFunction)PyModule_PR2RegisterRawTrajectoryInput, METH_VARARGS,
+    "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },
+#endif
 #define DEFINE_COMMON_PYMODULE_METHODS
 #include "PyModulePyCommon.cpp"
   { NULL, NULL, 0, NULL }           /* sentinel */
@@ -1717,7 +1756,12 @@ static PyMethodDef PyModule_methods[] = {
 PyPR2Module::PyPR2Module() : PyModuleExtension( "PyPR2" )
 {
   baseScanCB_ = tiltScanCB_ = NULL;
+#ifdef WITH_PR2HT
   objectDetectCB_ = objectTrackCB_ = NULL;
+#endif
+#ifdef WITH_RHYTH_DMP
+  trajInputCB_ = NULL;
+#endif
 }
 
 PyPR2Module::~PyPR2Module()
@@ -1730,6 +1774,8 @@ PyPR2Module::~PyPR2Module()
     Py_DECREF( tiltScanCB_ );
     tiltScanCB_ = NULL;
   }
+
+#ifdef WITH_PR2HT
   if (objectDetectCB_) {
     Py_DECREF( objectDetectCB_ );
     objectDetectCB_ = NULL;
@@ -1738,6 +1784,14 @@ PyPR2Module::~PyPR2Module()
     Py_DECREF( objectTrackCB_ );
     objectTrackCB_ = NULL;
   }
+#endif
+
+#ifdef WITH_RHYTH_DMP
+  if (trajInputCB_) {
+    Py_DECREF( trajInputCB_ );
+    trajInputCB_ = NULL;
+  }
+#endif
 }
 
 PyObject * PyPR2Module::createPyModule()
@@ -1755,104 +1809,51 @@ PyPR2Module * PyPR2Module::instance()
   
 void PyPR2Module::invokeBaseScanCallback( PyObject * arg )
 {
-  if (baseScanCB_) {
-    PyObject * pResult = PyObject_CallObject( baseScanCB_, arg );
-    if (PyErr_Occurred()) {
-      PyErr_Print();
-    }
-    Py_XDECREF( pResult );
-  }
+  this->InvokeCallbackHandler( baseScanCB_, arg );
 }
 
 void PyPR2Module::invokeTiltScanCallback( PyObject * arg )
 {
-  if (tiltScanCB_) {
-    PyObject * pResult = PyObject_CallObject( tiltScanCB_, arg );
-    if (PyErr_Occurred()) {
-      PyErr_Print();
-    }
-    Py_XDECREF( pResult );
-  }
+  this->InvokeCallbackHandler( tiltScanCB_, arg );
 }
   
 void PyPR2Module::setBaseScanCallback( PyObject * obj )
 {
-  if (obj) {
-    if (baseScanCB_) {
-      Py_DECREF( baseScanCB_ );
-    }
-    baseScanCB_ = obj;
-    Py_INCREF( baseScanCB_ );
-  }
-  else if (baseScanCB_) {
-    Py_DECREF( baseScanCB_ );
-    baseScanCB_ = NULL;
-  }
+  this->swapCallbackHandler( baseScanCB_, obj );
 }
 
 void PyPR2Module::setTiltScanCallback( PyObject * obj )
 {
-  if (obj) {
-    if (tiltScanCB_) {
-      Py_DECREF( tiltScanCB_ );
-    }
-    tiltScanCB_ = obj;
-    Py_INCREF( tiltScanCB_ );
-  }
-  else if (tiltScanCB_) {
-    Py_DECREF( tiltScanCB_ );
-    tiltScanCB_ = NULL;
-  }
+  this->swapCallbackHandler( tiltScanCB_, obj );
 }
 
 #ifdef WITH_PR2HT
 void PyPR2Module::invokeObjectDetectionCallback( PyObject * arg )
 {
-  if (objectDetectCB_) {
-    PyObject * pResult = PyObject_CallObject( objectDetectCB_, arg );
-    if (PyErr_Occurred()) {
-      PyErr_Print();
-    }
-    Py_XDECREF( pResult );
-  }
+  this->InvokeCallbackHandler( objectDetectCB_, arg );
 }
 
 void PyPR2Module::invokeObjectTrackingCallback( PyObject * arg )
 {
-  if (objectTrackCB_) {
-    PyObject * pResult = PyObject_CallObject( objectTrackCB_, arg );
-    if (PyErr_Occurred()) {
-      PyErr_Print();
-    }
-    Py_XDECREF( pResult );
-  }
+  this->InvokeCallbackHandler( objectTrackCB_, arg );
 }
 
 void PyPR2Module::setObjectDTCallback( PyObject * detectcb, PyObject * trackcb )
 {
-  if (detectcb) {
-    if (objectDetectCB_) {
-      Py_DECREF( objectDetectCB_ );
-    }
-    objectDetectCB_ = detectcb;
-    Py_INCREF( objectDetectCB_ );
-  }
-  else if (objectDetectCB_) {
-    Py_DECREF( objectDetectCB_ );
-    objectDetectCB_ = NULL;
-  }
+  this->swapCallbackHandler( objectDetectCB_, detectcb );
+  this->swapCallbackHandler( objectTrackCB_, trackcb );
+}
+#endif
 
-  if (trackcb) {
-    if (objectTrackCB_) {
-      Py_DECREF( objectTrackCB_ );
-    }
-    objectTrackCB_ = trackcb;
-    Py_INCREF( objectTrackCB_ );
-  }
-  else if (objectTrackCB_) {
-    Py_DECREF( objectTrackCB_ );
-    objectTrackCB_ = NULL;
-  }
+#ifdef WITH_RHYTH_DMP
+void PyPR2Module::setTrajectoryInputCallback( PyObject * inputcb )
+{
+  this->swapCallbackHandler( trajInputCB_, inputcb );
+}
+
+void PyPR2Module::invokeTrajectoryInputCallback( PyObject * arg )
+{
+  this->InvokeCallbackHandler( trajInputCB_, arg );
 }
 #endif
 } // namespace pyride

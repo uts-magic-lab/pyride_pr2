@@ -68,6 +68,8 @@ protected:
   PyModuleExtendedCommandHandler * pyModuleCommandHandler_;
   
   virtual PyObject * createPyModule() = 0;
+  void swapCallbackHandler( PyObject * & master, PyObject * newObj );
+  void InvokeCallbackHandler( PyObject * & cbObj, PyObject * arg );
 };
   
 class PyModuleExtendedCommandHandler : public PyRideExtendedCommandHandler
