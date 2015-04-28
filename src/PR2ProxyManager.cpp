@@ -77,6 +77,9 @@ PR2ProxyManager::PR2ProxyManager() :
   htObjStatusSub_( NULL ),
   htObjUpdateSub_( NULL ),
 #endif
+#ifdef WITH_RHYTH_DMP
+  dmpTrajDataSub_( NULL ),
+#endif
   baseScanSub_( NULL ),
   tiltScanSub_( NULL ),
   baseScanNotifier_( NULL ),
@@ -150,9 +153,7 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   }
 
   dmpTrajThread_ = new AsyncSpinner( 1, &dmpTrajQueue_ );
-  SubscribeOptions sopts = ros::SubscribeOptions::create<rhyth_dmp::OutputTrajData>( "/rhyth_dmp/output_trajectory",
-      1, boost::bind( &PR2ProxyManager::trajectoryDataInputCB, this, _1 ), ros::VoidPtr(), &dmpTrajQueue_ );
-  dmpTrajDataSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
+  dmpTrajThread_->start();
 #endif
 
   mCmd_.linear.x = mCmd_.linear.y = mCmd_.angular.z = 0;
@@ -335,11 +336,28 @@ void PR2ProxyManager::fini()
   jointSub_.shutdown();
   powerSub_.shutdown();
 
+#ifdef WITH_PR2HT
+  if (htObjStatusSub_) {
+    htObjStatusSub_->shutdown();
+    delete htObjStatusSub_;
+    htObjStatusSub_ = NULL;
+  }
+  if (htObjUpdateSub_) {
+    htObjUpdateSub_->shutdown();
+    delete htObjUpdateSub_;
+    htObjUpdateSub_ = NULL;
+  }
+#endif
+
 #ifdef WITH_RHYTH_DMP
   dmpTrajThread_->stop();
-  dmpTrajDataSub_->shutdown();
   delete dmpTrajThread_;
-  delete dmpTrajDataSub_;
+  dmpTrajThread_ = NULL;
+  if (dmpTrajDataSub_) {
+    dmpTrajDataSub_->shutdown();
+    delete dmpTrajDataSub_;
+    dmpTrajDataSub_ = NULL;
+  }
 #endif
 }
 
@@ -1681,12 +1699,18 @@ bool PR2ProxyManager::enableHumanDetection( bool toEnable, bool enableTrackingNo
 void PR2ProxyManager::subscribeRawTrajInput( bool enable )
 {
   if (enable) {
-    printf( "got start\n");
-    dmpTrajThread_->start();
+    if (dmpTrajDataSub_) { // should not happen, check here just in case.
+      ROS_WARN( "We have already subscribed to raw trajectory input." );
+      return;
+    }
+    SubscribeOptions sopts = ros::SubscribeOptions::create<rhyth_dmp::OutputTrajData>( "/rhyth_dmp/output_trajectory",
+        1, boost::bind( &PR2ProxyManager::trajectoryDataInputCB, this, _1 ), ros::VoidPtr(), &dmpTrajQueue_ );
+    dmpTrajDataSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
   }
-  else {
-    printf( "got end\n");
-    dmpTrajThread_->stop();
+  else if (dmpTrajDataSub_) {
+    dmpTrajDataSub_->shutdown();
+    delete dmpTrajDataSub_;
+    dmpTrajDataSub_ = NULL;
   }
 }
 #endif
