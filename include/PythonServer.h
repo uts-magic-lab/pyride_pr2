@@ -20,7 +20,7 @@
 #define PYTHON_SERVER_PORT        27005
 
 #ifdef ROS_BUILD
-#define DEFAULT_PYTHON_SCRIPT_PATH "embedded_scripts"
+#define DEFAULT_PYTHON_SCRIPT_PATH "scripts"
 #elif IOS_BUILD
 #define DEFAULT_PYTHON_SCRIPT_PATH "scripts"
 #else

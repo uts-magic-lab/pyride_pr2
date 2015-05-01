@@ -91,6 +91,8 @@ def main():
   PyPR2.stopDataRecording = extProcCall.stopDataRecording
   PyPR2.startJoystickControl = extProcCall.startJoystickControl
   PyPR2.stopJoystickControl = extProcCall.stopJoystickControl
+  PyPR2.startJointVelocityControl = extProcCall.startJointVelocityControl
+  PyPR2.stopJointVelocityControl = extProcCall.stopJointVelocityControl
   PyPR2.turnOnBaseScanIntensity = extProcCall.setBaseScanIntensityOn
    
   myMessenger = messenger.Messenger()
