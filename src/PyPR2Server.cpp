@@ -40,12 +40,14 @@ bool PyPR2Server::init()
   // setup private parameter image_transport to compressed
   NodeHandle priNh( "~" );
   std::string filename;
+  std::string scriptdir;
   bool useOptionNodes = false;
   bool useMoveIt = false;
   
   priNh.param<bool>( "use_optional_nodes", useOptionNodes, false );
   priNh.param<bool>( "use_moveit", useMoveIt, false );
   priNh.param<std::string>( "config_file", filename, "pyrideconfig.xml" );
+  priNh.param<std::string>( "script_dir", scriptdir, "scripts" );
   AppConfigManager::instance()->loadConfigFromFile( filename.c_str() );
 
   if (!initVideoDevices()) {
@@ -60,7 +62,8 @@ bool PyPR2Server::init()
   ServerDataProcessor::instance()->setClientID( AppConfigManager::instance()->clientID() );
   ServerDataProcessor::instance()->setDefaultRobotInfo( PR2, AppConfigManager::instance()->startPosition() );
   
-  PythonServer::instance()->init( AppConfigManager::instance()->enablePythonConsole(), PyPR2Module::instance() );
+  PythonServer::instance()->init( AppConfigManager::instance()->enablePythonConsole(),
+      PyPR2Module::instance(), scriptdir.c_str() );
   ServerDataProcessor::instance()->discoverConsoles();
   return true;
 }

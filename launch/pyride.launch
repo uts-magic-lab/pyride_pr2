@@ -8,6 +8,7 @@
     <remap from="cmd_vel" to="base_controller/command" />
     <remap from="head_vel" to="head_traj_controller/command" />
     <param name="config_file" type="str" value="$(find pyride_pr2)/pyrideconfig.xml"/>
+    <param name="script_dir" type="str" value="$(find pyride_pr2)/scripts"/>
     <param name="use_moveit" type="bool" value="false"/>
   </node>
 </launch>

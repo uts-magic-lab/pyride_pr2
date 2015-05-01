@@ -184,36 +184,27 @@ bool PythonServer::initUDPListener()
 
 bool PythonServer::initPyInterpreter()
 {
+  struct stat dirInfo;
   char scriptPath[256];
-#ifdef ROS_BUILD
   char * evnset = getenv( "SCRIPT_HOME" );
-  struct stat fileInfo;
 
-  if (!evnset || stat( evnset, &fileInfo ) || !S_ISDIR(fileInfo.st_mode)) {
-    int retval = readlink( "/proc/self/exe", scriptPath, 256 );
-    if (retval > 0) {
-      strcpy( strrchr( scriptPath, '/' ), "/../scripts/" );
-      strcat( scriptPath, DEFAULT_PYTHON_SCRIPT_PATH );
-    }
-    else {
-      strcpy( scriptPath, DEFAULT_PYTHON_SCRIPT_PATH );
-    }
+  if (strlen(customScriptBase) > 0 && stat( customScriptBase, &dirInfo ) == 0 && S_ISDIR(dirInfo.st_mode)) {
+    strcpy( scriptPath, customScriptBase );
   }
-  else {
+  else if (evnset && stat( evnset, &dirInfo ) == 0 && S_ISDIR(dirInfo.st_mode)) {
     strcpy( scriptPath, evnset );
   }
-  INFO_MSG( "default script path is %s.\n", scriptPath );
-#else
-  if (strlen(customScriptBase) > 0) {
-    snprintf( scriptPath, 256, "%s/%s", customScriptBase, DEFAULT_PYTHON_SCRIPT_PATH );
-    struct stat sb;
-    if (stat( scriptPath, &sb ) == -1)
-      mkdir( scriptPath, 0755 );
-  }
   else {
+#ifdef ROS_BUILD
+    int retval = readlink( "/proc/self/exe", scriptPath, 256 );
+    if (retval > 0) {
+      strcpy( strrchr( scriptPath, '/' ), "/scripts/" );
+    }
+#else
     strcpy( scriptPath, DEFAULT_PYTHON_SCRIPT_PATH );
-  }
 #endif
+  }
+  INFO_MSG( "default script path is %s.\n", scriptPath );
 
   // initialise Python interpreter
   if (Py_IsInitialized()) {
