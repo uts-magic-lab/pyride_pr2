@@ -13,6 +13,7 @@ class ProcConduit:
     self.mannequin = None
     self.recording = None
     self.joyControl = None
+
     if not os.path.exists( RECORDED_DATA_DIR ) or not os.path.isdir( RECORDED_DATA_DIR ):
       print 'Create data recording directory', RECORDED_DATA_DIR
       try:
@@ -34,6 +35,7 @@ class ProcConduit:
       return
 
     os.killpg( proc.pid, signal.SIGINT )  # Send the signal to all the process groups
+
   def setToMannequinMode( self, isYes ):
     if not isinstance( isYes, bool ):
       print 'Expect a boolean input'
@@ -48,9 +50,11 @@ class ProcConduit:
       if self.mannequin:
         self.killProc( self.mannequin )
         self.mannequin = None
+        subprocess.call( 'rosservice call /pr2_controller_manager/switch_controller \
+           "{start_controllers: [\'r_arm_controller\',\'l_arm_controller\'], \
+           stop_controllers: [],  strictness: 2}"', shell=True )
+
         PyPR2.say( "Stop mannequin mode." )
-      else:
-        print 'Not in mannequin mode'
 
   def setProjectorOff( self, isYes ):
     if not isinstance( isYes, bool ):
@@ -127,8 +131,9 @@ class ProcConduit:
       self.killProc( self.joyControl )
       self.joyControl = None
       PyPR2.say( "Stopped joystick control." )
-
+    
   def fini( self ):
     self.stopJoystickControl()
     self.stopDataRecording()
     self.setToMannequinMode( False )
+

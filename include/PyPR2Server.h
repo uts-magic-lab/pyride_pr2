@@ -40,8 +40,10 @@ public:
   
   void nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg );
 
+  void stopProcess();
+
 private:
-  
+  bool isRunning_;
   NodeHandle * hcNodeHandle_;
   Subscriber nodeStatusSub_;
 
