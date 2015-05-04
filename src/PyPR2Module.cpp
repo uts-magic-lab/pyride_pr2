@@ -1048,6 +1048,59 @@ static PyObject * PyModule_PR2MoveArmWithJointTrajAndSpeed( PyObject * self, PyO
   Py_RETURN_NONE;
 }
 
+/*! \fn moveArmWithJointVelocity(joint_velocities)
+ *  \memberof PyPR2
+ *  \brief Move a PR2 arm with raw joint velocity command
+ *  \param list joint_velocities. A joint velocity dictionaries with the same structure
+ *  of the PyPR2.moveArmWithJointPos without time_to_reach parameter.
+ *  \return None.
+ *  \note You must enable joint velocity controller by calling PyPR2.useJointVelocityControl
+ *  before using this method.
+ *  \warning You directly control the joint velocity with this method, PyRIDE provides no
+ *  additional check.
+ */
+static PyObject * PyModule_PR2MoveArmWithJointVelocity( PyObject * self, PyObject * args, PyObject * keywds )
+{
+  double s_p_j, s_l_j, u_a_r_j, e_f_j, f_r_j, w_f_j, w_r_j;
+  double time_to_reach = 2.0; // not used here
+
+  bool isLeftArm = false;
+
+  if (!PR2ProxyManager::instance()->useJointVelocityControl()) {
+    PyErr_Format( PyExc_RuntimeError, "Joint velocity controller is not in use." );
+    return NULL;
+  }
+
+  if (PyArg_ParseTupleAndKeywords( args, keywds, "ddddddd|d", (char**)kLeftArmKWlist,
+                       &s_p_j, &s_l_j, &u_a_r_j, &e_f_j, &f_r_j,
+                       &w_f_j, &w_r_j, &time_to_reach ))
+  {
+    isLeftArm = true;
+  }
+  else {
+    PyErr_Clear();
+    if (!PyArg_ParseTupleAndKeywords( args, keywds, "ddddddd|d", (char**)kRightArmKWlist,
+                                    &s_p_j, &s_l_j, &u_a_r_j, &e_f_j, &f_r_j,
+                                    &w_f_j, &w_r_j, &time_to_reach ))
+    {
+      // PyArg_ParseTuple will set the error status.
+      return NULL;
+    }
+  }
+
+  std::vector<double> velocities( 7, 0.0 );
+  velocities[0] = s_p_j;
+  velocities[1] = s_l_j;
+  velocities[2] = u_a_r_j;
+  velocities[3] = e_f_j;
+  velocities[4] = f_r_j;
+  velocities[5] = w_f_j;
+  velocities[6] = w_r_j;
+
+  PR2ProxyManager::instance()->moveArmWithJointVelocity( isLeftArm, velocities );
+  Py_RETURN_NONE;
+}
+
 /*! \fn cancelMoveArmAction(is_left_arm)
  *  \memberof PyPR2
  *  \brief Cancel current arm movement action invoked by PyPR2.moveArmWithJointPos or
@@ -1072,6 +1125,35 @@ static PyObject * PyModule_PR2CancelMoveArmAction( PyObject * self, PyObject * a
 
   PR2ProxyManager::instance()->cancelArmMovement( PyObject_IsTrue( armsel ) );
   Py_RETURN_NONE;
+}
+
+/*! \fn useJointVelocityControl( enable )
+ *  \memberof PyPR2
+ *  \brief Enable or disable the use of joint velocity controllers.
+ *  \param bool enable. True = load joint velocity controllers and stop using default joint trajectory action
+ *  controller. False = switch back to use the joint trajectory action controller.
+ *  \return True = successfully load or unload joint velocity controllers; False == otherwise.
+ *  \warning Using joint velocity controllers means, you have the direct control of joint velocity. Use
+ *  PyPR2.moveArmWithJointVelocity to control arm joints.
+ */
+static PyObject * PyModule_PR2UseJointVelocityControl( PyObject * self, PyObject * args )
+{
+  PyObject * enable = NULL;
+
+  if (!PyArg_ParseTuple( args, "O", &enable )) {
+    // PyArg_ParseTuple will set the error status.
+    return NULL;
+  }
+
+  if (!PyBool_Check( enable )) {
+    PyErr_Format( PyExc_ValueError, "PyPR2.useJointVelocityControl: input parameter must be a boolean!" );
+    return NULL;
+  }
+
+  if (PR2ProxyManager::instance()->enableJointVelocityControl( PyObject_IsTrue( enable ) ))
+    Py_RETURN_TRUE;
+  else
+    Py_RETURN_FALSE;
 }
 
 /*! \fn cancelMoveBodyAction()
@@ -1704,8 +1786,12 @@ static PyMethodDef PyModule_methods[] = {
     "Move one of PR2 arms in a specific joint trajectory (a list of joint positions)." },
   { "moveArmWithJointTrajectoryAndSpeed", (PyCFunction)PyModule_PR2MoveArmWithJointTrajAndSpeed, METH_VARARGS,
     "Move one of PR2 arms in a specific joint trajectory with joint velocity (a list of joint positions with associated velocity)." },
+  { "moveArmWithJointVelocity", (PyCFunction)PyModule_PR2MoveArmWithJointVelocity, METH_VARARGS|METH_KEYWORDS,
+    "Move one of PR2 arms with raw joint velocity command." },
   { "cancelMoveArmAction", (PyCFunction)PyModule_PR2CancelMoveArmAction, METH_VARARGS,
     "Cancel the active move arm actions." },
+  { "useJointVelocityControl", (PyCFunction)PyModule_PR2UseJointVelocityControl, METH_VARARGS,
+    "Enable or disable joint velocity controllers." },
   { "openGripper", (PyCFunction)PyModule_PR2OpenGripper, METH_VARARGS,
     "Open one or both PR2 grippers." },
   { "closeGripper", (PyCFunction)PyModule_PR2CloseGripper, METH_VARARGS,

@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   moveit_ros_planning_interface
   pr2_common_action_msgs
   pr2_controllers_msgs
+  pr2_mechanism_msgs
   pr2_msgs
   pr2_power_board
   roscpp

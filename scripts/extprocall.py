@@ -13,8 +13,6 @@ class ProcConduit:
     self.mannequin = None
     self.recording = None
     self.joyControl = None
-    self.useJointVelCtrl = False
-    self.loadJointVelCtrlSpec = False
 
     if not os.path.exists( RECORDED_DATA_DIR ) or not os.path.isdir( RECORDED_DATA_DIR ):
       print 'Create data recording directory', RECORDED_DATA_DIR
@@ -133,105 +131,9 @@ class ProcConduit:
       self.killProc( self.joyControl )
       self.joyControl = None
       PyPR2.say( "Stopped joystick control." )
-
-  def startJointVelocityControl( self ):
-    if self.useJointVelCtrl:
-      print 'already using joint velocity control'
-      return
-
-    if not self.loadJointVelCtrlSpec:
-      #use default pr2_controller_configuration settings on real robot
-      subprocess.call( 'rosparam load ${ROS_ROOT}/../pr2_controller_configuration_gazebo/config/pr2_joint_velocity_controllers.yaml', shell=True ) 
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_shoulder_pan_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_shoulder_pan_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_shoulder_lift_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_shoulder_lift_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_upper_arm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_upper_arm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_elbow_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_elbow_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_forearm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_forearm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_wrist_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_wrist_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'r_wrist_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/load_controller "name: \
-\'l_wrist_roll_velocity_controller\'"', shell=True )
-      self.loadJointVelCtrlSpec = True
-
-    subprocess.call( 'rosservice call /pr2_controller_manager/switch_controller \
-"{start_controllers: [\'r_shoulder_pan_velocity_controller\',\'r_shoulder_lift_velocity_controller\', \
-\'r_upper_arm_roll_velocity_controller\', \'r_elbow_flex_velocity_controller\', \
-\'r_forearm_roll_velocity_controller\', \'r_wrist_flex_velocity_controller\', \
-\'r_wrist_roll_velocity_controller\', \'l_shoulder_pan_velocity_controller\', \
-\'l_shoulder_lift_velocity_controller\', \'l_upper_arm_roll_velocity_controller\', \
-\'l_elbow_flex_velocity_controller\', \'l_forearm_roll_velocity_controller\', \
-\'l_wrist_flex_velocity_controller\', \'l_wrist_roll_velocity_controller\'], \
-stop_controllers: [\'r_arm_controller\',\'l_arm_controller\'], strictness: 2}"', shell=True )
-    self.useJointVelCtrl = True
-
-  def stopJointVelocityControl( self ):
-    if self.useJointVelCtrl:
-      subprocess.call( 'rosservice call /pr2_controller_manager/switch_controller \
-"{start_controllers: [\'r_arm_controller\',\'l_arm_controller\'], \
-stop_controllers: [\'r_shoulder_pan_velocity_controller\',\'r_shoulder_lift_velocity_controller\', \
-\'r_upper_arm_roll_velocity_controller\', \'r_elbow_flex_velocity_controller\', \
-\'r_forearm_roll_velocity_controller\', \'r_wrist_flex_velocity_controller\', \
-\'r_wrist_roll_velocity_controller\', \'l_shoulder_pan_velocity_controller\', \
-\'l_shoulder_lift_velocity_controller\', \'l_upper_arm_roll_velocity_controller\', \
-\'l_elbow_flex_velocity_controller\', \'l_forearm_roll_velocity_controller\', \
-\'l_wrist_flex_velocity_controller\', \'l_wrist_roll_velocity_controller\'], strictness: 2}"', shell=True )
-      self.useJointVelCtrl = False
-
-  def unloadAdditionalControllers( self ):
-    if self.loadJointVelCtrlSpec:
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_shoulder_pan_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_shoulder_pan_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_shoulder_lift_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_shoulder_lift_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_upper_arm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_upper_arm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_elbow_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_elbow_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_forearm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_forearm_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_wrist_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_wrist_flex_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'r_wrist_roll_velocity_controller\'"', shell=True )
-      subprocess.call( 'rosservice call /pr2_controller_manager/unload_controller "name: \
-\'l_wrist_roll_velocity_controller\'"', shell=True )
-    self.loadJointVelCtrlSpec = False
     
   def fini( self ):
     self.stopJoystickControl()
     self.stopDataRecording()
     self.setToMannequinMode( False )
-    self.stopJointVelocityControl()
-    self.unloadAdditionalControllers()
 

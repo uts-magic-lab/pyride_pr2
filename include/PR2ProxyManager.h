@@ -116,6 +116,8 @@ public:
                                   std::vector< std::vector<double> > & joint_velocities,
                                   std::vector<float> & times_to_reach );
 
+  void moveArmWithJointVelocity( bool isLeftArm, std::vector<double> & velocities );
+
   void cancelArmMovement( bool isLeftArm );
   
   bool addSolidObject( const std::string & name, std::vector<double> & volume,
@@ -171,6 +173,9 @@ public:
   void getTFFrameList( std::vector<std::string> & list );
   bool isTFFrameSupported( const char * frame_name );
 
+  bool enableJointVelocityControl( bool enable );
+  bool useJointVelocityControl() const { return useJointVelocityControl_; }
+
   void fini();
 
 private:
@@ -224,6 +229,8 @@ private:
   bool rGripperCtrl_;
   bool lArmCtrl_;
   bool rArmCtrl_;
+  bool useJointVelocityControl_;
+  bool loadedJointVelocitySpec_;
   
   float lArmActionTimeout_;
   float rArmActionTimeout_;
@@ -248,7 +255,7 @@ private:
   moveit::planning_interface::MoveGroup * larmGroup_;
 
   std::vector<std::string> solidObjectsInScene_;
-
+  std::vector<ros::Publisher *> jointVelocityPublishers_;
   //moveit::planning_interface::PlanningSceneInterface planningSceneInf_;
 
   TrajectoryClient * mlacClient_;
@@ -311,6 +318,8 @@ private:
   void tiltScanDataCB( const sensor_msgs::LaserScanConstPtr & msg );
 
   bool findSolidObjectInScene( const std::string & name );
+
+  void restoreJointControllers();
 
 #ifdef WITH_PR2HT
   void htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConstPtr & msg );

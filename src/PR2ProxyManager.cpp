@@ -8,6 +8,9 @@
  */
 #include <pr2_msgs/SetPeriodicCmd.h>
 #include <pr2_msgs/SetLaserTrajCmd.h>
+#include <pr2_mechanism_msgs/LoadController.h>
+#include <pr2_mechanism_msgs/UnloadController.h>
+#include <pr2_mechanism_msgs/SwitchController.h>
 #include "PR2ProxyManager.h"
 #include "PyPR2Module.h"
 
@@ -44,10 +47,20 @@ static const char *kPR2TFFrameList[] = { "map", "odom_combined", "base_footprint
   "narrow_stereo_r_stereo_camera_frame", "narrow_stereo_l_stereo_camera_frame",
   "wide_stereo_link", "narrow_stereo_link", "high_def_frame", "high_def_optical_frame",
   "wide_stereo_optical_frame", "narrow_stereo_optical_frame", "imu_link", "sensor_mount_link",
-  "laser_tilt_link", "base_laser_link",
-  NULL };
+  "laser_tilt_link", "base_laser_link", NULL };
 
 static const int kPR2TFFrameListSize = sizeof( kPR2TFFrameList ) / sizeof( kPR2TFFrameList[0] );
+
+static const char *kPR2JointVelocityControllers[] = { "r_shoulder_pan_velocity_controller",
+    "r_shoulder_lift_velocity_controller", "r_upper_arm_roll_velocity_controller",
+    "r_elbow_flex_velocity_controller", "r_forearm_roll_velocity_controller",
+    "r_wrist_flex_velocity_controller", "r_wrist_roll_velocity_controller",
+    "l_shoulder_pan_velocity_controller", "l_shoulder_lift_velocity_controller",
+    "l_upper_arm_roll_velocity_controller", "l_elbow_flex_velocity_controller",
+    "l_forearm_roll_velocity_controller", "l_wrist_flex_velocity_controller",
+    "l_wrist_roll_velocity_controller" };
+
+static const int kPR2JointVelocityControllerListSize = sizeof( kPR2JointVelocityControllers ) / sizeof( kPR2JointVelocityControllers[0] );
 
 // helper function
 inline double PR2ProxyManager::clamp( double val, double max )
@@ -94,6 +107,8 @@ PR2ProxyManager::PR2ProxyManager() :
   rGripperCtrl_( false ),
   lArmCtrl_( false ),
   rArmCtrl_( false ),
+  useJointVelocityControl_( false ),
+  loadedJointVelocitySpec_( false ),
   lArmActionTimeout_( 20 ),
   rArmActionTimeout_( 20 ),
   bodyActionTimeout_( 100 ),
@@ -293,6 +308,7 @@ doneInit:
 
 void PR2ProxyManager::fini()
 {
+  this->restoreJointControllers();
   if (rarmGroup_) {
     rarmGroup_->stop();
     rarmGroup_->clearPoseTargets();
@@ -1252,7 +1268,7 @@ bool PR2ProxyManager::tuckArms( bool tuckleft, bool tuckright )
 
 void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions, float time_to_reach )
 {
-  if (positions.size() != 7 || tuckArmCtrl_) {
+  if (positions.size() != 7 || tuckArmCtrl_ || useJointVelocityControl_) {
     return;
   }
   
@@ -1329,7 +1345,7 @@ void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> &
 void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< std::vector<double> > & trajectory,
                                                   std::vector<float> & times_to_reach )
 {
-  if (tuckArmCtrl_) {
+  if (tuckArmCtrl_ || useJointVelocityControl_) {
     return;
   }
   
@@ -1409,7 +1425,7 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
                                         std::vector< std::vector<double> > & joint_velocities,
                                         std::vector<float> & times_to_reach )
 {
-  if (tuckArmCtrl_) {
+  if (tuckArmCtrl_ || useJointVelocityControl_) {
     return;
   }
   
@@ -1487,7 +1503,7 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
 bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
                                           std::vector<double> & orientation, float time_to_reach )
 {
-  if (!rarmGroup_ || !larmGroup_)
+  if (!rarmGroup_ || !larmGroup_ || useJointVelocityControl_)
     return false;
 
   if (position.size() != 3 || orientation.size() != 4 || tuckArmCtrl_) {
@@ -1551,6 +1567,24 @@ bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> &
     return false;
   }
   return true;
+}
+
+void PR2ProxyManager::moveArmWithJointVelocity( bool isLeftArm, std::vector<double> & velocities )
+{
+  if (velocities.size() != 7 || tuckArmCtrl_ || !useJointVelocityControl_) {
+    return;
+  }
+
+  // First, the joint names, which apply to all waypoints
+  std_msgs::Float64 msg;
+  int start_pos = 0;
+  if (isLeftArm) {
+    start_pos = 7;
+  }
+  for (int i = 0; i < 7; i++) {
+    msg.data = velocities[i];
+    jointVelocityPublishers_[i+start_pos]->publish( msg );
+  }
 }
 
 void PR2ProxyManager::cancelArmMovement( bool isLeftArm )
@@ -2428,5 +2462,82 @@ bool PR2ProxyManager::findSolidObjectInScene( const std::string & name )
   return found;
 }
 
+bool PR2ProxyManager::enableJointVelocityControl( bool enable )
+{
+  if (enable == useJointVelocityControl_)
+    return true;
+
+  if (enable) {
+    if (!loadedJointVelocitySpec_) {
+      for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+        pr2_mechanism_msgs::LoadController loadMsg;
+        loadMsg.request.name = kPR2JointVelocityControllers[i];
+        if (!ros::service::call( "/pr2_controller_manager/load_controller", loadMsg ) || !loadMsg.response.ok ) {
+          ROS_ERROR( "Unable to load joint velocity controller '%s'.", kPR2JointVelocityControllers[i] );
+          return false;
+        }
+      }
+      loadedJointVelocitySpec_ = true;
+    }
+
+    pr2_mechanism_msgs::SwitchController switchMsg;
+    switchMsg.request.start_controllers.resize( kPR2JointVelocityControllerListSize );
+    switchMsg.request.stop_controllers.resize( 2 );
+    switchMsg.request.stop_controllers[0] = "r_arm_controller";
+    switchMsg.request.stop_controllers[1] = "l_arm_controller";
+    switchMsg.request.strictness = 2;
+    for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+      switchMsg.request.start_controllers[i] = kPR2JointVelocityControllers[i];
+    }
+
+    if (!ros::service::call( "/pr2_controller_manager/switch_controller", switchMsg ) || !switchMsg.response.ok ) {
+      ROS_ERROR( "Unable to switch to joint velocity controllers." );
+      return false;
+    }
+    char topic_name[128];
+    for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+      sprintf( topic_name, "%s/command", kPR2JointVelocityControllers[i] );
+      jointVelocityPublishers_.push_back( new ros::Publisher( mCtrlNode_->advertise<std_msgs::Float64>( topic_name, 1 ) ) );
+    }
+    useJointVelocityControl_ = true;
+  }
+  else {
+    pr2_mechanism_msgs::SwitchController switchMsg;
+    switchMsg.request.start_controllers.resize( 2 );
+    switchMsg.request.stop_controllers.resize( kPR2JointVelocityControllerListSize );
+    switchMsg.request.start_controllers[0] = "r_arm_controller";
+    switchMsg.request.start_controllers[1] = "l_arm_controller";
+    switchMsg.request.strictness = 2;
+    for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+      switchMsg.request.stop_controllers[i] = kPR2JointVelocityControllers[i];
+    }
+
+    if (!ros::service::call( "/pr2_controller_manager/switch_controller", switchMsg ) || !switchMsg.response.ok ) {
+      ROS_ERROR( "Unable to switch to joint trajectory action controller." );
+      return false;
+    }
+    for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+      delete jointVelocityPublishers_[i];
+    }
+    jointVelocityPublishers_.clear();
+    useJointVelocityControl_ = false;
+  }
+  return true;
+}
+
+void PR2ProxyManager::restoreJointControllers()
+{
+  this->enableJointVelocityControl( false );
+  if (loadedJointVelocitySpec_) {
+    for (int i = 0; i < kPR2JointVelocityControllerListSize; i++) {
+      pr2_mechanism_msgs::UnloadController unloadMsg;
+      unloadMsg.request.name = kPR2JointVelocityControllers[i];
+      if (!ros::service::call( "/pr2_controller_manager/unload_controller", unloadMsg ) || !unloadMsg.response.ok ) {
+        ROS_WARN( "Unable to unload joint velocity controller '%s'.", kPR2JointVelocityControllers[i] );
+      }
+    }
+    loadedJointVelocitySpec_ = false;
+  }
+}
 /**@}*/
 } // namespace pyride

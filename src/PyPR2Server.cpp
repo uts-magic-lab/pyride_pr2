@@ -23,7 +23,8 @@ namespace pyride {
 static const float kHFOV_Wide = 90.0;
 static const float kHFOV_Narrow = 55.0;
 
-PyPR2Server::PyPR2Server()
+PyPR2Server::PyPR2Server() :
+  isRunning_( true )
 {
   hcNodeHandle_ = new NodeHandle();
 }
@@ -68,11 +69,16 @@ bool PyPR2Server::init()
   return true;
 }
 
+void PyPR2Server::stopProcess()
+{
+  isRunning_ = false;
+}
+
 void PyPR2Server::continueProcessing()
 {
   ros::Rate publish_rate( kPublishFreq );
 
-  while (ros::ok()) {
+  while (isRunning_) {
     ros::spinOnce();
 
     PR2ProxyManager::instance()->publishCommands();
