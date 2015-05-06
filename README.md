@@ -19,10 +19,18 @@ relative ease. Currently, PyRIDE runs on NAO, ROS/PR2 and iOS/ROMO platforms. Th
 contains PyRIDE source code for ROS/PR2 platform.
 
 ##Compile source code
+###Prerequisites
 PyRIDE on ROS/PR2 uses the standard catkin build system. It requires a full PR2 Hydro 
-installation on a Ubuntu linux system. You need to set up a catkin workspace and check out
-the latest code from the repository into the source directory of the catkin workspace. Then,
- do:
+installation on a Ubuntu linux system. In particular, make sure you have the following
+packages installed on your system:
+
+* ros-hydro-moveit-resources
+* ros-hydro-moveit-pr2
+* ros-hydro-sound-play
+* libccrtp-dev
+
+You need to set up a catkin workspace and check out the latest code from this repository
+into the source directory of a working catkin workspace. Then, do:
 
 ```
 catkin_make pyride_pr2
@@ -39,9 +47,9 @@ You can use doxygen to generate the latest API documentation of PyRIDE on PR2. S
 doxygen pyride.dox
 ```
 under the `pyride_pr2` directory. The API documentation will be generated under `doc` 
-sub-directory. **NOTE**: The API documentation is incomplete at this stage.
+sub-directory. **NOTE**: The API documentation is incomplete at this stage. You can find the latest doxygen generated documentation at http://uts-magic-lab.github.io/pyride_pr2
 
-##Lauch PyRIDE on PR2
+##Launch PyRIDE on PR2
 Make sure you have started up a full PR2 simulation or on a PR2 robot and sourced appropriate
 catkin overlay. Do:
 
@@ -49,12 +57,20 @@ catkin overlay. Do:
 roslaunch pyride_pr2 pyride.launch
 ```
 
-***NOTE** fully functioning PyRIDE depends on several subsystems such as MoveIt!, 2D navigation
+**NOTE** fully functioning PyRIDE depends on several subsystems such as MoveIt!, 2D navigation
 stack. If you want to use functionalities related to these subsystems, make sure these 
 subsystems are operating before launching PyRIDE.
 
+##Load user-developed Python scripts
+PyRIDE on PR2 can automatically load and execute Python scripts on its startup. It searches
+for a ```py_main.py``` under a predefined script directory and executes its ```main()``` function.
+Check ```scripts\py_main.py``` under this repository for further details. A working application
+example that receives and sends messages to a twitter account is also provided.
+
+**NOTE** You can change the directory where you want PyRIDE load Python scripts under ```script_dir```
+parameter in ```pyride.launch``` file.
+
 ##Logging
 PyRIDE uses its own logging system. You can find the log output under ```.ros/pyride_pr2*.log```.
-
 
 
