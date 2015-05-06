@@ -7,11 +7,15 @@ Provide an overview of your package.
 PyRIDE, Python based Robot Interactive Development Environment, is a
 software development framework for rapid robot behaviour programming in Python scripting language. It is also an integration framework for bring disparate robot functional modules together. This documentation gives a detailed description of application programming interface of PyRIDE on PR2 robot.
 
-\section install Installation
+\section compile Compile from source on PR2
+\subsection require Prerequisites
+PyRIDE on ROS/PR2 uses the standard ROS catkin build system. It requires a full PR2 Hydro installation on a Ubuntu linux system. In particular, make sure you have the following packages installed on your system:
+- ros-hydro-moveit-resources
+- ros-hydro-moveit-pr2
+- ros-hydro-sound-play
+- libccrtp-dev
 
-Compile from source on PR2
-
--# Install dependency: <b>sudo apt-get install libccrtp-dev</b>.
+To compile PyRIDE on PR2, do:
 -# Get source code: <b>git clone https://github.com/uts-magic-lab/pyride_pr2.git</b> under an existing catkin_workspace src directory.
 -# Compile: <b>catkin_make pyride_pr2</b>.
 
