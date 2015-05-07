@@ -25,7 +25,6 @@ installation on a Ubuntu linux system. In particular, make sure you have the fol
 packages installed on your system:
 
 * ros-hydro-moveit-resources
-* ros-hydro-moveit-pr2
 * ros-hydro-sound-play
 * libccrtp-dev
 
@@ -61,6 +60,16 @@ roslaunch pyride_pr2 pyride.launch
 stack. If you want to use functionalities related to these subsystems, make sure these 
 subsystems are operating before launching PyRIDE.
 
+##Access embeded interactive Python console
+PyRIDE contains a fully functional Python intepreter. One can access its interactive remote shell
+via
+```
+telnet host 27005
+```
+where ```host``` is the robot/machine PyRIDE is running on. You can turn off the remote shell
+access by setting **RemotePythonAccess** tag to disable in ```pyrideconfig.xml``` configuration
+file.
+ 
 ##Load user-developed Python scripts
 PyRIDE on PR2 can automatically load and execute Python scripts on its startup. It searches
 for a ```py_main.py``` under a predefined script directory and executes its ```main()``` function.
