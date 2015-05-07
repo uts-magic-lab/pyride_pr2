@@ -171,6 +171,7 @@ public:
   void getTFFrameList( std::vector<std::string> & list );
   bool isTFFrameSupported( const char * frame_name );
 
+  bool useMoveIt() const { return (rarmGroup_ != NULL && larmGroup_ != NULL); }
   void fini();
 
 private:

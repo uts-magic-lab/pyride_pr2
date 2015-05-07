@@ -764,6 +764,12 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
   PyObject * armselObj = NULL;
   double time_to_reach = 5.0;
   
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "OOO|d", (char**)kArmPoseKWlist, &posObj, &orientObj, &armselObj, &time_to_reach ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
   {
@@ -1500,6 +1506,12 @@ static PyObject * PyModule_PR2PickUpAndPlaceObject( bool to_place, PyObject * se
   PyObject * posObj = NULL;
   PyObject * orientObj = NULL;
   double distance = 5.0;
+
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
 
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOf", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
