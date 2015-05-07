@@ -764,6 +764,12 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
   PyObject * armselObj = NULL;
   double time_to_reach = 5.0;
   
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "OOO|d", (char**)kArmPoseKWlist, &posObj, &orientObj, &armselObj, &time_to_reach ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
   {
@@ -828,6 +834,12 @@ static PyObject * PyModule_PR2MoveArmWithJointPos( PyObject * self, PyObject * a
   
   bool isLeftArm = false;
   
+  if (PR2ProxyManager::instance()->useJointVelocityControl()) {
+    PyErr_Format( PyExc_RuntimeError, "Joint velocity controller is in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (PyArg_ParseTupleAndKeywords( args, keywds, "ddddddd|d", (char**)kLeftArmKWlist,
                        &s_p_j, &s_l_j, &u_a_r_j, &e_f_j, &f_r_j,
                        &w_f_j, &w_r_j, &time_to_reach ))
@@ -868,7 +880,13 @@ static PyObject * PyModule_PR2MoveArmWithJointPos( PyObject * self, PyObject * a
 static PyObject * PyModule_PR2MoveArmWithJointTraj( PyObject * self, PyObject * args )
 {
   PyObject * trajObj = NULL;
-  
+
+  if (PR2ProxyManager::instance()->useJointVelocityControl()) {
+    PyErr_Format( PyExc_RuntimeError, "Joint velocity controller is in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTuple( args, "O", &trajObj )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
@@ -956,6 +974,12 @@ static PyObject * PyModule_PR2MoveArmWithJointTrajAndSpeed( PyObject * self, PyO
 {
   PyObject * trajObj = NULL;
   
+  if (PR2ProxyManager::instance()->useJointVelocityControl()) {
+    PyErr_Format( PyExc_RuntimeError, "Joint velocity controller is in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTuple( args, "O", &trajObj )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
@@ -1582,6 +1606,12 @@ static PyObject * PyModule_PR2PickUpAndPlaceObject( bool to_place, PyObject * se
   PyObject * posObj = NULL;
   PyObject * orientObj = NULL;
   double distance = 5.0;
+
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
 
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOf", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))

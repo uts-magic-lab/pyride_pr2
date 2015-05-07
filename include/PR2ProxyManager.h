@@ -175,6 +175,7 @@ public:
 
   bool enableJointVelocityControl( bool enable );
   bool useJointVelocityControl() const { return useJointVelocityControl_; }
+  bool useMoveIt() const { return (rarmGroup_ != NULL && larmGroup_ != NULL); }
 
   void fini();
 
