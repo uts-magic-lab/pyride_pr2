@@ -28,7 +28,7 @@
   
   <td style="padding-left: 0.5em;">
    <div id="projectname">PyRIDE
-   &#160;<span id="projectnumber">1.0</span>
+   &#160;<span id="projectnumber">0.1.0</span>
    </div>
    
   </td>
@@ -144,10 +144,10 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the PR2 tilt laser in a pure periodic movement.  <a href="#a09b718ee4517a7aa8000f2609d0c6641"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a4bc0439bc26448f423828123a0424f80">setTiltLaserTraj</a> (positions, durations)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a specific sequence of repeated PR2 tilt laser position.  <a href="#a4bc0439bc26448f423828123a0424f80"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a6039673392cc2570503dc7ced173b4a6">registerBaseScanCallback</a> (callback_function, target_frame)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback function for receiving base laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned.  <a href="#a6039673392cc2570503dc7ced173b4a6"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ad36b823027470d77f7535b2944e63ec8">registerTiltScanCallback</a> (callback_function, target_frame)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback function for receiving tilt laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned.  <a href="#ad36b823027470d77f7535b2944e63ec8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a73c49857323bd14f75c3301eca159b6e">registerBaseScanCallback</a> (laser_data_callback, target_frame)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback function for receiving base laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned.  <a href="#a73c49857323bd14f75c3301eca159b6e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a885819cd4436d03ad8990b982a6a8c6f">registerTiltScanCallback</a> (laser_data_callback, target_frame)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback function for receiving tilt laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned.  <a href="#a885819cd4436d03ad8990b982a6a8c6f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a98f28470e4d404bec32cfca7a7c0034e">addSolidObject</a> (name, volume, position, orientation)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose within a time frame.  <a href="#a98f28470e4d404bec32cfca7a7c0034e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adfa55d9d3fe95894914dc7bf8dd7223c">delSolidObject</a> ()</td></tr>
@@ -158,6 +158,12 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pickup a solid object from a location (another solid object) use a specific grasp pose and approaching distance.  <a href="#ae2f278f3d26f1ee7a6198f194db70b8d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#aa397952d31930fb14c90fba52ada094b">placeObject</a> (name, place, place_position, place_orientation, use_left_arm, distance_from)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Place a solid object to a location (another solid object) use a specific place pose and retreating distance.  <a href="#aa397952d31930fb14c90fba52ada094b"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> (detection_callback, tracking_callback)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications.  <a href="#a3f510a5817e084f3d66320b5c1e37a65"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f0c7512f5dc678767ac973010644abb">recallRhythDMPTrajectory</a> (name, amplitude, system_freq, sample_freq, cycle)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a trajectory.  <a href="#a3f0c7512f5dc678767ac973010644abb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> (traj_data_callback)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame).  <a href="#ada2ccc68982ac78c5f36dfc9662767fc"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a> (cmd_id, cmd_text)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a custom command is received from a remote client.  <a href="#ab066ed63929d4f1e7793724fd5401563"></a><br/></td></tr>
@@ -1685,14 +1691,73 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6039673392cc2570503dc7ced173b4a6"></a><!-- doxytag: member="PyPR2::registerBaseScanCallback" ref="a6039673392cc2570503dc7ced173b4a6" args="(callback_function, target_frame)" -->
+<a class="anchor" id="a3f0c7512f5dc678767ac973010644abb"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a3f0c7512f5dc678767ac973010644abb" args="(name, amplitude, system_freq, sample_freq, cycle)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#a6039673392cc2570503dc7ced173b4a6">registerBaseScanCallback</a> </td>
+          <td class="memname"><a class="el" href="classPyPR2.html#a3f0c7512f5dc678767ac973010644abb">recallRhythDMPTrajectory</a> </td>
           <td>(</td>
-          <td class="paramtype">callback_function&#160;</td>
+          <td class="paramtype">name&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">amplitude&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">system_freq&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">sample_freq&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cycle&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Request RhythDMP to publish a trajectory. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">string</td><td>name. Name of the trajectory. </td></tr>
+    <tr><td class="paramname">float</td><td>amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional) </td></tr>
+    <tr><td class="paramname">float</td><td>system_freq. System frequency of (rhythmic) trajectory, default to 1.0. </td></tr>
+    <tr><td class="paramname">int</td><td>sample_freq. Trajectory sampling frequency, default 20. </td></tr>
+    <tr><td class="paramname">int</td><td>cycle. No of cycles of (rhythmic) trajectory, default 1. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>True == success, False == failure. </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>uts-specfic. Require RhythDMP module. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a73c49857323bd14f75c3301eca159b6e"></a><!-- doxytag: member="PyPR2::registerBaseScanCallback" ref="a73c49857323bd14f75c3301eca159b6e" args="(laser_data_callback, target_frame)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a73c49857323bd14f75c3301eca159b6e">registerBaseScanCallback</a> </td>
+          <td>(</td>
+          <td class="paramtype">laser_data_callback&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -1713,7 +1778,7 @@ Public Member Functions</h2></td></tr>
 <p>Register a callback function for receiving base laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">callback</td><td>function that takes a list of raw laser range data or 3D position data as the input. </td></tr>
+    <tr><td class="paramname">callback</td><td>laser_data_callback. Function that takes a list of raw laser range data or 3D position data as the input. </td></tr>
     <tr><td class="paramname">string</td><td>target_frame. Optional, the name of the target frame </td></tr>
   </table>
   </dd>
@@ -1722,14 +1787,79 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad36b823027470d77f7535b2944e63ec8"></a><!-- doxytag: member="PyPR2::registerTiltScanCallback" ref="ad36b823027470d77f7535b2944e63ec8" args="(callback_function, target_frame)" -->
+<a class="anchor" id="a3f510a5817e084f3d66320b5c1e37a65"></a><!-- doxytag: member="PyPR2::registerHumanDetectTracking" ref="a3f510a5817e084f3d66320b5c1e37a65" args="(detection_callback, tracking_callback)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#ad36b823027470d77f7535b2944e63ec8">registerTiltScanCallback</a> </td>
+          <td class="memname"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> </td>
           <td>(</td>
-          <td class="paramtype">callback_function&#160;</td>
+          <td class="paramtype">detection_callback&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">tracking_callback&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>detection_callback. Function that takes inputs of (object_type, detection_id, identification_number, status) </td></tr>
+    <tr><td class="paramname">callback</td><td>tracking_callback (optional). Function that takes a list of dictionaries of { 'object_type', 'track_id', 'bound' (in topleft x, y, width, height), 'est_pos' (in x, y z)}. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>uts-specific. Require pr2ht module. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ada2ccc68982ac78c5f36dfc9662767fc"></a><!-- doxytag: member="PyPR2::registerRawTrajectoryInput" ref="ada2ccc68982ac78c5f36dfc9662767fc" args="(traj_data_callback)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> </td>
+          <td>(</td>
+          <td class="paramtype">traj_data_callback&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame). </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">callback</td><td>traj_data_callback. Function that takes a dictionaries of { 'traj_id', 'step', 'position', 'velocity', 'acceleration' (all in tuples of x,y,z) }. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>uts-specific. Require RhythDMP module. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a885819cd4436d03ad8990b982a6a8c6f"></a><!-- doxytag: member="PyPR2::registerTiltScanCallback" ref="a885819cd4436d03ad8990b982a6a8c6f" args="(laser_data_callback, target_frame)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a885819cd4436d03ad8990b982a6a8c6f">registerTiltScanCallback</a> </td>
+          <td>(</td>
+          <td class="paramtype">laser_data_callback&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -1750,8 +1880,8 @@ Public Member Functions</h2></td></tr>
 <p>Register a callback function for receiving tilt laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">callback</td><td>function that takes a list of raw laser range data or 3D position data as the input. </td></tr>
-    <tr><td class="paramname">string</td><td>target_frame. Optional, the name of the target frame </td></tr>
+    <tr><td class="paramname">callback</td><td>laser_data_callback. Function that takes a list of raw laser range data or 3D position data as the input. </td></tr>
+    <tr><td class="paramname">string</td><td>target_frame. Optional, the name of the target frame. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2115,7 +2245,7 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 6 2015 12:51:32 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed May 13 2015 14:50:44 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
