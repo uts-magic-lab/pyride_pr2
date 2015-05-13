@@ -31,6 +31,10 @@ static const char *kPickAndPlaceKWlist[] = { "name", "place", "grasp_position", 
 static const char *kObjectKWlist[] = { "name", "volume", "position", "orientation", NULL };
 static const char *kArmPoseKWlist[] = { "position", "orientation", "use_left_arm", "time_to_reach", NULL };
 
+#ifdef WITH_RHYTH_DMP
+static const char *kRhythDMPKWlist[] = { "name", "amplitude", "system_freq", "sample_freq", "cycles", NULL };
+#endif
+
 static PyObject * PyModule_write( PyObject *self, PyObject * args )
 {
   char * msg;
@@ -1365,13 +1369,13 @@ static PyObject * PyModule_PR2SetTiltLaserTraj( PyObject * self, PyObject * args
     Py_RETURN_FALSE;
 }
 
-/*! \fn registerBaseScanCallback( callback_function, target_frame )
+/*! \fn registerBaseScanCallback( laser_data_callback, target_frame )
  *  \memberof PyPR2
  *  \brief Register a callback function for receiving base laser scan data.
  *  None object can be used to stop receiving the scan data.
  *  If target frame is provided, the 3D position (x,y,z) w.r.t the target 
  *  frame will be returned. Otherwise, raw laser scan data is returned.
- *  \param callback function that takes a list of raw laser range data or 3D position data as the input.
+ *  \param callback laser_data_callback. Function that takes a list of raw laser range data or 3D position data as the input.
  *  \param string target_frame. Optional, the name of the target frame
  *  \return None
  */
@@ -1411,14 +1415,14 @@ static PyObject * PyModule_PR2RegisterBaseScanData( PyObject * self, PyObject * 
   Py_RETURN_NONE;
 }
 
-/*! \fn registerTiltScanCallback( callback_function, target_frame )
+/*! \fn registerTiltScanCallback( laser_data_callback, target_frame )
  *  \memberof PyPR2
  *  \brief Register a callback function for receiving tilt laser scan data.
  *  None object can be used to stop receiving the scan data.
  *  If target frame is provided, the 3D position (x,y,z) w.r.t the target
  *  frame will be returned. Otherwise, raw laser scan data is returned.
- *  \param callback function that takes a list of raw laser range data or 3D position data as the input.
- *  \param string target_frame. Optional, the name of the target frame
+ *  \param callback laser_data_callback. Function that takes a list of raw laser range data or 3D position data as the input.
+ *  \param string target_frame. Optional, the name of the target frame.
  *  \return None
  */
 static PyObject * PyModule_PR2RegisterTiltScanData( PyObject * self, PyObject * args )
@@ -1613,7 +1617,7 @@ static PyObject * PyModule_PR2PickUpAndPlaceObject( bool to_place, PyObject * se
     return NULL;
   }
 
-  if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOf", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
+  if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOd", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
   {
     PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must be a dictionary with position, "
@@ -1693,10 +1697,11 @@ static PyObject * PyModule_PR2PlaceObject( PyObject * self, PyObject * args, PyO
  *  \brief Register callback functions to receive human detection and tracking information.
  *  Currently support only detection and tracking human (object).
  *  None object can be used to stop receiving human detection and tracking notifications.
- *  \param detection_callback function that takes inputs of (object_type, detection_id, identification_number, status)
- *  \param tracking_callback (optional) function that takes a list of dictionaries of { 'object_type', 'track_id',
+ *  \param callback detection_callback. Function that takes inputs of (object_type, detection_id, identification_number, status)
+ *  \param callback tracking_callback (optional). Function that takes a list of dictionaries of { 'object_type', 'track_id',
  *  'bound' (in topleft x, y, width, height), 'est_pos' (in x, y z)}.
  *  \return None
+ *  \note uts-specific. Require pr2ht module.
  */
 static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyObject * args )
 {
@@ -1734,13 +1739,48 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
 #endif
 
 #ifdef WITH_RHYTH_DMP
-/*! \fn registerRawTrajectoryInput( traj_input_callback )
+/*! \fn recallRhythDMPTrajectory(name,amplitude,system_freq,sample_freq,cycle)
+ *  \memberof PyPR2
+ *  \brief Request RhythDMP to publish a trajectory
+ *  \param string name. Name of the trajectory.
+ *  \param float amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional)
+ *  \param float system_freq. System frequency of (rhythmic) trajectory, default to 1.0.
+ *  \param int sample_freq. Trajectory sampling frequency, default 20.
+ *  \param int cycle. No of cycles of (rhythmic) trajectory, default 1.
+ *  \return True == success, False == failure.
+ *  \note uts-specfic. Require RhythDMP module.
+ */
+static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObject * args, PyObject * keywds )
+{
+  char * traj = NULL;
+  double amp_ratio = 1.0;
+  double sys_freq = 1.0;
+  int sample_freq = 20;
+  int cycles = 1;
+
+  if (!PyArg_ParseTupleAndKeywords( args, keywds, "s|ddii", (char**)kRhythDMPKWlist, &traj, &amp_ratio, &sys_freq, &sample_freq, &cycles )) {
+    PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must be a dictionary with trajectory name, "
+        "amplitude (ratio), system frequency, sampling frequency and cycle.", "recallRhythDMPTrajectory" );
+    return NULL;
+  }
+
+  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( std::string( traj ), amp_ratio, sys_freq, sample_freq, cycles )) {
+    Py_RETURN_TRUE;
+  }
+  else {
+    Py_RETURN_FALSE;
+  }
+  Py_RETURN_FALSE;
+}
+
+/*! \fn registerRawTrajectoryInput( traj_data_callback )
  *  \memberof PyPR2
  *  \brief Register callback function to receive raw trajectory input with respect to
  *  an end effector (and its reference frame).
- *  \param traj_input_callback function that takes a dictionaries of { 'traj_id', 'step',
+ *  \param callback traj_data_callback. Function that takes a dictionaries of { 'traj_id', 'step',
  *  'position', 'velocity', 'acceleration' (all in tuples of x,y,z) }.
  *  \return None
+ *  \note uts-specific. Require RhythDMP module.
  */
 static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObject * args )
 {
@@ -1758,7 +1798,7 @@ static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObj
   }
 
   if (!PyCallable_Check( trajincb )) {
-    PyErr_Format( PyExc_ValueError, "Input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "Input parameter is not a callable object" );
     return NULL;
   }
 
@@ -1863,6 +1903,8 @@ static PyMethodDef PyModule_methods[] = {
 #ifdef WITH_RHYTH_DMP
   { "registerRawTrajectoryInput", (PyCFunction)PyModule_PR2RegisterRawTrajectoryInput, METH_VARARGS,
     "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },
+  { "recallRhythDMPTrajectory", (PyCFunction)PyModule_PR2RecallRhythDMPTrajectory, METH_VARARGS|METH_KEYWORDS,
+    "Request RhythDMP module to publish a known trajectory." },
 #endif
 #define DEFINE_COMMON_PYMODULE_METHODS
 #include "PyModulePyCommon.cpp"

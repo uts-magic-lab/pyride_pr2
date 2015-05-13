@@ -874,6 +874,26 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
 #endif
 
 #ifdef WITH_RHYTH_DMP
+bool PR2ProxyManager::recallRhythDMPTrajectory( const std::string & name, double amp_ratio,
+    double f_freq, int s_freq, int cycles )
+{
+  if (!dmpClient_.exists())
+    return false;
+
+  if (amp_ratio <= 0.0 || f_freq <= 0.0 || s_freq <= 0 || cycles <= 0)
+    return false;
+
+  rhyth_dmp::RecallTraj srvMsg;
+
+  srvMsg.request.traj_id = name;
+  srvMsg.request.amplitude = amp_ratio;
+  srvMsg.request.system_freq = f_freq;
+  srvMsg.request.sampling_freq = s_freq;
+  srvMsg.request.cycles = cycles;
+
+  return (dmpClient_.call( srvMsg ) && srvMsg.response.success);
+}
+
 void PR2ProxyManager::trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataConstPtr & msg )
 {
   PyGILState_STATE gstate;

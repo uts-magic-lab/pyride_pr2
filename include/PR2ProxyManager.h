@@ -152,6 +152,8 @@ public:
   
 #ifdef WITH_RHYTH_DMP
   void subscribeRawTrajInput( bool enable );
+  bool recallRhythDMPTrajectory( const std::string & name, double amp_ratio,
+      double f_freq, int s_freq, int cycles );
 #endif
 
   void cancelBodyMovement();
