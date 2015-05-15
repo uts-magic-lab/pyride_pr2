@@ -1739,14 +1739,14 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
 #endif
 
 #ifdef WITH_RHYTH_DMP
-/*! \fn recallRhythDMPTrajectory(name,amplitude,system_freq,sample_freq,cycle)
+/*! \fn recallRhythDMPTrajectory(name,amplitude,system_freq,sample_freq,cycles)
  *  \memberof PyPR2
  *  \brief Request RhythDMP to publish a trajectory
  *  \param string name. Name of the trajectory.
  *  \param float amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional)
  *  \param float system_freq. System frequency of (rhythmic) trajectory, default to 1.0.
  *  \param int sample_freq. Trajectory sampling frequency, default 20.
- *  \param int cycle. No of cycles of (rhythmic) trajectory, default 1.
+ *  \param int cycles. No of cycles of (rhythmic) trajectory, default 1.
  *  \return True == success, False == failure.
  *  \note uts-specfic. Require RhythDMP module.
  */
