@@ -188,7 +188,7 @@ void PyModuleExtension::swapCallbackHandler( PyObject * & master, PyObject * new
   }
 }
 
-void PyModuleExtension::InvokeCallbackHandler( PyObject * & cbObj, PyObject * arg )
+void PyModuleExtension::invokeCallbackHandler( PyObject * & cbObj, PyObject * arg )
 {
   if (cbObj) {
     PyObject * pResult = PyObject_CallObject( cbObj, arg );

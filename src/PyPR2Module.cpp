@@ -1759,8 +1759,7 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
   int cycles = 1;
 
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "s|ddii", (char**)kRhythDMPKWlist, &traj, &amp_ratio, &sys_freq, &sample_freq, &cycles )) {
-    PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must be a dictionary with trajectory name, "
-        "amplitude (ratio), system frequency, sampling frequency and cycle.", "recallRhythDMPTrajectory" );
+    PyErr_Format( PyExc_ValueError, "PyPR2.%s: invalid input parameters.", "recallRhythDMPTrajectory" );
     return NULL;
   }
 
@@ -1967,12 +1966,12 @@ PyPR2Module * PyPR2Module::instance()
   
 void PyPR2Module::invokeBaseScanCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( baseScanCB_, arg );
+  this->invokeCallbackHandler( baseScanCB_, arg );
 }
 
 void PyPR2Module::invokeTiltScanCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( tiltScanCB_, arg );
+  this->invokeCallbackHandler( tiltScanCB_, arg );
 }
   
 void PyPR2Module::setBaseScanCallback( PyObject * obj )
@@ -1988,12 +1987,12 @@ void PyPR2Module::setTiltScanCallback( PyObject * obj )
 #ifdef WITH_PR2HT
 void PyPR2Module::invokeObjectDetectionCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( objectDetectCB_, arg );
+  this->invokeCallbackHandler( objectDetectCB_, arg );
 }
 
 void PyPR2Module::invokeObjectTrackingCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( objectTrackCB_, arg );
+  this->invokeCallbackHandler( objectTrackCB_, arg );
 }
 
 void PyPR2Module::setObjectDTCallback( PyObject * detectcb, PyObject * trackcb )
@@ -2011,7 +2010,7 @@ void PyPR2Module::setTrajectoryInputCallback( PyObject * inputcb )
 
 void PyPR2Module::invokeTrajectoryInputCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( trajInputCB_, arg );
+  this->invokeCallbackHandler( trajInputCB_, arg );
 }
 #endif
 } // namespace pyride
