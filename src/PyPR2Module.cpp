@@ -1396,7 +1396,7 @@ static PyObject * PyModule_PR2RegisterBaseScanData( PyObject * self, PyObject * 
   }
   
   if (!PyCallable_Check( callbackFn )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
 
@@ -1442,7 +1442,7 @@ static PyObject * PyModule_PR2RegisterTiltScanData( PyObject * self, PyObject * 
   }
   
   if (!PyCallable_Check( callbackFn )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
   
@@ -1481,7 +1481,7 @@ static PyObject * PyModule_PR2AddSolidObject( PyObject * self, PyObject * args, 
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "sOOO", (char**)kObjectKWlist, &objName, &volObj, &posObj, &orientObj ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyTuple_Check( volObj ))
   {
-    PyErr_Format( PyExc_ValueError, "PyPR2.addSolidObject: input parameter must be a dictionary with volume, position, orientation tuples." );
+    PyErr_Format( PyExc_ValueError, "PyPR2.addSolidObject: input parameter must contain volume, position, orientation tuples." );
     return NULL;
   }
 
@@ -1620,7 +1620,7 @@ static PyObject * PyModule_PR2PickUpAndPlaceObject( bool to_place, PyObject * se
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "ssOOOd", (char**)kPickAndPlaceKWlist, &objName, &placeName, &posObj, &orientObj, &armselObj, &distance ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyBool_Check( armselObj ))
   {
-    PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must be a dictionary with position, "
+    PyErr_Format( PyExc_ValueError, "PyPR2.%s: input parameter must contain position, "
         "orientation tuples and and use_left_arm boolean flag.",
         to_place ? "placeObject" : "pickUpObject" );
     return NULL;
@@ -1720,12 +1720,12 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   }
   
   if (!PyCallable_Check( detectcb )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
 
   if (trackcb && !PyCallable_Check( trackcb )) {
-    PyErr_Format( PyExc_ValueError, "Secode input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "Secode input parameter is not a callable object" );
     return NULL;
   }
 
