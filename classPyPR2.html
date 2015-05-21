@@ -149,9 +149,9 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a885819cd4436d03ad8990b982a6a8c6f">registerTiltScanCallback</a> (laser_data_callback, target_frame)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a callback function for receiving tilt laser scan data. None object can be used to stop receiving the scan data. If target frame is provided, the 3D position (x,y,z) w.r.t the target frame will be returned. Otherwise, raw laser scan data is returned.  <a href="#a885819cd4436d03ad8990b982a6a8c6f"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a98f28470e4d404bec32cfca7a7c0034e">addSolidObject</a> (name, volume, position, orientation)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose within a time frame.  <a href="#a98f28470e4d404bec32cfca7a7c0034e"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a solid object to the current collision scene.  <a href="#a98f28470e4d404bec32cfca7a7c0034e"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adfa55d9d3fe95894914dc7bf8dd7223c">delSolidObject</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete a existing solid object from the current collision scene.  <a href="#adfa55d9d3fe95894914dc7bf8dd7223c"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete an existing solid object from the current collision scene.  <a href="#adfa55d9d3fe95894914dc7bf8dd7223c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2e7b7b8417b4fe0472ab44a05d4313b6">listSolidObjects</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of known solid objects in the collision scene.  <a href="#a2e7b7b8417b4fe0472ab44a05d4313b6"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ae2f278f3d26f1ee7a6198f194db70b8d">pickUpObject</a> (name, place, grasp_position, grasp_orientation, use_left_arm, distance_from)</td></tr>
@@ -160,8 +160,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Place a solid object to a location (another solid object) use a specific place pose and retreating distance.  <a href="#aa397952d31930fb14c90fba52ada094b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> (detection_callback, tracking_callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications.  <a href="#a3f510a5817e084f3d66320b5c1e37a65"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f0c7512f5dc678767ac973010644abb">recallRhythDMPTrajectory</a> (name, amplitude, system_freq, sample_freq, cycle)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a trajectory.  <a href="#a3f0c7512f5dc678767ac973010644abb"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2363d4e5074559cf635a866921ad8360">recallRhythDMPTrajectory</a> (name, amplitude, system_freq, sample_freq, cycles)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a trajectory.  <a href="#a2363d4e5074559cf635a866921ad8360"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> (traj_data_callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame).  <a href="#ada2ccc68982ac78c5f36dfc9662767fc"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
@@ -268,13 +268,13 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Move a PR2 arm to a specified pose within a time frame. </p>
+<p>Add a solid object to the current collision scene. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">string</td><td>name. Name of the solid object. </td></tr>
     <tr><td class="paramname">tuple</td><td>volume. The volume of the object in (width,height,depth). </td></tr>
     <tr><td class="paramname">tuple</td><td>position. Position of the object in (x,y,z). </td></tr>
-    <tr><td class="paramname">tuple</td><td>orientation. Orientation of the object in quarternion form (w,x,y,z). </td></tr>
+    <tr><td class="paramname">tuple</td><td>orientation. Orientation of the object in quaternion form (w,x,y,z). </td></tr>
   </table>
   </dd>
 </dl>
@@ -370,7 +370,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Delete a existing solid object from the current collision scene. </p>
+<p>Delete an existing solid object from the current collision scene. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">string</td><td>name. Name of the solid object. </td></tr>
@@ -662,7 +662,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">tuple</td><td>target_position. Position in (x,y,z). </td></tr>
-    <tr><td class="paramname">tuple</td><td>target_orientation. Orientation in quarternion form (w,x,y,z). </td></tr>
+    <tr><td class="paramname">tuple</td><td>target_orientation. Orientation in quaternion form (w,x,y,z). </td></tr>
     <tr><td class="paramname">bool</td><td>use_left_arm. True to move the left arm; False to use the right arm. </td></tr>
     <tr><td class="paramname">float</td><td>time_to_reach. Requested timeframe for reaching the pose. </td></tr>
   </table>
@@ -992,7 +992,7 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">tuple</td><td>target_position. Position in the form of (x,y,z). </td></tr>
-    <tr><td class="paramname">tuple</td><td>target_orientation. Orientation in quarternion form (w,x,y,z). </td></tr>
+    <tr><td class="paramname">tuple</td><td>target_orientation. Orientation in quaternion form (w,x,y,z). </td></tr>
   </table>
   </dd>
 </dl>
@@ -1561,7 +1561,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">string</td><td>name. Name of the solid object. </td></tr>
     <tr><td class="paramname">string</td><td>name. Name of the object from where the target object is picked up from. </td></tr>
     <tr><td class="paramname">tuple</td><td>grasp_position. Grasp position (x,y,z). </td></tr>
-    <tr><td class="paramname">tuple</td><td>grasp_orientation. Grasp orientation in quarternion form (w,x,y,z). </td></tr>
+    <tr><td class="paramname">tuple</td><td>grasp_orientation. Grasp orientation in quaternion form (w,x,y,z). </td></tr>
     <tr><td class="paramname">bool</td><td>use_left_arm. True == use the left arm; False = use the right arm. </td></tr>
     <tr><td class="paramname">float</td><td>distance_from. Approaching distance from the object. </td></tr>
   </table>
@@ -1628,7 +1628,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">string</td><td>name. Name of the solid object. </td></tr>
     <tr><td class="paramname">string</td><td>name. Name of the object from where the target object is placed to. </td></tr>
     <tr><td class="paramname">tuple</td><td>place_position. Place position (x,y,z). </td></tr>
-    <tr><td class="paramname">tuple</td><td>place_orientation. Place orientation in quarternion form (w,x,y,z). </td></tr>
+    <tr><td class="paramname">tuple</td><td>place_orientation. Place orientation in quaternion form (w,x,y,z). </td></tr>
     <tr><td class="paramname">bool</td><td>use_left_arm. True == use the left arm; False = use the right arm. </td></tr>
     <tr><td class="paramname">float</td><td>distance_from. Retreating distance from the object. </td></tr>
   </table>
@@ -1691,12 +1691,12 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a3f0c7512f5dc678767ac973010644abb"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a3f0c7512f5dc678767ac973010644abb" args="(name, amplitude, system_freq, sample_freq, cycle)" -->
+<a class="anchor" id="a2363d4e5074559cf635a866921ad8360"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a2363d4e5074559cf635a866921ad8360" args="(name, amplitude, system_freq, sample_freq, cycles)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#a3f0c7512f5dc678767ac973010644abb">recallRhythDMPTrajectory</a> </td>
+          <td class="memname"><a class="el" href="classPyPR2.html#a2363d4e5074559cf635a866921ad8360">recallRhythDMPTrajectory</a> </td>
           <td>(</td>
           <td class="paramtype">name&#160;</td>
           <td class="paramname">, </td>
@@ -1722,7 +1722,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">cycle&#160;</td>
+          <td class="paramtype">cycles&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1741,7 +1741,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">float</td><td>amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional) </td></tr>
     <tr><td class="paramname">float</td><td>system_freq. System frequency of (rhythmic) trajectory, default to 1.0. </td></tr>
     <tr><td class="paramname">int</td><td>sample_freq. Trajectory sampling frequency, default 20. </td></tr>
-    <tr><td class="paramname">int</td><td>cycle. No of cycles of (rhythmic) trajectory, default 1. </td></tr>
+    <tr><td class="paramname">int</td><td>cycles. No of cycles of (rhythmic) trajectory, default 1. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2245,7 +2245,7 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 13 2015 14:50:44 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 21 2015 12:51:17 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
