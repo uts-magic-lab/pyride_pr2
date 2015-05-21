@@ -694,7 +694,7 @@ static PyObject * PyModule_PR2TuckBothArms( PyObject * self )
  *  \memberof PyPR2
  *  \brief Navigate PR2 body to a specified pose.
  *  \param tuple target_position. Position in the form of (x,y,z).
- *  \param tuple target_orientation. Orientation in quarternion form (w,x,y,z).
+ *  \param tuple target_orientation. Orientation in quaternion form (w,x,y,z).
  *  \return None.
  *  \note Must have PR2 navigation stack running prior the start of PyRIDE.
  */
@@ -751,7 +751,7 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \memberof PyPR2
  *  \brief Move a PR2 arm to a specified pose within a time frame.
  *  \param tuple target_position. Position in (x,y,z).
- *  \param tuple target_orientation. Orientation in quarternion form (w,x,y,z).
+ *  \param tuple target_orientation. Orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True to move the left arm; False to use the right arm.
  *  \param float time_to_reach. Requested timeframe for reaching the pose.
  *  \return None.
@@ -1292,7 +1292,7 @@ static PyObject * PyModule_PR2RegisterBaseScanData( PyObject * self, PyObject * 
   }
   
   if (!PyCallable_Check( callbackFn )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
 
@@ -1338,7 +1338,7 @@ static PyObject * PyModule_PR2RegisterTiltScanData( PyObject * self, PyObject * 
   }
   
   if (!PyCallable_Check( callbackFn )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
   
@@ -1359,11 +1359,11 @@ static PyObject * PyModule_PR2RegisterTiltScanData( PyObject * self, PyObject * 
 
 /*! \fn addSolidObject(name,volume,position,orientation)
  *  \memberof PyPR2
- *  \brief Move a PR2 arm to a specified pose within a time frame.
+ *  \brief Add a solid object to the current collision scene.
  *  \param string name. Name of the solid object.
  *  \param tuple volume. The volume of the object in (width,height,depth).
  *  \param tuple position. Position of the object in (x,y,z).
- *  \param tuple orientation. Orientation of the object in quarternion form (w,x,y,z).
+ *  \param tuple orientation. Orientation of the object in quaternion form (w,x,y,z).
  *  \return bool. True == success; False == otherwise.
  *  \note Require MoveIt! to be running prior the start of PyRIDE.
  */
@@ -1377,7 +1377,7 @@ static PyObject * PyModule_PR2AddSolidObject( PyObject * self, PyObject * args, 
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "sOOO", (char**)kObjectKWlist, &objName, &volObj, &posObj, &orientObj ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyTuple_Check( volObj ))
   {
-    PyErr_Format( PyExc_ValueError, "PyPR2.addSolidObject: input parameter must be a dictionary with volume, position, orientation tuples." );
+    PyErr_Format( PyExc_ValueError, "PyPR2.addSolidObject: input parameter must contains volume, position, orientation tuples." );
     return NULL;
   }
 
@@ -1434,7 +1434,7 @@ static PyObject * PyModule_PR2AddSolidObject( PyObject * self, PyObject * args, 
 
 /*! \fn delSolidObject()
  *  \memberof PyPR2
- *  \brief Delete a existing solid object from the current collision scene.
+ *  \brief Delete an existing solid object from the current collision scene.
  *  \param string name. Name of the solid object.
  *  \return None.
  *  \note Require MoveIt! to be running prior the start of PyRIDE.
@@ -1477,7 +1477,7 @@ static PyObject * PyModule_PR2ListSolidObjects( PyObject * self )
  *  \param string name. Name of the solid object.
  *  \param string name. Name of the object from where the target object is picked up from.
  *  \param tuple grasp_position. Grasp position (x,y,z).
- *  \param tuple grasp_orientation. Grasp orientation in quarternion form (w,x,y,z).
+ *  \param tuple grasp_orientation. Grasp orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True == use the left arm; False = use the right arm.
  *  \param float distance_from. Approaching distance from the object.
  *  \return bool. True == success; False == otherwise.
@@ -1490,7 +1490,7 @@ static PyObject * PyModule_PR2ListSolidObjects( PyObject * self )
  *  \param string name. Name of the solid object.
  *  \param string name. Name of the object from where the target object is placed to.
  *  \param tuple place_position. Place position (x,y,z).
- *  \param tuple place_orientation. Place orientation in quarternion form (w,x,y,z).
+ *  \param tuple place_orientation. Place orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True == use the left arm; False = use the right arm.
  *  \param float distance_from. Retreating distance from the object.
  *  \return bool. True == success; False == otherwise.
@@ -1615,12 +1615,12 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   }
   
   if (!PyCallable_Check( detectcb )) {
-    PyErr_Format( PyExc_ValueError, "First input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "First input parameter is not a callable object" );
     return NULL;
   }
 
   if (trackcb && !PyCallable_Check( trackcb )) {
-    PyErr_Format( PyExc_ValueError, "Secode input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "Secode input parameter is not a callable object" );
     return NULL;
   }
 
@@ -1658,7 +1658,7 @@ static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObj
   }
 
   if (!PyCallable_Check( trajincb )) {
-    PyErr_Format( PyExc_ValueError, "Input parameter is not callable object" );
+    PyErr_Format( PyExc_ValueError, "Input parameter is not a callable object" );
     return NULL;
   }
 
