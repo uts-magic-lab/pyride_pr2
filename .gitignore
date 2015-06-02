@@ -1,5 +1,6 @@
 build
 bin
+scripts/Magiks
 *.pyc
 msg_gen
 .DS_Store
