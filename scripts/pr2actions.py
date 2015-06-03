@@ -176,6 +176,14 @@ class ActionPlayer( object ):
       self.delegate = delegate
     else:
       self.delegate = None
+    self.resetMotionCallbacks()
+
+  def resetMotionCallbacks( self ):
+    PyPR2.onMoveArmActionSuccess = self.onArmActionComplete
+    PyPR2.onGripperActionSuccess = self.onGripperActionComplete
+    PyPR2.onNavigateBodySuccess = self.onNavigateBodyComplete
+    PyPR2.onMoveBodySuccess = self.onMoveBodyComplete
+    PyPR2.onHeadActionSuccess = self.onHeadActionComplete
 
   def setDelegate( self, delegate ):
     if isinstance( delegate, ActionPlayerDelegate ):
