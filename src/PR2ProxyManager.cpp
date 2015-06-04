@@ -134,8 +134,15 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   hPub_ = mCtrlNode_->advertise<trajectory_msgs::JointTrajectory>( "head_vel", 1 );
   torsoPub_ = mCtrlNode_->advertise<trajectory_msgs::JointTrajectory>( "torso_vel", 1 );
 
-  jointSub_ = mCtrlNode_->subscribe( "joint_states", 1, &PR2ProxyManager::jointStateDataCB, this );
   powerSub_ = mCtrlNode_->subscribe( "power_state", 1, &PR2ProxyManager::powerStateDataCB, this );
+
+  ros::SubscribeOptions sopts = ros::SubscribeOptions::create<sensor_msgs::JointState>( "joint_states",
+        1, boost::bind( &PR2ProxyManager::jointStateDataCB, this, _1 ), ros::VoidPtr(), &jointDataQueue_ );
+
+  jointSub_ = mCtrlNode_->subscribe( sopts );
+
+  jointDataThread_ = new ros::AsyncSpinner( 1, &jointDataQueue_ );
+  jointDataThread_->start();
 
 #ifdef WITH_PR2HT
   htClient_ = mCtrlNode_->serviceClient<pr2ht::DetectTrackControl>( "enable_hdt" );
@@ -359,6 +366,10 @@ void PR2ProxyManager::fini()
     dmpTrajDataSub_ = NULL;
   }
 #endif
+  jointDataThread_->stop();
+  delete jointDataThread_;
+  jointDataThread_ = NULL;
+  jointSub_.shutdown();
 }
 
 /** @name Action Callback Functions

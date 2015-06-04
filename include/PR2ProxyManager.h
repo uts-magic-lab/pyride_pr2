@@ -186,6 +186,9 @@ private:
   Subscriber * rawBaseScanSub_;
   Subscriber * rawTiltScanSub_;
 
+  AsyncSpinner * jointDataThread_;
+  CallbackQueue jointDataQueue_;
+
 #ifdef WITH_PR2HT
   Subscriber * htObjStatusSub_;
   Subscriber * htObjUpdateSub_;

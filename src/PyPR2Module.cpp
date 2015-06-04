@@ -286,6 +286,19 @@ static PyObject * PyModule_PR2CheckTFFrame( PyObject * self, PyObject * args )
     Py_RETURN_FALSE;
 }
 
+/*! \fn useMoveIt()
+ *  \memberof PyPR2
+ *  \brief Return whether MoveIt is in use.
+ *  \return list(frame names).
+ */
+static PyObject * PyModule_PR2UseMoveIt( PyObject * self )
+{
+  if (PR2ProxyManager::instance()->useMoveIt())
+    Py_RETURN_TRUE;
+  else
+    Py_RETURN_FALSE;
+}
+
 /*! \fn moveTorsoBy(length, best_time)
  *  \memberof PyPR2
  *  \brief Move the PR2 torso height by a certain length.
@@ -588,7 +601,7 @@ static PyObject * PyModule_PR2GetArmJointPositions( PyObject * self, PyObject * 
     return retObj;
   }
   else {
-    PyErr_Format( PyExc_SystemError, "PyPR2.getArmJointPositions: unable to arm joint positions." );
+    PyErr_Format( PyExc_SystemError, "PyPR2.getArmJointPositions: unable to get arm joint positions." );
     return NULL;
   }
 }
@@ -1374,6 +1387,12 @@ static PyObject * PyModule_PR2AddSolidObject( PyObject * self, PyObject * args, 
   PyObject * posObj = NULL;
   PyObject * orientObj = NULL;
 
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTupleAndKeywords( args, keywds, "sOOO", (char**)kObjectKWlist, &objName, &volObj, &posObj, &orientObj ) ||
       !PyTuple_Check( posObj ) || !PyTuple_Check( orientObj ) || !PyTuple_Check( volObj ))
   {
@@ -1443,6 +1462,12 @@ static PyObject * PyModule_PR2DelSolidObject( PyObject * self, PyObject * args )
 {
   char * objName = NULL;
 
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
+
   if (!PyArg_ParseTuple( args, "s", &objName )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
@@ -1461,6 +1486,12 @@ static PyObject * PyModule_PR2DelSolidObject( PyObject * self, PyObject * args )
 static PyObject * PyModule_PR2ListSolidObjects( PyObject * self )
 {
   std::vector<std::string> objlist;
+
+  if (!PR2ProxyManager::instance()->useMoveIt()) {
+    PyErr_Format( PyExc_RuntimeError, "MoveIt is not in use, "
+        "this method must not be used." );
+    return NULL;
+  }
 
   PR2ProxyManager::instance()->listSolidObjects( objlist );
   int fsize = (int)objlist.size();
@@ -1738,6 +1769,8 @@ static PyMethodDef PyModule_methods[] = {
     "List supported PR2 TF frames." },
   { "isSupportedTFFrame", (PyCFunction)PyModule_PR2CheckTFFrame, METH_VARARGS,
     "Check whether the input TF frames is supported." },
+  { "useMoveIt", (PyCFunction)PyModule_PR2UseMoveIt, METH_NOARGS,
+    "Check whether MoveIt is in use." },
   { "addSolidObject", (PyCFunction)PyModule_PR2AddSolidObject, METH_VARARGS|METH_KEYWORDS,
     "Add a solid object into the collision scene." },
   { "delSolidObject", (PyCFunction)PyModule_PR2DelSolidObject, METH_VARARGS,

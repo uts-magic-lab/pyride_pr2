@@ -195,6 +195,12 @@ bool PythonServer::initPyInterpreter()
     strcpy( scriptPath, evnset );
   }
   else {
+    if (strlen(customScriptBase) > 0) {
+      ERROR_MSG( "Invalid custom script path %s, use default.\n", customScriptBase );
+    }
+    else if (evnset) {
+      ERROR_MSG( "Invalid custom script path %s, use default.\n", evnset );
+    }
 #ifdef ROS_BUILD
     int retval = readlink( "/proc/self/exe", scriptPath, 256 );
     if (retval > 0) {
@@ -204,7 +210,7 @@ bool PythonServer::initPyInterpreter()
     strcpy( scriptPath, DEFAULT_PYTHON_SCRIPT_PATH );
 #endif
   }
-  INFO_MSG( "default script path is %s.\n", scriptPath );
+  INFO_MSG( "use script path %s.\n", scriptPath );
 
   // initialise Python interpreter
   if (Py_IsInitialized()) {
@@ -301,7 +307,15 @@ void PythonServer::runMainScript()
     PyObject * mainFn = PyObject_GetAttrString( pMainScript_, "main" );
     if (mainFn && PyCallable_Check( mainFn )) {
       PyObject * pResult = PyObject_CallObject( mainFn, NULL );
-      Py_XDECREF( pResult );
+      if (pResult == NULL) {
+        ERROR_MSG( "PythonServer: Failed to run main function in script"
+                   " %s\n", PYRIDE_MAIN_SCRIPT_NAME );
+        PyErr_Print();
+        PyErr_Clear();
+      }
+      else {
+        Py_DECREF( pResult );
+      }
     }
     else {
       ERROR_MSG( "PythonServer: missing main function in script %s\n",
