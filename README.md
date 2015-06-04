@@ -93,6 +93,7 @@ functions within the package.
 
 Currently, PyRIDE provides only basic level support for MoveIt! and methods relate to MoveIt! have not
 been fully tested. To enable MoveIt! under PyRIDE, you need to do the following steps:
+
 1. Set ```use_move_it``` parameter in the ```pyride.launch``` to true.
 2. Launch MoveIt! before running PyRIDE.
 3. Call ```py_main.iksResolver.useMoveIt()``` method in PyRIDE.
