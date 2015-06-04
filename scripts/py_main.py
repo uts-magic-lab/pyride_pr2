@@ -70,7 +70,6 @@ def main():
   
   extProcCall = extprocall.ProcConduit()
   iksResolver = iksresolver.IKSResolver()
-  iksResolver.resolveIKS()
   
   PyPR2.onUserLogOn = userLogon
   PyPR2.onUserLogOff = userLogoff

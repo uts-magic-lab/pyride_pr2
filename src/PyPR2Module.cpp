@@ -764,15 +764,14 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
   Py_RETURN_NONE;
 }
 
-/*! \fn moveArmPoseTo(target_position,target_orientation, use_left_arm, time_to_reach)
+/*! \fn moveArmTo(position,orientation,use_left_arm)
  *  \memberof PyPR2
- *  \brief Move a PR2 arm to a specified pose within a time frame.
- *  \param tuple target_position. Position in (x,y,z).
- *  \param tuple target_orientation. Orientation in quaternion form (w,x,y,z).
+ *  \brief Move a PR2 arm to a specified pose.
+ *  \param tuple position. Target position in (x,y,z) w.r.t to odometry_combined reference frame.
+ *  \param tuple orientation. Orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True to move the left arm; False to use the right arm.
- *  \param float time_to_reach. Requested timeframe for reaching the pose.
  *  \return None.
- *  \note Must have PR2 arm navigation stack running prior the start of PyRIDE.
+ *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
  */
 static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, PyObject * keywds )
 {

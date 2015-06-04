@@ -1,7 +1,6 @@
 import os
 import sys
 import PyPR2
-import time
 
 MagiksPR2Path = 'Magiks/magiks/projects/s_pr2'
 
@@ -11,7 +10,11 @@ class IKSError( Exception ):
 class IKSResolver( object ):
   def __init__( self ):
     self.spr2_obj = None
-    self.use_move_it = False
+    self.iks_in_use = 0
+    self.np = None
+    self.geometry = None
+    self.resolveIKS()
+    self.useSPR2()
 
   def moveArmWithSPR2( self, **kwargs ):
     if not self.spr2_obj:
@@ -21,7 +24,7 @@ class IKSResolver( object ):
       print 'Invalid input argument'
       return False
 
-    self.spr2_obj.arm_speed = 0.05
+    self.spr2_obj.arm_speed = 0.1
 
     if kwargs['use_left_arm']:
       self.spr2_obj.larm_reference = True
@@ -30,25 +33,20 @@ class IKSResolver( object ):
  
     arm_orient = self.geometry.Orientation_3D( kwargs['orientation'], representation = 'quaternion' )
     self.spr2_obj.set_target( self.np.array(kwargs['position']), arm_orient.matrix() )
-    return self.spr2_obj.arm_target() #on the selected arm only
+    return self.spr2_obj.arm_target()
 
   def dummyMoveArmTo( self, **kwargs ):
     raise IKSError( 'NO IKS solver is available to PyRIDE' )
 
   def resolveIKS( self ):
-    if PyPR2.useMoveIt():
-      self.use_move_it = True
-      PyPR2.moveArmTo = PyPR2.moveArmPoseTo
-      print 'PyRIDE is using MoveIt! for PR2'
-      return True
-    else: 
-      iksPath = os.path.join( sys.path[0], MagiksPR2Path )
-      if os.path.exists( iksPath ):
-        sys.path.append('/usr/local/lib/python2.7/dist-packages/')
-        sys.path.append('/usr/lib/python2.7/dist-packages/')
-        sys.path.append('/usr/lib/pymodules/python2.7')
-        sys.path.append(iksPath)
-        #try:
+    PyPR2.moveArmTo = self.dummyMoveArmTo
+    iksPath = os.path.join( sys.path[0], MagiksPR2Path )
+    if os.path.exists( iksPath ):
+      sys.path.append('/usr/local/lib/python2.7/dist-packages/')
+      sys.path.append('/usr/lib/python2.7/dist-packages/')
+      sys.path.append('/usr/lib/pymodules/python2.7')
+      sys.path.append(iksPath)
+      try:
         import initialize
         from magiks.specific_geometries.pr2 import pyride_synchronizer as pys
         import numpy as np
@@ -56,20 +54,26 @@ class IKSResolver( object ):
         self.np = np
         self.geometry = geometry
         self.spr2_obj = pys.PyRide_PR2()
-        #except:
-          #print 'unable to load S-PR2/Magiks engine'
-          #PyPR2.moveArmTo = self.dummyMoveArmTo
-          #return False
-      
+      except:
+        print 'unable to load S-PR2/Magiks engine'
+        self.spr2_obj = None
 
-        PyPR2.moveArmTo = self.moveArmWithSPR2
-        return True 
-    return False
+  def useSPR2( self ):
+    if self.spr2_obj:
+      PyPR2.moveArmTo = self.moveArmWithSPR2
+      self.iks_in_use = 2
+      print 'PyRIDE is using S-PR2 for PR2'
+      
+  def useMoveIt( self ):
+    if PyPR2.useMoveIt():
+      PyPR2.moveArmTo = PyPR2.moveArmPoseTo
+      self.iks_in_use = 1
+      print 'PyRIDE is using MoveIt! for PR2'
 
   def iksInUse( self ):
-    if self.use_move_it:
-      return 'MoveIt'
-    elif self.spr2_obj:
+    if self.iks_in_use == 1:
+      return 'MoveIt!'
+    elif self.iks_in_use == 2:
       return 'S-PR2'
     else:
       return 'None'
