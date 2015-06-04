@@ -6,13 +6,13 @@ import messenger
 import tininfo
 import tinmind
 import extprocall
-import pr2actions
+import iksresolver
 
 from timers import timermanager
 
 myMessenger = None
 extProcCall = None
-actionPlayer = None
+iksResolver = None
 msgTryTimer = -1
 
 def userLogon( name ):
@@ -66,10 +66,10 @@ def systemShutdownActions():
 
 def main():
   global myMessenger, msgTryTimer
-  global extProcCall, actionPlayer
+  global extProcCall, iksResolver
   
   extProcCall = extprocall.ProcConduit()
-  actionPlayer = pr2actions.ActionPlayer()
+  iksResolver = iksresolver.IKSResolver()
   
   PyPR2.onUserLogOn = userLogon
   PyPR2.onUserLogOff = userLogoff
@@ -79,11 +79,6 @@ def main():
   PyPR2.onSystemShutdown = systemShutdownActions
   PyPR2.onPowerPluggedChange = powerPlugChangeActions
   PyPR2.onBatteryChargeChange = batteryChargeChangeActions
-  PyPR2.onMoveArmActionSuccess = actionPlayer.onArmActionComplete
-  PyPR2.onGripperActionSuccess = actionPlayer.onGripperActionComplete
-  PyPR2.onNavigateBodySuccess = actionPlayer.onNavigateBodyComplete
-  PyPR2.onMoveBodySuccess = actionPlayer.onMoveBodyComplete
-  PyPR2.onHeadActionSuccess = actionPlayer.onHeadActionComplete
   
   PyPR2.setProjectorOff = extProcCall.setProjectorOff
   PyPR2.setToMannequinMode = extProcCall.setToMannequinMode
