@@ -605,7 +605,7 @@ static PyObject * PyModule_PR2GetArmJointPositions( PyObject * self, PyObject * 
     return retObj;
   }
   else {
-    PyErr_Format( PyExc_SystemError, "PyPR2.getArmJointPositions: unable to arm joint positions." );
+    PyErr_Format( PyExc_SystemError, "PyPR2.getArmJointPositions: unable to get arm joint positions." );
     return NULL;
   }
 }

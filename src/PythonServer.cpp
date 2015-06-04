@@ -307,7 +307,15 @@ void PythonServer::runMainScript()
     PyObject * mainFn = PyObject_GetAttrString( pMainScript_, "main" );
     if (mainFn && PyCallable_Check( mainFn )) {
       PyObject * pResult = PyObject_CallObject( mainFn, NULL );
-      Py_XDECREF( pResult );
+      if (pResult == NULL) {
+        ERROR_MSG( "PythonServer: Failed to run main function in script"
+                   " %s\n", PYRIDE_MAIN_SCRIPT_NAME );
+        PyErr_Print();
+        PyErr_Clear();
+      }
+      else {
+        Py_DECREF( pResult );
+      }
     }
     else {
       ERROR_MSG( "PythonServer: missing main function in script %s\n",
