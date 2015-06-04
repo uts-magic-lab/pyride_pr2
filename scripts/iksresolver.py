@@ -3,7 +3,7 @@ import sys
 import PyPR2
 import time
 
-MagiksPR2Path = 'Magiks/packages/nima/robotics/kinematics/special_geometries/pr2'
+MagiksPR2Path = 'Magiks/magiks/projects/s_pr2'
 
 class IKSError( Exception ):
   pass
@@ -48,20 +48,18 @@ class IKSResolver( object ):
         sys.path.append('/usr/lib/python2.7/dist-packages/')
         sys.path.append('/usr/lib/pymodules/python2.7')
         sys.path.append(iksPath)
-        try:
-          import __init__
-          __init__.set_file_path( False )
-
-          import pyride_synchronizer as pys
-          import numpy as np
-          from packages.nima.mathematics.geometry import geometry
-          self.np = np
-          self.geometry = geometry
-          self.spr2_obj = pys.PyRide_PR2()
-        except:
-          print 'unable to load S-PR2/Magiks engine'
-          PyPR2.moveArmTo = self.dummyMoveArmTo
-          return False
+        #try:
+        import initialize
+        from magiks.specific_geometries.pr2 import pyride_synchronizer as pys
+        import numpy as np
+        from math_tools.geometry import geometry
+        self.np = np
+        self.geometry = geometry
+        self.spr2_obj = pys.PyRide_PR2()
+        #except:
+          #print 'unable to load S-PR2/Magiks engine'
+          #PyPR2.moveArmTo = self.dummyMoveArmTo
+          #return False
       
 
         PyPR2.moveArmTo = self.moveArmWithSPR2
