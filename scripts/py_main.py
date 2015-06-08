@@ -27,7 +27,13 @@ def remoteCommandActions( cmd, arg ):
   pass
 
 def timerLapsedActions( id ):
-  timermanager.onTimerLapsed( id )
+  global myMessenger, msgTryTimer
+
+  if msgTryTimer == id and myMessenger.checkin():
+    PyPR2.removeTimer( msgTryTimer )
+    msgTryTimer = -1
+  else:
+    timermanager.onTimerCall( id )
 
 def timerActions( id ):
   timermanager.onTimerCall( id )
