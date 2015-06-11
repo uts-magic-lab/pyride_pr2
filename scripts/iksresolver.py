@@ -1,8 +1,27 @@
 import os
 import sys
+import math
 import PyPR2
 
 MagiksPR2Path = 'Magiks/magiks/projects/s_pr2'
+
+#convenient function to set orientation
+def quat_mult( q1, q2 ):
+  w1, x1, y1, z1 = q1
+  w2, x2, y2, z2 = q2
+  w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+  x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+  y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
+  z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
+  return w, x, y, z
+
+def set_orient( rot_x, rot_y, rot_z ):
+  quat_x = (math.cos(math.radians(rot_x)/2.0), math.sin(math.radians(rot_x)/2.0), 0.0, 0.0)
+  quat_y = (math.cos(math.radians(rot_y)/2.0), 0.0, math.sin(math.radians(rot_y)/2.0), 0.0)
+  quat_z = (math.cos(math.radians(rot_z)/2.0), 0.0, 0.0, math.sin(math.radians(rot_z)/2.0))
+  
+  multp1 = quat_mult(quat_x, quat_y)
+  return quat_mult(multp1, quat_z)
 
 class IKSError( Exception ):
   pass
@@ -15,6 +34,51 @@ class IKSResolver( object ):
     self.geometry = None
     self.resolveIKS()
     self.useSPR2()
+
+  def getArmPose( self, left_arm ):
+    if self.iks_in_use == 2:
+      pos = None
+      orient = None
+      if left_arm:
+        pos = tuple(self.spr2_obj.larm_end_position())
+        orient = self.geometry.Orientation_3D( self.spr2_obj.larm_end_orientation(), representation = 'matrix' )
+      else:
+        pos = tuple(self.spr2_obj.rarm_end_position())
+        orient = self.geometry.Orientation_3D( self.spr2_obj.rarm_end_orientation(), representation = 'matrix' )
+      pose = {'position': pos, 'orientation': tuple(orient.quaternion())}
+      return pose
+    else:
+      if left_arm:
+        return PyPR2.getRelativeTF( '/base_footprint', '/l_gripper_tool_frame' )
+      else:
+        return PyPR2.getRelativeTF( '/base_footprint', '/r_gripper_tool_frame' )
+
+  def moveArmInTrajectory( self, traj, time = 10.0, left_arm = False ):
+    if self.iks_in_use != 2:
+      raise IKSError( 'This function is only available with S-PR2.' )
+
+    if time <= 1.0:
+      raise IKSError( 'Invalid execution time.' )
+      
+    if not isinstance( traj, list ) or len( traj ) == 0:
+      raise IKSError( 'Input trajectory must be a non-empty list of pose (dictionary)' )
+
+    t = self.traj.Polynomial_Trajectory()
+
+    for idx, pose in enumerate(traj):
+      if not isinstance( pose, dict ) or pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
+        print 'invalid pose at {0}'.format( idx )	
+      else:
+        t.add_point(phi = float(idx), pos = self.np.array(pose['position']))
+
+    t.consistent_velocities()
+
+    if left_arm:
+      jt = self.spr2_obj.larm.project_to_js( t )
+      self.spr2_obj.run_config_trajectory(jt, is_left_arm = True, duration = time) 
+    else:
+      jt = self.spr2_obj.rarm.project_to_js( t )
+      self.spr2_obj.run_config_trajectory(jt, is_left_arm = False, duration = time) 
 
   def moveArmWithSPR2( self, **kwargs ):
     if not self.spr2_obj:
@@ -40,6 +104,7 @@ class IKSResolver( object ):
 
   def resolveIKS( self ):
     PyPR2.moveArmTo = self.dummyMoveArmTo
+    PyPR2.getArmPose = self.getArmPose
     iksPath = os.path.join( sys.path[0], MagiksPR2Path )
     if os.path.exists( iksPath ):
       sys.path.append('/usr/local/lib/python2.7/dist-packages/')
@@ -51,9 +116,12 @@ class IKSResolver( object ):
         from magiks.specific_geometries.pr2 import pyride_synchronizer as pys
         import numpy as np
         from math_tools.geometry import geometry
+        from math_tools.geometry import trajectory as traj
+
         self.np = np
         self.geometry = geometry
         self.spr2_obj = pys.PyRide_PR2()
+        self.traj = traj
       except:
         print 'unable to load S-PR2/Magiks engine'
         self.spr2_obj = None
