@@ -53,7 +53,7 @@ class IKSResolver( object ):
       else:
         return PyPR2.getRelativeTF( '/base_footprint', '/r_gripper_tool_frame' )
 
-  def moveArmInTrajectory( self, traj, time = 10.0, left_arm = False ):
+  def moveArmInTrajectory( self, traj, time = 10.0, left_arm = False, relative = False ):
     if self.iks_in_use != 2:
       raise IKSError( 'This function is only available with S-PR2.' )
 
@@ -63,21 +63,28 @@ class IKSResolver( object ):
     if not isinstance( traj, list ) or len( traj ) == 0:
       raise IKSError( 'Input trajectory must be a non-empty list of pose (dictionary)' )
 
-    t = self.traj.Polynomial_Trajectory()
+    pos_traj = self.traj.Polynomial_Trajectory()
+    orient_traj = self.traj.Orientation_Trajectory_Polynomial()
 
     for idx, pose in enumerate(traj):
       if not isinstance( pose, dict ) or pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
-        print 'invalid pose at {0}'.format( idx )	
+        print 'invalid pose position at {0}'.format( idx )	
       else:
-        t.add_point(phi = float(idx), pos = self.np.array(pose['position']))
+        pos_traj.add_point(phi = float(idx), pos = self.np.array(pose['position']))
+      # optional
+      if pose.has_key( 'orientation' ) and isinstance(pose['orientation'], tuple) and len(pose['orientation']) == 4:
+        orient_traj.add_point(phi = float(idx), ori = self.geometry.Orientation_3D( pose['orientation'], representation = 'quaternion' ) )
 
-    t.consistent_velocities()
+    #pos_traj.consistent_velocities()
 
     if left_arm:
-      jt = self.spr2_obj.larm.project_to_js( t )
+      jt = self.spr2_obj.larm.project_to_js( pos_traj, orient_traj, relative = relative )
+      pos_traj.consistent_velocities()
+      jt.consistent_velocities()
       self.spr2_obj.run_config_trajectory(jt, is_left_arm = True, duration = time) 
     else:
-      jt = self.spr2_obj.rarm.project_to_js( t )
+      jt = self.spr2_obj.rarm.project_to_js( pos_traj, orient_traj, relative = relative )
+      jt.consistent_velocities()
       self.spr2_obj.run_config_trajectory(jt, is_left_arm = False, duration = time) 
 
   def moveArmWithSPR2( self, **kwargs ):
@@ -105,6 +112,7 @@ class IKSResolver( object ):
   def resolveIKS( self ):
     PyPR2.moveArmTo = self.dummyMoveArmTo
     PyPR2.getArmPose = self.getArmPose
+    PyPR2.moveArmInTrajectory = self.moveArmInTrajectory
     iksPath = os.path.join( sys.path[0], MagiksPR2Path )
     if os.path.exists( iksPath ):
       sys.path.append('/usr/local/lib/python2.7/dist-packages/')
