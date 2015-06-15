@@ -122,6 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Navigate PR2 body to a specified pose.  <a href="#a8158dc2cc4ce7265406358e03d16be99"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a12079d0eac454eeda76fdc62959d14e2">moveArmTo</a> (position, orientation, use_left_arm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose.  <a href="#a12079d0eac454eeda76fdc62959d14e2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a> (left_arm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current arm pose in task space with respect to base_foot_print TF frame.  <a href="#a0e091e88e66473f4ded76513cdb8d2d7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2d8ecb78d985e019a87ee85ac1d8710b">moveArmWithJointPos</a> (joint_position, time_to_reach)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to the specified joint position within a time frame.  <a href="#a2d8ecb78d985e019a87ee85ac1d8710b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#add75b3895e90c446186a4744d624d950">moveArmWithJointTrajectory</a> (joint_trajectory)</td></tr>
@@ -162,8 +164,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Place a solid object to a location (another solid object) use a specific place pose and retreating distance.  <a href="#aa397952d31930fb14c90fba52ada094b"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> (detection_callback, tracking_callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications.  <a href="#a3f510a5817e084f3d66320b5c1e37a65"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2363d4e5074559cf635a866921ad8360">recallRhythDMPTrajectory</a> (name, amplitude, system_freq, sample_freq, cycles)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a trajectory.  <a href="#a2363d4e5074559cf635a866921ad8360"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a23a621f40e9ca7c82d4e04f20befd1ee">recallRhythDMPTrajectory</a> (trajectory_list, use_left_arm)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a list of trajectories.  <a href="#a23a621f40e9ca7c82d4e04f20befd1ee"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> (traj_data_callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame).  <a href="#ada2ccc68982ac78c5f36dfc9662767fc"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
@@ -408,6 +410,33 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>dictionary(arm_joint_positions). </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>Returned dictionary use joint names as keys. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a0e091e88e66473f4ded76513cdb8d2d7"></a><!-- doxytag: member="PyPR2::getArmPose" ref="a0e091e88e66473f4ded76513cdb8d2d7" args="(left_arm)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a> </td>
+          <td>(</td>
+          <td class="paramtype">left_arm&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Get the current arm pose in task space with respect to base_foot_print TF frame. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bool</td><td>left_arm. True == left arm; False == right arm. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A dictionary of position and orientation. </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2. </dd></dl>
 
 </div>
 </div>
@@ -1686,38 +1715,20 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a2363d4e5074559cf635a866921ad8360"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a2363d4e5074559cf635a866921ad8360" args="(name, amplitude, system_freq, sample_freq, cycles)" -->
+<a class="anchor" id="a23a621f40e9ca7c82d4e04f20befd1ee"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a23a621f40e9ca7c82d4e04f20befd1ee" args="(trajectory_list, use_left_arm)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#a2363d4e5074559cf635a866921ad8360">recallRhythDMPTrajectory</a> </td>
+          <td class="memname"><a class="el" href="classPyPR2.html#a23a621f40e9ca7c82d4e04f20befd1ee">recallRhythDMPTrajectory</a> </td>
           <td>(</td>
-          <td class="paramtype">name&#160;</td>
+          <td class="paramtype">trajectory_list&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">amplitude&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">system_freq&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">sample_freq&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">cycles&#160;</td>
+          <td class="paramtype">use_left_arm&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1729,14 +1740,11 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Request RhythDMP to publish a trajectory. </p>
+<p>Request RhythDMP to publish a list of trajectories. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">string</td><td>name. Name of the trajectory. </td></tr>
-    <tr><td class="paramname">float</td><td>amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional) </td></tr>
-    <tr><td class="paramname">float</td><td>system_freq. System frequency of (rhythmic) trajectory, default to 1.0. </td></tr>
-    <tr><td class="paramname">int</td><td>sample_freq. Trajectory sampling frequency, default 20. </td></tr>
-    <tr><td class="paramname">int</td><td>cycles. No of cycles of (rhythmic) trajectory, default 1. </td></tr>
+    <tr><td class="paramname">list</td><td>trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'} where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0), system_freq is the system frequency of (rhythmic) trajectory (default 1.0), sample_freq is the trajectory sampling frequency (default 20) and cycles is the number of cycles of (rhythmic) trajectory (default 1). </td></tr>
+    <tr><td class="paramname">bool</td><td>use_left_arm. True == use left arm to perform the trajectory execution, False == use right arm. </td></tr>
   </table>
   </dd>
 </dl>
@@ -2259,7 +2267,7 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Jun 5 2015 01:31:45 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon Jun 15 2015 18:41:01 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
