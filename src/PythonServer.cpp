@@ -324,11 +324,7 @@ void PythonServer::runMainScript()
   }
   else {
     if (PyErr_Occurred() == PyExc_ImportError) {
-      INFO_MSG( "PythonServer: No main script %s\n",
-                 PYRIDE_MAIN_SCRIPT_NAME );
-    }
-    else {
-      ERROR_MSG( "PythonServer: Failed to import main script"
+      ERROR_MSG( "PythonServer: Unable to import main script"
                  " %s\n", PYRIDE_MAIN_SCRIPT_NAME );
       PyErr_Print();
     }

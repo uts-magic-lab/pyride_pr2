@@ -559,6 +559,40 @@ static PyObject * PyModule_DispatchVideoData( PyObject * self, PyObject * args, 
   }
 }
 
+/*! \fn setTeamMemberID(member_id, team_id)
+ *  \memberof PyPR2
+ *  \memberof PyNAO
+ *  \memberof PyROMO
+ *  \brief Sets the ID number of the robot.
+ *
+ *  The robot can be assigned as a member
+ *  of blue team (number 1) or pink team (number 2). This facilitates robot to
+ *  robot communication.
+ *  \note This function is inherited from robot soccer competition
+ *  code for NAO.
+ *  \param int member_id. Must be a non-negative integer.
+ *  \param int team_id. Must be either 1 (blue team) or 2 (pink team).
+ *  \return None.
+ */
+
+/*! \fn say(text)
+ *  \memberof PyPR2
+ *  \memberof PyNAO
+ *  \memberof PyROMO
+ *  \brief Use Text-to-Speech system to say the input text.
+ *  \param str text. Text to be spoken by the robot.
+ *  \return None.
+ */
+
+/*! \fn sendTeamMessage( message )
+ *  \memberof PyPR2
+ *  \memberof PyNAO
+ *  \memberof PyROMO
+ *  \brief Broadcast a message to other robots in the same team.
+ *
+ *  \param str message. A text based message.
+ *  \return None
+ */
 
 #undef INCLUDE_COMMON_PYMODULE_MEHTODS
 #endif

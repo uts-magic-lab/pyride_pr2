@@ -97,21 +97,6 @@ static PyObject * PyModule_write( PyObject *self, PyObject * args )
  *  \return None.
  */
 
-/*! \fn setTeamMemberID(member_id, team_id)
- *  \memberof PyPR2
- *  \memberof PyNAO
- *  \memberof PyROMO
- *  \brief Sets the ID number of the robot.
- *
- *  The robot can be assigned as a member
- *  of blue team (number 1) or pink team (number 2). This facilitates robot to
- *  robot communication.
- *  \note This function is inherited from robot soccer competition
- *  code for NAO.
- *  \param int member_id. Must be a non-negative integer.
- *  \param int team_id. Must be either 1 (blue team) or 2 (pink team).
- *  \return None.
- */
 static PyObject * PyModule_SetTeamMemberID( PyObject *self, PyObject * args )
 {
   int teamID, teamColour;
@@ -138,15 +123,6 @@ static PyObject * PyModule_SetTeamMemberID( PyObject *self, PyObject * args )
   Py_RETURN_NONE;
 }
 
-/*! \fn sendTeamMessage( message )
- *  \memberof PyPR2
- *  \memberof PyNAO
- *  \memberof PyROMO
- *  \brief Broadcast a message to other robots in the same team.
- *
- *  \param str message. A text based message.
- *  \return None
- */
 static PyObject * PyModule_sendTeamMessage( PyObject *self, PyObject * args )
 {
   char * dataStr = NULL;
@@ -160,14 +136,6 @@ static PyObject * PyModule_sendTeamMessage( PyObject *self, PyObject * args )
   Py_RETURN_NONE;
 }
 
-/*! \fn say(text)
- *  \memberof PyPR2
- *  \memberof PyNAO
- *  \memberof PyROMO
- *  \brief Use Text-to-Speech system to say the input text.
- *  \param str text. Text to be spoken by the robot.
- *  \return None.
- */
 static PyObject * PyModule_PR2SayWithVolume( PyObject * self, PyObject * args )
 {
   float volume = 0.0;
@@ -767,6 +735,13 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \param tuple orientation. Orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True to move the left arm; False to use the right arm.
  *  \return None.
+ *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
+ */
+/*! \fn getArmPose(left_arm)
+ *  \memberof PyPR2
+ *  \brief Get the current arm pose in task space with respect to base_foot_print TF frame.
+ *  \param bool left_arm. True == left arm; False == right arm.
+ *  \return A dictionary of position and orientation.
  *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
  */
 static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, PyObject * keywds )
