@@ -60,6 +60,7 @@
 #endif
 
 #include "PyRideCommon.h"
+#include "PyPR2Module.h"
 
 using namespace std;
 using namespace ros;
@@ -152,8 +153,7 @@ public:
   
 #ifdef WITH_RHYTH_DMP
   void subscribeRawTrajInput( bool enable );
-  bool recallRhythDMPTrajectory( const std::string & name, double amp_ratio,
-      double f_freq, int s_freq, int cycles );
+  bool recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm );
 #endif
 
   void cancelBodyMovement();

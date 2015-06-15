@@ -31,10 +31,6 @@ static const char *kPickAndPlaceKWlist[] = { "name", "place", "grasp_position", 
 static const char *kObjectKWlist[] = { "name", "volume", "position", "orientation", NULL };
 static const char *kArmPoseKWlist[] = { "position", "orientation", "use_left_arm", "time_to_reach", NULL };
 
-#ifdef WITH_RHYTH_DMP
-static const char *kRhythDMPKWlist[] = { "name", "amplitude", "system_freq", "sample_freq", "cycles", NULL };
-#endif
-
 static PyObject * PyModule_write( PyObject *self, PyObject * args )
 {
   char * msg;
@@ -1769,18 +1765,20 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
 #endif
 
 #ifdef WITH_RHYTH_DMP
-/*! \fn recallRhythDMPTrajectory(name,amplitude,system_freq,sample_freq,cycles)
+/*! \fn recallRhythDMPTrajectory(trajectory_list, use_left_arm)
  *  \memberof PyPR2
- *  \brief Request RhythDMP to publish a trajectory
- *  \param string name. Name of the trajectory.
- *  \param float amplitude. Amplitude (ratio) of the trajectory, default to 1.0. (Optional)
- *  \param float system_freq. System frequency of (rhythmic) trajectory, default to 1.0.
- *  \param int sample_freq. Trajectory sampling frequency, default 20.
- *  \param int cycles. No of cycles of (rhythmic) trajectory, default 1.
+ *  \brief Request RhythDMP to publish a list of trajectories
+ *  \param list trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary
+ *  contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'}
+ *  where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0),
+ *  system_freq is the system frequency of (rhythmic) trajectory (default 1.0),
+ *  sample_freq is the trajectory sampling frequency (default 20) and cycles is the number of cycles of
+ *  (rhythmic) trajectory (default 1).
+ *  \param bool use_left_arm. True == use left arm to perform the trajectory execution, False == use right arm.
  *  \return True == success, False == failure.
  *  \note uts-specfic. Require RhythDMP module.
  */
-static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObject * args, PyObject * keywds )
+static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObject * args )
 {
   char * traj = NULL;
   double amp_ratio = 1.0;
@@ -1788,18 +1786,95 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
   int sample_freq = 20;
   int cycles = 1;
 
-  if (!PyArg_ParseTupleAndKeywords( args, keywds, "s|ddii", (char**)kRhythDMPKWlist, &traj, &amp_ratio, &sys_freq, &sample_freq, &cycles )) {
-    PyErr_Format( PyExc_ValueError, "PyPR2.%s: invalid input parameters.", "recallRhythDMPTrajectory" );
+  PyObject * trajListObj = NULL;
+  PyObject * boolObj = NULL;
+
+  if (!PyArg_ParseTuple( args, "OO", &trajListObj, &boolObj )) {
+    // PyArg_ParseTuple will set the error status.
     return NULL;
   }
 
-  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( std::string( traj ), amp_ratio, sys_freq, sample_freq, cycles )) {
+  if (boolObj && !PyBool_Check( boolObj )) {
+    PyErr_Format( PyExc_ValueError, "PyPR2.recallRhythDMPTrajectory: the second parameter must be a boolean!" );
+    return NULL;
+  }
+
+  int listSize = 0;
+
+  if (!PyList_Check( trajListObj ) || (listSize = PyList_Size( trajListObj )) == 0) {
+    PyErr_Format( PyExc_ValueError, "PyPR2.recallRhythDMPTrajectory: input parameter must be a non empty list of dictionary!" );
+    return NULL;
+  }
+
+  PyObject * trajObj = NULL;
+  PyObject * nameVal = NULL;
+
+  DMPTrajCmdList cmdList;
+  cmdList.reserve( listSize );
+
+  for (int i = 0; i < listSize; ++i) {
+    trajObj = PyList_GetItem( trajListObj, i );
+    if (!PyDict_Check( trajObj ) || (nameVal = PyDict_GetItemString( trajObj, "name" )) == NULL || !PyString_Check( nameVal )) {
+      PyErr_Format( PyExc_ValueError, "PyPR2.recallRhythDMPTrajectory: input list item %d "
+                   "must be a dictionary that contains a trajectory name.", i );
+      return NULL;
+    }
+
+    struct DMPTrajCmdData tcData;
+    tcData.name = PyString_AsString( nameVal );
+
+    double tmpFloat = 0.0;
+    long tmpInt = 0;
+
+    PyObject * dataVal = PyDict_GetItemString( trajObj, "amplitude" );
+    if (dataVal && PyFloat_Check( dataVal ) && (tmpFloat = PyFloat_AsDouble( dataVal )) > 0.0) {
+      tcData.amplitude = tmpFloat;
+    }
+    else {
+      tcData.amplitude = 1.0;
+    }
+
+    dataVal = PyDict_GetItemString( trajObj, "system_freq" );
+    if (dataVal && PyFloat_Check( dataVal ) && (tmpFloat = PyFloat_AsDouble( dataVal )) > 0.0) {
+      tcData.system_freq = tmpFloat;
+    }
+    else {
+      tcData.system_freq = 1.0;
+    }
+
+    dataVal = PyDict_GetItemString( trajObj, "sampling_freq" );
+    if (dataVal && PyInt_Check( dataVal ) && (tmpInt = PyInt_AsLong( dataVal )) > 0) {
+      tcData.sampling_freq = tmpInt;
+    }
+    else {
+      tcData.sampling_freq = 20;
+    }
+
+    dataVal = PyDict_GetItemString( trajObj, "cycles" );
+    if (dataVal && PyInt_Check( dataVal ) && (tmpInt = PyInt_AsLong( dataVal )) > 0) {
+      tcData.cycles = tmpInt;
+    }
+    else {
+      tcData.cycles = 1;
+    }
+
+    dataVal = PyDict_GetItemString( trajObj, "position" );
+    if (!dataVal || !PyTuple_Check( dataVal ) || !PyArg_ParseTuple( dataVal, "fff", &tcData.pos_x, &tcData.pos_y, &tcData.pos_z )) {
+      tcData.pos_x = tcData.pos_y = tcData.pos_z = 0.0;
+    }
+
+    dataVal = PyDict_GetItemString( trajObj, "orientation" );
+    if (!dataVal || !PyTuple_Check( dataVal ) || !PyArg_ParseTuple( dataVal, "ffff", &tcData.ori_w, &tcData.ori_x, &tcData.ori_y, &tcData.ori_z )) {
+      tcData.ori_w = 1.0;
+      tcData.ori_x = tcData.ori_y = tcData.ori_z = 0.0;
+    }
+    cmdList.push_back( tcData );
+  }
+
+  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( cmdList, PyObject_IsTrue( boolObj ) ))
     Py_RETURN_TRUE;
-  }
-  else {
+  else
     Py_RETURN_FALSE;
-  }
-  Py_RETURN_FALSE;
 }
 
 /*! \fn registerRawTrajectoryInput( traj_data_callback )
@@ -1934,7 +2009,7 @@ static PyMethodDef PyModule_methods[] = {
 #ifdef WITH_RHYTH_DMP
   { "registerRawTrajectoryInput", (PyCFunction)PyModule_PR2RegisterRawTrajectoryInput, METH_VARARGS,
     "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },
-  { "recallRhythDMPTrajectory", (PyCFunction)PyModule_PR2RecallRhythDMPTrajectory, METH_VARARGS|METH_KEYWORDS,
+  { "recallRhythDMPTrajectory", (PyCFunction)PyModule_PR2RecallRhythDMPTrajectory, METH_VARARGS,
     "Request RhythDMP module to publish a known trajectory." },
 #endif
 #define DEFINE_COMMON_PYMODULE_METHODS

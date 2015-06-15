@@ -14,6 +14,25 @@
 
 namespace pyride {
 
+#ifdef WITH_RHYTH_DMP
+struct DMPTrajCmdData {
+  std::string name;
+  float amplitude;
+  float system_freq;
+  int sampling_freq;
+  int cycles;
+  double pos_x;
+  double pos_y;
+  double pos_z;
+  double ori_w;
+  double ori_x;
+  double ori_y;
+  double ori_z;
+};
+
+typedef std::vector<DMPTrajCmdData> DMPTrajCmdList;
+#endif
+
 class PyPR2Module : public PyModuleExtension
 {
 public:

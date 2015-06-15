@@ -12,7 +12,6 @@
 #include <pr2_mechanism_msgs/UnloadController.h>
 #include <pr2_mechanism_msgs/SwitchController.h>
 #include "PR2ProxyManager.h"
-#include "PyPR2Module.h"
 
 #ifdef WITH_PR2HT
 #include "pr2ht/DetectTrackControl.h"
@@ -886,22 +885,33 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
 #endif
 
 #ifdef WITH_RHYTH_DMP
-bool PR2ProxyManager::recallRhythDMPTrajectory( const std::string & name, double amp_ratio,
-    double f_freq, int s_freq, int cycles )
+bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm )
 {
   if (!dmpClient_.exists())
     return false;
 
-  if (amp_ratio <= 0.0 || f_freq <= 0.0 || s_freq <= 0 || cycles <= 0)
+  int listSize = (int)cmd_list.size();
+
+  if (listSize == 0)
     return false;
 
   rhyth_dmp::RecallTraj srvMsg;
-
-  srvMsg.request.traj_id = name;
-  srvMsg.request.amplitude = amp_ratio;
-  srvMsg.request.system_freq = f_freq;
-  srvMsg.request.sampling_freq = s_freq;
-  srvMsg.request.cycles = cycles;
+  srvMsg.request.left_arm = use_left_arm;
+  srvMsg.request.data.resize( listSize );
+  for (int i = 0; i < listSize; i++) {
+    srvMsg.request.data[i].traj_id = cmd_list[i].name;
+    srvMsg.request.data[i].amplitude = cmd_list[i].amplitude;
+    srvMsg.request.data[i].system_freq = cmd_list[i].system_freq;
+    srvMsg.request.data[i].sampling_freq = cmd_list[i].sampling_freq;
+    srvMsg.request.data[i].cycles = cmd_list[i].cycles;
+    srvMsg.request.data[i].frame_orig.position.x = cmd_list[i].pos_x;
+    srvMsg.request.data[i].frame_orig.position.y = cmd_list[i].pos_y;
+    srvMsg.request.data[i].frame_orig.position.z = cmd_list[i].pos_z;
+    srvMsg.request.data[i].frame_orig.orientation.w = cmd_list[i].ori_w;
+    srvMsg.request.data[i].frame_orig.orientation.x = cmd_list[i].ori_x;
+    srvMsg.request.data[i].frame_orig.orientation.y = cmd_list[i].ori_y;
+    srvMsg.request.data[i].frame_orig.orientation.z = cmd_list[i].ori_z;
+  }
 
   return (dmpClient_.call( srvMsg ) && srvMsg.response.success);
 }
