@@ -26,8 +26,18 @@ def userLogoff( name ):
 def remoteCommandActions( cmd, arg ):
   pass
 
+def nodeStatusUpdate( node_id, priority, text ):
+  #process messages from external ROS nodes here.
+  pass
+
 def timerLapsedActions( id ):
-  timermanager.onTimerLapsed( id )
+  global myMessenger, msgTryTimer
+
+  if msgTryTimer == id and myMessenger.checkin():
+    PyPR2.removeTimer( msgTryTimer )
+    msgTryTimer = -1
+  else:
+    timermanager.onTimerCall( id )
 
 def timerActions( id ):
   timermanager.onTimerCall( id )
@@ -79,6 +89,7 @@ def main():
   PyPR2.onSystemShutdown = systemShutdownActions
   PyPR2.onPowerPluggedChange = powerPlugChangeActions
   PyPR2.onBatteryChargeChange = batteryChargeChangeActions
+  PyPR2.onNodeStatusUpdate = nodeStatusUpdate
   
   PyPR2.setProjectorOff = extProcCall.setProjectorOff
   PyPR2.setToMannequinMode = extProcCall.setToMannequinMode

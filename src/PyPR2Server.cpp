@@ -55,7 +55,7 @@ bool PyPR2Server::init()
     ERROR_MSG( "Unable to find any active robot camera.\n" );
   }
 
-  nodeStatusSub_ = hcNodeHandle_->subscribe( "pyride_status", 1, &PyPR2Server::nodeStatusCB, this );
+  nodeStatusSub_ = hcNodeHandle_->subscribe( "pyride_pr2/node_status", 1, &PyPR2Server::nodeStatusCB, this );
 
   PR2ProxyManager::instance()->initWithNodeHandle( hcNodeHandle_, useOptionNodes, useMoveIt );
   ServerDataProcessor::instance()->init( activeVideoDevices_, activeAudioDevices_ );
