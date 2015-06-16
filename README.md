@@ -73,10 +73,10 @@ file.
 ##Load user-developed Python scripts
 PyRIDE on PR2 can automatically load and execute Python scripts on its start up. It searches
 for a ```py_main.py``` under a predefined script directory and executes its ```main()``` function.
-Check ```scripts\py_main.py``` under this repository for further details. A working application
+Check ```scripts/py_main.py``` under this repository for further details. A working application
 example that receives and sends messages to a twitter account is also provided.
 
-**NOTE** You can change the directory where you want PyRIDE load Python scripts under ```script_dir```
+**NOTE** You can specify the directory where you want PyRIDE load Python scripts under ```script_dir```
 parameter in the ```pyride.launch``` file.
 
 ##Logging
@@ -98,5 +98,48 @@ been fully tested. To enable MoveIt! under PyRIDE, you need to do the following 
 2. Launch MoveIt! before running PyRIDE.
 3. Call ```py_main.iksResolver.useMoveIt()``` method in PyRIDE.
 
-Note that regardless which inverse kinematic engine is selected, you can move a PR2 arm use the same ```PyPR2.moveArmTo``` method. Check API documentation for further details.
+Note that regardless which inverse kinematic engine is selected, you can move a PR2 arm use the same 
+```PyPR2.moveArmTo``` method. Check API documentation for further details. Another important issue you
+need to keep in mind is that the reference frames used in MoveIt! and S-PR2 are slightly different. You
+cannot switch between MoveIt! and S-PR2 transparently without adjust your target position and orientation
+calculations. We will improve the wrapper functions so that you can transit between the two seamlessly in
+the future.
+
+##Third-party ROS node integration with PyRIDE
+PyRIDE for PR2 already provides some of the most commonly used functionalities on PR2 by integrating the
+respective ROS nodes into the PyRIDE framework. You may want to integrate additional third party ROS node
+with PyRIDE. PyRIDE supports two approaches for ROS node integration:
+
+1. "Deep" integration: This approach requires modifications of PyRIDE source code. ```PR2ProxyManager```
+class is the main class that is responsible for communicating with foreign ROS nodes and providing C++ based
+wrapper functions to interface with these node. You should create necessary subscriber or publishers to the
+node in the ```initWithNodeHandle``` method and the corresponding clean up code in the ```fini``` method.
+You should write necessary callback functions for your subscriber and command methods for your publisher (or
+action client) as methods of ```PR2ProxyManager```. ```PyPR2Module``` class provides wrapper functions to 
+expose C++ methods (usually) of ```PR2ProxyManager``` class to the embedded Python engine. It uses the
+standard embedded Python programming approach and APIs. See source code further details and examples.
+**NOTE** Future version of PyRIDE may provide a better designed plugin mechanism for deep ROS node integration.
+
+2. "Shallow" integration: This approach represents a simpler way of sending messages from an external ROS node
+to PyRIDE. PyRIDE constantly listens on a ```/pyride_pr2/node_status``` topic. A ROS node can publish 
+```NodeStatus``` (see ```msg/NodeStatus.msg``` for message structure) messages to this topic, PyRIDE will 
+automatically forward the received messages to ```PyPR2.onNodeStatusUpdate``` Python callback function in the
+embedded Python environment. See ```py_main.py``` for further details on this callback function.
+
+##Limited use of ```rospy``` under PyRIDE environment
+In ideal circumstance, PyRIDE should be used as a full replacement for ```rospy``` with custom integration of third
+party ROS modules. However, it is possible to use ```rospy``` in a limited way under PyRIDE to publish messages
+to other ROS node. Use the following example code snippet to create an *addon* node and publish messages.
+
+```
+import sys
+sys.path.append('/opt/ros/hydro/lib/python2.7/dist-packages') #add rospy path into the system path
+import rospy
+from std_msgs.msg import String
+rospy.init_node('pyride_talker',disable_signals=True)
+pub = rospy.Publisher( 'pyride_msg', String, queue_size = 5 )
+pub.publish('this is a test message')
+```
+
+**NOTE** that you should **not** use ```rospy.spin()``` under PyRIDE.
 
