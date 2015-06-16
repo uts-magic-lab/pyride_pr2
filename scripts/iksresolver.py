@@ -63,11 +63,11 @@ class IKSResolver( object ):
     if not isinstance( traj, list ) or len( traj ) == 0:
       raise IKSError( 'Input trajectory must be a non-empty list of pose (dictionary)' )
 
-    pos_traj = self.traj.Polynomial_Trajectory()
+    pos_traj = self.traj.Trajectory_Polynomial()
     orient_traj = self.traj.Orientation_Trajectory_Polynomial()
 
     for idx, pose in enumerate(traj):
-      if not isinstance( pose, dict ) or pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
+      if not isinstance( pose, dict ) or not pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
         print 'invalid pose position at {0}'.format( idx )	
       else:
         pos_traj.add_point(phi = float(idx), pos = self.np.array(pose['position']))
