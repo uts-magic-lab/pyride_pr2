@@ -153,7 +153,7 @@ public:
   
 #ifdef WITH_RHYTH_DMP
   void subscribeRawTrajInput( bool enable );
-  bool recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm );
+  bool recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, int sampling_freq, bool use_left_arm );
 #endif
 
   void cancelBodyMovement();

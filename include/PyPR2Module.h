@@ -19,7 +19,6 @@ struct DMPTrajCmdData {
   std::string name;
   float amplitude;
   float system_freq;
-  int sampling_freq;
   int cycles;
   double pos_x;
   double pos_y;

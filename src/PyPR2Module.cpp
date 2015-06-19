@@ -1764,7 +1764,7 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
   PyObject * trajListObj = NULL;
   PyObject * boolObj = NULL;
 
-  if (!PyArg_ParseTuple( args, "OO", &trajListObj, &boolObj )) {
+  if (!PyArg_ParseTuple( args, "OiO", &trajListObj, &sample_freq, &boolObj )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
   }
@@ -1817,14 +1817,6 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
       tcData.system_freq = 1.0;
     }
 
-    dataVal = PyDict_GetItemString( trajObj, "sampling_freq" );
-    if (dataVal && PyInt_Check( dataVal ) && (tmpInt = PyInt_AsLong( dataVal )) > 0) {
-      tcData.sampling_freq = tmpInt;
-    }
-    else {
-      tcData.sampling_freq = 20;
-    }
-
     dataVal = PyDict_GetItemString( trajObj, "cycles" );
     if (dataVal && PyInt_Check( dataVal ) && (tmpInt = PyInt_AsLong( dataVal )) > 0) {
       tcData.cycles = tmpInt;
@@ -1846,7 +1838,7 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
     cmdList.push_back( tcData );
   }
 
-  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( cmdList, PyObject_IsTrue( boolObj ) ))
+  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( cmdList, sample_freq, PyObject_IsTrue( boolObj ) ))
     Py_RETURN_TRUE;
   else
     Py_RETURN_FALSE;

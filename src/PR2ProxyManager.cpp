@@ -885,7 +885,7 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
 #endif
 
 #ifdef WITH_RHYTH_DMP
-bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm )
+bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, int sampling_freq, bool use_left_arm )
 {
   if (!dmpClient_.exists())
     return false;
@@ -897,12 +897,12 @@ bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list,
 
   rhyth_dmp::RecallTraj srvMsg;
   srvMsg.request.left_arm = use_left_arm;
+  srvMsg.request.sampling_freq = sampling_freq;
   srvMsg.request.data.resize( listSize );
   for (int i = 0; i < listSize; i++) {
     srvMsg.request.data[i].traj_id = cmd_list[i].name;
     srvMsg.request.data[i].amplitude = cmd_list[i].amplitude;
     srvMsg.request.data[i].system_freq = cmd_list[i].system_freq;
-    srvMsg.request.data[i].sampling_freq = cmd_list[i].sampling_freq;
     srvMsg.request.data[i].cycles = cmd_list[i].cycles;
     srvMsg.request.data[i].frame_orig.position.x = cmd_list[i].pos_x;
     srvMsg.request.data[i].frame_orig.position.y = cmd_list[i].pos_y;
