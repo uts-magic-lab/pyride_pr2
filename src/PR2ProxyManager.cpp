@@ -951,6 +951,14 @@ void PR2ProxyManager::trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataCons
   PyDict_SetItemString( retObj, "acceleration", elemObj );
   Py_DECREF( elemObj );
 
+  elemObj = PyTuple_New( 4 );
+  PyTuple_SetItem( elemObj, 0, PyFloat_FromDouble( msg->point.orientation.w ) );
+  PyTuple_SetItem( elemObj, 1, PyFloat_FromDouble( msg->point.orientation.x ) );
+  PyTuple_SetItem( elemObj, 2, PyFloat_FromDouble( msg->point.orientation.y ) );
+  PyTuple_SetItem( elemObj, 3, PyFloat_FromDouble( msg->point.orientation.z ) );
+  PyDict_SetItemString( retObj, "orientation", elemObj );
+  Py_DECREF( elemObj );
+
   PyObject * arg = Py_BuildValue( "(O)", retObj );
 
   PyPR2Module::instance()->invokeTrajectoryInputCallback( arg );
