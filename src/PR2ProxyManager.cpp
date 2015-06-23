@@ -885,7 +885,8 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
 #endif
 
 #ifdef WITH_RHYTH_DMP
-bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, int sampling_freq, bool use_left_arm )
+bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm,
+    int sampling_freq, double transport_speed )
 {
   if (!dmpClient_.exists())
     return false;
@@ -898,6 +899,7 @@ bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list,
   rhyth_dmp::RecallTraj srvMsg;
   srvMsg.request.left_arm = use_left_arm;
   srvMsg.request.sampling_freq = sampling_freq;
+  srvMsg.request.transport_speed = transport_speed;
   srvMsg.request.data.resize( listSize );
   for (int i = 0; i < listSize; i++) {
     srvMsg.request.data[i].traj_id = cmd_list[i].name;

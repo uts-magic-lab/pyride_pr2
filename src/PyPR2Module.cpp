@@ -1746,10 +1746,11 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
  *  \param list trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary
  *  contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'}
  *  where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0),
- *  system_freq is the system frequency of (rhythmic) trajectory (default 1.0),
- *  sample_freq is the trajectory sampling frequency (default 20) and cycles is the number of cycles of
+ *  system_freq is the system frequency of (rhythmic) trajectory (default 1.0), and cycles is the number of cycles of
  *  (rhythmic) trajectory (default 1).
  *  \param bool use_left_arm. True == use left arm to perform the trajectory execution, False == use right arm.
+ *  \param int sample_freq. The trajectory sampling frequency (default 20).
+ *  \param float transport_speed. The speed for transportation between trajectories (default 0.1).
  *  \return True == success, False == failure.
  *  \note uts-specfic. Require RhythDMP module.
  */
@@ -1758,13 +1759,14 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
   char * traj = NULL;
   double amp_ratio = 1.0;
   double sys_freq = 1.0;
+  double transport_speed = 0.1;
   int sample_freq = 20;
   int cycles = 1;
 
   PyObject * trajListObj = NULL;
   PyObject * boolObj = NULL;
 
-  if (!PyArg_ParseTuple( args, "OiO", &trajListObj, &sample_freq, &boolObj )) {
+  if (!PyArg_ParseTuple( args, "OO|if", &trajListObj, &boolObj, &sample_freq, &transport_speed )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
   }
@@ -1838,7 +1840,7 @@ static PyObject * PyModule_PR2RecallRhythDMPTrajectory( PyObject * self, PyObjec
     cmdList.push_back( tcData );
   }
 
-  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( cmdList, sample_freq, PyObject_IsTrue( boolObj ) ))
+  if (PR2ProxyManager::instance()->recallRhythDMPTrajectory( cmdList, PyObject_IsTrue( boolObj ), sample_freq, transport_speed ))
     Py_RETURN_TRUE;
   else
     Py_RETURN_FALSE;
