@@ -961,6 +961,10 @@ void PR2ProxyManager::trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataCons
   PyDict_SetItemString( retObj, "orientation", elemObj );
   Py_DECREF( elemObj );
 
+  elemObj = PyBool_FromLong( msg->in_progress );
+  PyDict_SetItemString( retObj, "in_progress", elemObj );
+  Py_DECREF( elemObj );
+
   PyObject * arg = Py_BuildValue( "(O)", retObj );
 
   PyPR2Module::instance()->invokeTrajectoryInputCallback( arg );
