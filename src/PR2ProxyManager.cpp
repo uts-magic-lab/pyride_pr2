@@ -924,8 +924,13 @@ void PR2ProxyManager::trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataCons
   gstate = PyGILState_Ensure();
 
   PyObject * retObj = PyDict_New();
+
   PyObject * elemObj = PyString_FromString( msg->traj_id.c_str() );
   PyDict_SetItemString( retObj, "traj_id", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyFloat_FromDouble( (double)msg->header.stamp.sec + (double)msg->header.stamp.nsec / 1E9 );
+  PyDict_SetItemString( retObj, "timestamp", elemObj );
   Py_DECREF( elemObj );
 
   elemObj = PyInt_FromLong( msg->step );
