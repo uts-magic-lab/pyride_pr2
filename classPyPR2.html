@@ -122,6 +122,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Navigate PR2 body to a specified pose.  <a href="#a8158dc2cc4ce7265406358e03d16be99"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a12079d0eac454eeda76fdc62959d14e2">moveArmTo</a> (position, orientation, use_left_arm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose.  <a href="#a12079d0eac454eeda76fdc62959d14e2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adf5074da7238403363b9c351a4b7ccb0">moveArmInTrajectory</a> (trajectory, period, left_arm, relative)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose.  <a href="#adf5074da7238403363b9c351a4b7ccb0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a> (left_arm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current arm pose in task space with respect to base_foot_print TF frame.  <a href="#a0e091e88e66473f4ded76513cdb8d2d7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2d8ecb78d985e019a87ee85ac1d8710b">moveArmWithJointPos</a> (joint_position, time_to_reach)</td></tr>
@@ -168,21 +170,13 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a list of trajectories.  <a href="#a23a621f40e9ca7c82d4e04f20befd1ee"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> (traj_data_callback)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame).  <a href="#ada2ccc68982ac78c5f36dfc9662767fc"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a> (cmd_id, cmd_text)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a custom command is received from a remote client.  <a href="#ab066ed63929d4f1e7793724fd5401563"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adba214e24866376f3fe3a18bcdfd994e">onUserLogOn</a> (user_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a user logs in through a remote client.  <a href="#adba214e24866376f3fe3a18bcdfd994e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab7f2071168f860fce1c1337d020dc97d">onUserLogOff</a> (user_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a remote user logs off.  <a href="#ab7f2071168f860fce1c1337d020dc97d"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader">Timer Management Functions</div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8fa658106e30657bb6523ba56c7b4a6d">onTimer</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired.  <a href="#a8fa658106e30657bb6523ba56c7b4a6d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a140ec5e71ba22485085245ed2bd4e1a8">onTimerLapsed</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired for the last time.  <a href="#a140ec5e71ba22485085245ed2bd4e1a8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#afd5b4f1700e30f8a035109c584c6677a">setTeamMemberID</a> (member_id, team_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the ID number of the robot.  <a href="#afd5b4f1700e30f8a035109c584c6677a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af1db0209c92b8989db2bcdc76cc04ef3">say</a> (text)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Use Text-to-Speech system to say the input text.  <a href="#af1db0209c92b8989db2bcdc76cc04ef3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ae0c1b0f76c9dec4fc42d57e8f4f71125">sendTeamMessage</a> (message)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast a message to other robots in the same team (colour).  <a href="#ae0c1b0f76c9dec4fc42d57e8f4f71125"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Miscellaneous Functions</div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5">onSnapshotImage</a> (image_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when PyPR2.takeCameraSnapshot is called.  <a href="#af8bc1cd49c8ec2faea99608dca5a30e5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a4aff0325b3e46f1708f734b4517898fc">setToMannequinMode</a> (to_set)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set PR2 to the mannequin mode.  <a href="#a4aff0325b3e46f1708f734b4517898fc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab936f344fa76977901ac56a73891e78b">startDataRecording</a> (data_type, output_file)</td></tr>
@@ -201,6 +195,51 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return the current low power threshold.  <a href="#a393e3fa09ed5b08ea95c614650135627"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a4d23e7ab37261cddc6f8afdb620cc84e">setLowPowerThreshold</a> (battery_percentage)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the low power threshold.  <a href="#a4d23e7ab37261cddc6f8afdb620cc84e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275">takeCameraSnapshot</a> (all_camera)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a snapshot for the robot camera(s)  <a href="#a7b9410c34ceb40818f13b52211b83275"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#afab550231c059fdc85cd68af7bcd074a">getMyIPAddress</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IP address of the robot.  <a href="#afab550231c059fdc85cd68af7bcd074a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5">onSnapshotImage</a> (image_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275" title="Take a snapshot for the robot camera(s)">PyPR2.takeCameraSnapshot</a> is called.  <a href="#af8bc1cd49c8ec2faea99608dca5a30e5"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a59d000e6b2f5c2d43c22942656270407">disconnect</a> (username)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnect all remote clients.  <a href="#a59d000e6b2f5c2d43c22942656270407"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab67a1649d2764d9a68209d4cf78ee2a3">blockRemoteExclusiveControl</a> (toblock)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Block or unblock exclusive control of connected remote clients.  <a href="#ab67a1649d2764d9a68209d4cf78ee2a3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a875c4ebd24897d9e354d6ac09fa23e0c">updateOperationalStatus</a> (op_state, op_text)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Send robot operational status notification to all connected remote clients.  <a href="#a875c4ebd24897d9e354d6ac09fa23e0c"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a> (cmd_id, cmd_text)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a custom command is received from a remote client.  <a href="#ab066ed63929d4f1e7793724fd5401563"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adba214e24866376f3fe3a18bcdfd994e">onUserLogOn</a> (user_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a user logs in through a remote client.  <a href="#adba214e24866376f3fe3a18bcdfd994e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab7f2071168f860fce1c1337d020dc97d">onUserLogOff</a> (user_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a remote user logs off.  <a href="#ab7f2071168f860fce1c1337d020dc97d"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Remote Client User Management Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a26dffe7ef4c1e630adacc15b8db77706">listCurrentUsers</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of users who are currently logged in through remote clients.  <a href="#a26dffe7ef4c1e630adacc15b8db77706"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ac6021a4cd791060aee26f8162a49b684">listAllUsers</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of users who can log in remotely.  <a href="#ac6021a4cd791060aee26f8162a49b684"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ac3fce7965c35f1d20bdfdb544fa682f2">saveConfiguration</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Save the current user access configuration.  <a href="#ac3fce7965c35f1d20bdfdb544fa682f2"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a1b1baea5a73ed05eeae181c528c2f63f">addUser</a> (user_name, user_password)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a new remote user into the system.  <a href="#a1b1baea5a73ed05eeae181c528c2f63f"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ae96726d655a09a6fb636defd04bd2466">removeUser</a> (user_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove an existing remote user from the system.  <a href="#ae96726d655a09a6fb636defd04bd2466"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a42b4baae87e88a1278a95b65fe614c4b">changeUserPassword</a> (user_name, old_password, new_password)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Change an existing remote user's password.  <a href="#a42b4baae87e88a1278a95b65fe614c4b"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Timer Management Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a46c5b5974d8939800c8db11eb7b04837">addTimer</a> (init_start, repeats, interval)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a timer object.  <a href="#a46c5b5974d8939800c8db11eb7b04837"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a timer object.  <a href="#a55104db9aa8af00e96d6d65e00e937d4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2449f339acd1a7bb9ad9c2e5b82432b4">isTimerRunning</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether a timer object is still alive.  <a href="#a2449f339acd1a7bb9ad9c2e5b82432b4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all timer objects in the system.  <a href="#af9bcb81751a454ae9e2e289ffc650490"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8fa658106e30657bb6523ba56c7b4a6d">onTimer</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired.  <a href="#a8fa658106e30657bb6523ba56c7b4a6d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a140ec5e71ba22485085245ed2bd4e1a8">onTimerLapsed</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired for the last time.  <a href="#a140ec5e71ba22485085245ed2bd4e1a8"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Action Callback Functions</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#addfbe834b418869407f44a7ff36e6a9f">onHeadActionSuccess</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#a89c5dd1292b40dc1be46adfd9dfc849a" title="Point the PR2 head towards a specific coordinates in a reference frame.">PyPR2.pointHeadTo</a> method call is successful.  <a href="#addfbe834b418869407f44a7ff36e6a9f"></a><br/></td></tr>
@@ -287,6 +326,114 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a46c5b5974d8939800c8db11eb7b04837"></a><!-- doxytag: member="PyPR2::addTimer" ref="a46c5b5974d8939800c8db11eb7b04837" args="(init_start, repeats, interval)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a46c5b5974d8939800c8db11eb7b04837">addTimer</a> </td>
+          <td>(</td>
+          <td class="paramtype">init_start&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">repeats&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">interval&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Add a timer object. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">int</td><td>init_start. Initial start time (in seconds) after the method is called. </td></tr>
+    <tr><td class="paramname">long</td><td>repeats. A number of times the timer shall be called. -1 means infinite. </td></tr>
+    <tr><td class="paramname">int</td><td>interval. Time interval (in seconds) between timer callbacks. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>long The ID of the timer object. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a1b1baea5a73ed05eeae181c528c2f63f"></a><!-- doxytag: member="PyPR2::addUser" ref="a1b1baea5a73ed05eeae181c528c2f63f" args="(user_name, user_password)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a1b1baea5a73ed05eeae181c528c2f63f">addUser</a> </td>
+          <td>(</td>
+          <td class="paramtype">user_name&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">user_password&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Add a new remote user into the system. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>user_name. </td></tr>
+    <tr><td class="paramname">str</td><td>user_password. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ab67a1649d2764d9a68209d4cf78ee2a3"></a><!-- doxytag: member="PyPR2::blockRemoteExclusiveControl" ref="ab67a1649d2764d9a68209d4cf78ee2a3" args="(toblock)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ab67a1649d2764d9a68209d4cf78ee2a3">blockRemoteExclusiveControl</a> </td>
+          <td>(</td>
+          <td class="paramtype">toblock&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Block or unblock exclusive control of connected remote clients. </p>
+<p>Allow or block the exclusive control right of remote clients. If a client has already taken the exclusive control, the control right will be revoked when the input is set to True. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bool</td><td>toblock. True for block; False for unblock. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a1fad2fa67905522e2b0919bfa8d5895f"></a><!-- doxytag: member="PyPR2::cancelMoveArmAction" ref="a1fad2fa67905522e2b0919bfa8d5895f" args="(is_left_arm)" -->
 <div class="memitem">
 <div class="memproto">
@@ -331,6 +478,50 @@ Public Member Functions</h2></td></tr>
 <p>Cancel current body movement action invoked by <a class="el" href="classPyPR2.html#ac6d983eb5ce4481444832b4fc411de71" title="Move the PR2 body to a pose at (x,y,theta).">PyPR2.moveBodyTo</a> or <a class="el" href="classPyPR2.html#ac3c9eb318a01ac16c6662637539c55f4" title="Set the PR2 body moving speed in the form of (x,y,theta).">PyPR2.moveBodyWithSpeed</a> method call. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>This function has not been fully tested on PR2 and may be buggy. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a42b4baae87e88a1278a95b65fe614c4b"></a><!-- doxytag: member="PyPR2::changeUserPassword" ref="a42b4baae87e88a1278a95b65fe614c4b" args="(user_name, old_password, new_password)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a42b4baae87e88a1278a95b65fe614c4b">changeUserPassword</a> </td>
+          <td>(</td>
+          <td class="paramtype">user_name&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">old_password&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">new_password&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Change an existing remote user's password. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>user_name name. </td></tr>
+    <tr><td class="paramname">str</td><td>old_password. </td></tr>
+    <tr><td class="paramname">str</td><td>new_password. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
 
 </div>
 </div>
@@ -383,6 +574,32 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
 <dl class="note"><dt><b>Note:</b></dt><dd>Require MoveIt! to be running prior the start of PyRIDE. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a59d000e6b2f5c2d43c22942656270407"></a><!-- doxytag: member="PyPR2::disconnect" ref="a59d000e6b2f5c2d43c22942656270407" args="(username)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a59d000e6b2f5c2d43c22942656270407">disconnect</a> </td>
+          <td>(</td>
+          <td class="paramtype">username&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Disconnect all remote clients. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>username. Optional name of an online user to be disconnected. If no username is provided. All connected clients will be disconnected. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
 
 </div>
 </div>
@@ -504,6 +721,25 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="afab550231c059fdc85cd68af7bcd074a"></a><!-- doxytag: member="PyPR2::getMyIPAddress" ref="afab550231c059fdc85cd68af7bcd074a" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#afab550231c059fdc85cd68af7bcd074a">getMyIPAddress</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Get the IP address of the robot. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>The robot IP address in text. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a8d53fc0a16c6e79531ae24816f8ff20b"></a><!-- doxytag: member="PyPR2::getPositionForJoints" ref="a8d53fc0a16c6e79531ae24816f8ff20b" args="(joint_names)" -->
 <div class="memitem">
 <div class="memproto">
@@ -613,6 +849,70 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a2449f339acd1a7bb9ad9c2e5b82432b4"></a><!-- doxytag: member="PyPR2::isTimerRunning" ref="a2449f339acd1a7bb9ad9c2e5b82432b4" args="(timer_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a2449f339acd1a7bb9ad9c2e5b82432b4">isTimerRunning</a> </td>
+          <td>(</td>
+          <td class="paramtype">timer_id&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Check whether a timer object is still alive. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">long</td><td>timer_id. ID of the timer object. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>True = timer is alive; False = timer is dead. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac6021a4cd791060aee26f8162a49b684"></a><!-- doxytag: member="PyPR2::listAllUsers" ref="ac6021a4cd791060aee26f8162a49b684" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ac6021a4cd791060aee26f8162a49b684">listAllUsers</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return a list of users who can log in remotely. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A list of user names. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a26dffe7ef4c1e630adacc15b8db77706"></a><!-- doxytag: member="PyPR2::listCurrentUsers" ref="a26dffe7ef4c1e630adacc15b8db77706" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a26dffe7ef4c1e630adacc15b8db77706">listCurrentUsers</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Return a list of users who are currently logged in through remote clients. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>A list of user names. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a2e7b7b8417b4fe0472ab44a05d4313b6"></a><!-- doxytag: member="PyPR2::listSolidObjects" ref="a2e7b7b8417b4fe0472ab44a05d4313b6" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -649,6 +949,58 @@ Public Member Functions</h2></td></tr>
 
 <p>Return a list of supported PR2 TF frame names. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>list(frame names). </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="adf5074da7238403363b9c351a4b7ccb0"></a><!-- doxytag: member="PyPR2::moveArmInTrajectory" ref="adf5074da7238403363b9c351a4b7ccb0" args="(trajectory, period, left_arm, relative)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#adf5074da7238403363b9c351a4b7ccb0">moveArmInTrajectory</a> </td>
+          <td>(</td>
+          <td class="paramtype">trajectory&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">period&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">left_arm&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">relative&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Move a PR2 arm to a specified pose. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">list</td><td>trajectory. A list of way points which consists of arm pose dictionaries { 'position', 'orientation' }. </td></tr>
+    <tr><td class="paramname">float</td><td>period. The execution period for completing the trajectory. </td></tr>
+    <tr><td class="paramname">bool</td><td>left_arm. True to use the left arm; False to use the right arm (default False) </td></tr>
+    <tr><td class="paramname">bool</td><td>relative. True means the input trajectory is relative to the current arm pose; False means the trajectory is with respect to the basefoot_print reference frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>This function is available only when S-PR2 is in use. </dd></dl>
 
 </div>
 </div>
@@ -1388,7 +1740,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Callback function when PyPR2.takeCameraSnapshot is called. </p>
+<p>Callback function when <a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275" title="Take a snapshot for the robot camera(s)">PyPR2.takeCameraSnapshot</a> is called. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">str</td><td>image_name. Path for the saved image. </td></tr>
@@ -1743,8 +2095,10 @@ Public Member Functions</h2></td></tr>
 <p>Request RhythDMP to publish a list of trajectories. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
-    <tr><td class="paramname">list</td><td>trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'} where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0), system_freq is the system frequency of (rhythmic) trajectory (default 1.0), sample_freq is the trajectory sampling frequency (default 20) and cycles is the number of cycles of (rhythmic) trajectory (default 1). </td></tr>
+    <tr><td class="paramname">list</td><td>trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'} where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0), system_freq is the system frequency of (rhythmic) trajectory (default 1.0), and cycles is the number of cycles of (rhythmic) trajectory (default 1). </td></tr>
     <tr><td class="paramname">bool</td><td>use_left_arm. True == use left arm to perform the trajectory execution, False == use right arm. </td></tr>
+    <tr><td class="paramname">int</td><td>sample_freq. The trajectory sampling frequency (default 20). </td></tr>
+    <tr><td class="paramname">float</td><td>transport_speed. The speed for transportation between trajectories (default 0.1). </td></tr>
   </table>
   </dd>
 </dl>
@@ -1892,6 +2246,149 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="af9bcb81751a454ae9e2e289ffc650490"></a><!-- doxytag: member="PyPR2::removeAllTimers" ref="af9bcb81751a454ae9e2e289ffc650490" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Remove all timer objects in the system. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a55104db9aa8af00e96d6d65e00e937d4"></a><!-- doxytag: member="PyPR2::removeTimer" ref="a55104db9aa8af00e96d6d65e00e937d4" args="(timer_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a> </td>
+          <td>(</td>
+          <td class="paramtype">timer_id&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Remove a timer object. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">long</td><td>timer_id. ID of the timer object pending for removal. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae96726d655a09a6fb636defd04bd2466"></a><!-- doxytag: member="PyPR2::removeUser" ref="ae96726d655a09a6fb636defd04bd2466" args="(user_name)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ae96726d655a09a6fb636defd04bd2466">removeUser</a> </td>
+          <td>(</td>
+          <td class="paramtype">user_name&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Remove an existing remote user from the system. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>user_name name. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ac3fce7965c35f1d20bdfdb544fa682f2"></a><!-- doxytag: member="PyPR2::saveConfiguration" ref="ac3fce7965c35f1d20bdfdb544fa682f2" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ac3fce7965c35f1d20bdfdb544fa682f2">saveConfiguration</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Save the current user access configuration. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="af1db0209c92b8989db2bcdc76cc04ef3"></a><!-- doxytag: member="PyPR2::say" ref="af1db0209c92b8989db2bcdc76cc04ef3" args="(text)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#af1db0209c92b8989db2bcdc76cc04ef3">say</a> </td>
+          <td>(</td>
+          <td class="paramtype">text&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Use Text-to-Speech system to say the input text. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>text. Text to be spoken by the robot. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae0c1b0f76c9dec4fc42d57e8f4f71125"></a><!-- doxytag: member="PyPR2::sendTeamMessage" ref="ae0c1b0f76c9dec4fc42d57e8f4f71125" args="(message)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ae0c1b0f76c9dec4fc42d57e8f4f71125">sendTeamMessage</a> </td>
+          <td>(</td>
+          <td class="paramtype">message&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Broadcast a message to other robots in the same team (colour). </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>message. A text based message. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>(legacy) This is based on the team colour assignment defined in pyrideconfig.xml </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a3ab919c6ddb22902a3227532703d4ef1"></a><!-- doxytag: member="PyPR2::setGripperPosition" ref="a3ab919c6ddb22902a3227532703d4ef1" args="(which_gripper, position)" -->
 <div class="memitem">
 <div class="memproto">
@@ -1975,6 +2472,45 @@ Public Member Functions</h2></td></tr>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">bool</td><td>to_set. True = set projector off; False = set projector on. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="afd5b4f1700e30f8a035109c584c6677a"></a><!-- doxytag: member="PyPR2::setTeamMemberID" ref="afd5b4f1700e30f8a035109c584c6677a" args="(member_id, team_id)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#afd5b4f1700e30f8a035109c584c6677a">setTeamMemberID</a> </td>
+          <td>(</td>
+          <td class="paramtype">member_id&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">team_id&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Sets the ID number of the robot. </p>
+<p>The robot can be assigned as a member of blue team (number 1) or pink team (number 2). This facilitates robot to robot communication. </p>
+<dl class="note"><dt><b>Note:</b></dt><dd>This function is inherited from robot soccer competition code for NAO. </dd></dl>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">int</td><td>member_id. Must be a non-negative integer. </td></tr>
+    <tr><td class="paramname">int</td><td>team_id. Must be either 1 (blue team) or 2 (pink team). </td></tr>
   </table>
   </dd>
 </dl>
@@ -2179,6 +2715,33 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 </div>
 </div>
+<a class="anchor" id="a7b9410c34ceb40818f13b52211b83275"></a><!-- doxytag: member="PyPR2::takeCameraSnapshot" ref="a7b9410c34ceb40818f13b52211b83275" args="(all_camera)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275">takeCameraSnapshot</a> </td>
+          <td>(</td>
+          <td class="paramtype">all_camera&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Take a snapshot for the robot camera(s) </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">bool</td><td>all_camera. Take a snapshot from all available cameras. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>Image(s) taken from the robot camera(s) will be saved in <b>/removeable/recordings/cameras</b> directory on the PR2. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a3d6b5c1a910106d69db26e91ed81312d"></a><!-- doxytag: member="PyPR2::tuckBothArms" ref="a3d6b5c1a910106d69db26e91ed81312d" args="()" -->
 <div class="memitem">
 <div class="memproto">
@@ -2195,6 +2758,44 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 <p>Tuck both PR2 arms to their safe positions. </p>
 <dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a875c4ebd24897d9e354d6ac09fa23e0c"></a><!-- doxytag: member="PyPR2::updateOperationalStatus" ref="a875c4ebd24897d9e354d6ac09fa23e0c" args="(op_state, op_text)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a875c4ebd24897d9e354d6ac09fa23e0c">updateOperationalStatus</a> </td>
+          <td>(</td>
+          <td class="paramtype">op_state&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">op_text&#160;</td>
+          <td class="paramname">&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Send robot operational status notification to all connected remote clients. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">int</td><td>op_state. Must be a positive integer representing the operational status. </td></tr>
+    <tr><td class="paramname">str</td><td>op_text. Optional text for the operational status. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+<dl class="note"><dt><b>Note:</b></dt><dd>For pre allocated operational status ID, check constants.py. </dd></dl>
 
 </div>
 </div>
@@ -2246,8 +2847,9 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/PyPR2Module.cpp</li>
-<li>src/PyModuleStub.cpp</li>
+<li>src/PyModulePyCommon.cpp</li>
 <li>src/PR2ProxyManager.cpp</li>
+<li>src/PyModuleStub.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- window showing the filter options -->
@@ -2267,7 +2869,7 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 15 2015 18:41:01 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 8 2015 13:03:21 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

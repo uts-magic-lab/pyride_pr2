@@ -82,21 +82,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="contents">
 This is the complete list of members for <a class="el" href="classPyPR2.html">PyPR2</a>, including all inherited members.<table>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a98f28470e4d404bec32cfca7a7c0034e">addSolidObject</a>(name, volume, position, orientation)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a46c5b5974d8939800c8db11eb7b04837">addTimer</a>(init_start, repeats, interval)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a1b1baea5a73ed05eeae181c528c2f63f">addUser</a>(user_name, user_password)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ab67a1649d2764d9a68209d4cf78ee2a3">blockRemoteExclusiveControl</a>(toblock)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a1fad2fa67905522e2b0919bfa8d5895f">cancelMoveArmAction</a>(is_left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4464fe442a99baab4e83121319a3b22d">cancelMoveBodyAction</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a42b4baae87e88a1278a95b65fe614c4b">changeUserPassword</a>(user_name, old_password, new_password)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#af93876b3c7cac1400ea9a94316e510f2">closeGripper</a>(which_gripper)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#adfa55d9d3fe95894914dc7bf8dd7223c">delSolidObject</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a59d000e6b2f5c2d43c22942656270407">disconnect</a>(username)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ad34ee9430b52db397f40faaeb1614c8a">getArmJointPositions</a>(left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a>(left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#acdfa8d305b9a6eb75886110fbe4140d1">getBatteryStatus</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a8044baa2fb267fc4daa797ab791c2b97">getJointPos</a>(joint_name)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a393e3fa09ed5b08ea95c614650135627">getLowPowerThreshold</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#afab550231c059fdc85cd68af7bcd074a">getMyIPAddress</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a8d53fc0a16c6e79531ae24816f8ff20b">getPositionForJoints</a>(joint_names)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a0e174ffcd38807593ef9e7ce4c6e9410">getRelativeTF</a>(reference_frame, frame)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4e319161c91dd7061a2b4b056979584a">getRobotPose</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a673f49c26eaeb4561fd00d995aa2d4ce">isSupportedTFFrame</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a2449f339acd1a7bb9ad9c2e5b82432b4">isTimerRunning</a>(timer_id)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ac6021a4cd791060aee26f8162a49b684">listAllUsers</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a26dffe7ef4c1e630adacc15b8db77706">listCurrentUsers</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a2e7b7b8417b4fe0472ab44a05d4313b6">listSolidObjects</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#af56a3c9c372350fde5b18960e6973000">listTFFrames</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#adf5074da7238403363b9c351a4b7ccb0">moveArmInTrajectory</a>(trajectory, period, left_arm, relative)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a12079d0eac454eeda76fdc62959d14e2">moveArmTo</a>(position, orientation, use_left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a2d8ecb78d985e019a87ee85ac1d8710b">moveArmWithJointPos</a>(joint_position, time_to_reach)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#add75b3895e90c446186a4744d624d950">moveArmWithJointTrajectory</a>(joint_trajectory)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
@@ -136,9 +146,16 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a>(detection_callback, tracking_callback)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a>(traj_data_callback)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a885819cd4436d03ad8990b982a6a8c6f">registerTiltScanCallback</a>(laser_data_callback, target_frame)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a>(timer_id)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ae96726d655a09a6fb636defd04bd2466">removeUser</a>(user_name)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ac3fce7965c35f1d20bdfdb544fa682f2">saveConfiguration</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#af1db0209c92b8989db2bcdc76cc04ef3">say</a>(text)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ae0c1b0f76c9dec4fc42d57e8f4f71125">sendTeamMessage</a>(message)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a3ab919c6ddb22902a3227532703d4ef1">setGripperPosition</a>(which_gripper, position)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4d23e7ab37261cddc6f8afdb620cc84e">setLowPowerThreshold</a>(battery_percentage)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4a815f7cad3ac5fc4a6b0d85f1be21c0">setProjectorOff</a>(to_set)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#afd5b4f1700e30f8a035109c584c6677a">setTeamMemberID</a>(member_id, team_id)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a09b718ee4517a7aa8000f2609d0c6641">setTiltLaserPeriodic</a>(amplitude, period)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4bc0439bc26448f423828123a0424f80">setTiltLaserTraj</a>(positions, durations)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a4aff0325b3e46f1708f734b4517898fc">setToMannequinMode</a>(to_set)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
@@ -146,7 +163,9 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a06c3a9f91c38cf43cbefae88b27917bc">startJoystickControl</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#aabc8468057e6ccc57ea728674af370d6">stopDataRecording</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a452d2116ceb4dd6361bf8e6a5b7ee15f">stopJoystickControl</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275">takeCameraSnapshot</a>(all_camera)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a3d6b5c1a910106d69db26e91ed81312d">tuckBothArms</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a875c4ebd24897d9e354d6ac09fa23e0c">updateOperationalStatus</a>(op_state, op_text)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#abf328f324a602d6b43a6018a503d7368">useJointVelocityControl</a>(enable)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ab06a2dce82b816b110884bd4dd88117a">useMoveIt</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
 </table></div><!-- contents -->
@@ -167,7 +186,7 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 15 2015 18:41:01 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 8 2015 13:03:21 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
