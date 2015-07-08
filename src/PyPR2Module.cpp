@@ -737,6 +737,17 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \return None.
  *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
  */
+/*! \fn moveArmInTrajectory( trajectory, period, left_arm, relative)
+ *  \memberof PyPR2
+ *  \brief Move a PR2 arm to a specified pose.
+ *  \param list trajectory. A list of way points which consists of arm pose dictionaries { 'position', 'orientation' }.
+ *  \param float period. The execution period for completing the trajectory.
+ *  \param bool left_arm. True to use the left arm; False to use the right arm (default False)
+ *  \param bool relative. True means the input trajectory is relative to the current arm pose;
+ *   False means the trajectory is with respect to the basefoot_print reference frame.
+ *  \return None.
+ *  \note This function is available only when S-PR2 is in use.
+ */
 /*! \fn getArmPose(left_arm)
  *  \memberof PyPR2
  *  \brief Get the current arm pose in task space with respect to base_foot_print TF frame.
