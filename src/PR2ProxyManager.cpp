@@ -2159,16 +2159,43 @@ void PR2ProxyManager::publishCommands()
     //this->getHeadPos( reqHeadYaw_, reqHeadPitch_ ); // get the latest data
 
     if (headYawRate_ > 0.0) {
-      headYawRate_ = (reqHeadYaw_ >= targetYaw_ ? 0.0 : headYawRate_);
+      if (reqHeadYaw_ >= targetYaw_) {
+        headYawRate_ = 0.0;
+      }
+      else if ((targetYaw_ - reqHeadYaw_) < headYawRate_) {
+        headYawRate_ = (targetYaw_ - reqHeadYaw_);
+      }
     }
     else if (headYawRate_ < 0.0) {
-      headYawRate_ = (reqHeadYaw_ <= targetYaw_ ? 0.0 : headYawRate_);
+      if (reqHeadYaw_ <= targetYaw_) {
+        headYawRate_ = 0.0;
+      }
+      else if ((targetYaw_ - reqHeadYaw_) > headYawRate_) {
+        headYawRate_ = (targetYaw_ - reqHeadYaw_);
+      }
     }
     if (headPitchRate_ > 0.0) {
-      headPitchRate_ = (reqHeadPitch_ >= targetPitch_ ? 0.0 : headPitchRate_);
+      if (reqHeadPitch_ >= targetPitch_) {
+        headPitchRate_ = 0.0;
+      }
+      else if ((targetPitch_ - reqHeadPitch_) < headPitchRate_) {
+        headPitchRate_ = (targetPitch_ - reqHeadPitch_);
+      }
     }
     else if (headPitchRate_ < 0.0) {
-      headPitchRate_ = (reqHeadPitch_ <= targetPitch_ ? 0.0 : headPitchRate_);
+      if (reqHeadPitch_ <= targetPitch_) {
+        headPitchRate_ = 0.0;
+      }
+      else if ((targetPitch_ - reqHeadPitch_) > headYawRate_) {
+        headPitchRate_ = (targetPitch_ - reqHeadPitch_);
+      }
+    }
+
+    if (fabs(headYawRate_) < kHeadPosTolerance) {
+      headYawRate_ = 0.0;
+    }
+    if (fabs(headPitchRate_) < kHeadPosTolerance) {
+      headPitchRate_ = 0.0;
     }
 
     //printf( "corrected head move rate %f,%f\n", headYawRate_, headPitchRate_);
