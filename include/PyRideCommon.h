@@ -87,6 +87,9 @@
     OutputDebugStringA( outputStr ); \
   }
 #else
+#define PYRIDE_NO_LOGGING \
+FILE * s_pyridelog = NULL;
+
 #define PYRIDE_LOGGING_DECLARE( LOGNAME ) \
 FILE * s_pyridelog = NULL; \
 const char * logFileName = LOGNAME
@@ -114,27 +117,37 @@ s_pyridelog = fopen( logFileName, "a" )
 #define DEBUG_MSG( MSG... )
 #else
 #define DEBUG_MSG( MSG... ) \
-fprintf( s_pyridelog, "DEBUG: " ); \
-fprintf( s_pyridelog, MSG ); \
-fflush( s_pyridelog )
+if (s_pyridelog) { \
+  fprintf( s_pyridelog, "DEBUG: " ); \
+  fprintf( s_pyridelog, MSG ); \
+  fflush( s_pyridelog ); \
+}
 #endif
 
 #define INFO_MSG( MSG... ) \
-fprintf( s_pyridelog, "INFO: " ); \
-fprintf( s_pyridelog, MSG ); \
-fflush( s_pyridelog )
+if (s_pyridelog) { \
+  fprintf( s_pyridelog, "INFO: " ); \
+  fprintf( s_pyridelog, MSG ); \
+  fflush( s_pyridelog ); \
+}
 
 #define WARNING_MSG( MSG... ) \
-fprintf( s_pyridelog, "WARNING: " ); \
-fprintf( s_pyridelog, MSG ); \
-fflush( s_pyridelog )
-
+if (s_pyridelog) { \
+  fprintf( s_pyridelog, "WARNING: " ); \
+  fprintf( s_pyridelog, MSG ); \
+  fflush( s_pyridelog ); \
+}
 #define ERROR_MSG( MSG... ) \
-fprintf( s_pyridelog, "ERROR: " ); \
-fprintf( s_pyridelog, MSG ); \
-fflush( s_pyridelog )
+if (s_pyridelog) { \
+  fprintf( s_pyridelog, "ERROR: " ); \
+  fprintf( s_pyridelog, MSG ); \
+  fflush( s_pyridelog ); \
+}
 
-#define PYRIDE_LOGGING_FINI fclose( s_pyridelog )
+#define PYRIDE_LOGGING_FINI \
+if (s_pyridelog) { \
+  fclose( s_pyridelog ); \
+}
 #endif // !WIN32
 #endif // IOS_BUILD
 
@@ -144,6 +157,11 @@ fflush( s_pyridelog )
 #else
 #define SOCKET_T  int
 #define INVALID_SOCKET -1
+#endif
+
+#ifndef DEFINED_ENCRYPTION_KEY
+#pragma message ( "Make sure you change the encryption key for PyRIDE client server communication. \
+To disable this warning, set DEFINED_ENCRYPTION_KEY macro to true." )
 #endif
 
 enum CommandStatus {
