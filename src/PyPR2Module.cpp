@@ -734,6 +734,7 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \param tuple position. Target position in (x,y,z) w.r.t to odometry_combined reference frame.
  *  \param tuple orientation. Orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True to move the left arm; False to use the right arm.
+ *  \param bool wait. True == method blocks; False == method return immediately. (Use this parameter only for S-PR2).
  *  \return None.
  *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
  */

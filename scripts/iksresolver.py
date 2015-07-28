@@ -97,16 +97,22 @@ class IKSResolver( object ):
 
     self.spr2_obj.arm_speed = 0.1
 
+    if kwargs.has_key( 'wait' ):
+      wait = kwargs['wait']
+    else:
+      wait = True
+
     if kwargs['use_left_arm']:
       self.spr2_obj.larm_reference = True
     else:
       self.spr2_obj.larm_reference = False
  
+    self.spr2_obj.sync_object()
     arm_orient = self.geometry.Orientation_3D( kwargs['orientation'], representation = 'quaternion' )
     self.spr2_obj.set_target( self.np.array(kwargs['position']), arm_orient.matrix() )
-    return self.spr2_obj.arm_target()
+    return self.spr2_obj.arm_target(wait = wait)
 
-  def dummyMoveArmTo( self, **kwargs ):
+  def dummyMoveArmTo( self, wait = True, **kwargs ):
     raise IKSError( 'NO IKS solver is available to PyRIDE' )
 
   def resolveIKS( self ):
