@@ -63,11 +63,11 @@ class IKSResolver( object ):
     if not isinstance( traj, list ) or len( traj ) == 0:
       raise IKSError( 'Input trajectory must be a non-empty list of pose (dictionary)' )
 
-    pos_traj = self.traj.Polynomial_Trajectory()
+    pos_traj = self.traj.Trajectory_Polynomial()
     orient_traj = self.traj.Orientation_Trajectory_Polynomial()
 
     for idx, pose in enumerate(traj):
-      if not isinstance( pose, dict ) or pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
+      if not isinstance( pose, dict ) or not pose.has_key( 'position' ) or not isinstance(pose['position'], tuple) or len(pose['position']) != 3:
         print 'invalid pose position at {0}'.format( idx )	
       else:
         pos_traj.add_point(phi = float(idx), pos = self.np.array(pose['position']))
@@ -97,16 +97,22 @@ class IKSResolver( object ):
 
     self.spr2_obj.arm_speed = 0.1
 
+    if kwargs.has_key( 'wait' ):
+      wait = kwargs['wait']
+    else:
+      wait = True
+
     if kwargs['use_left_arm']:
       self.spr2_obj.larm_reference = True
     else:
       self.spr2_obj.larm_reference = False
  
+    self.spr2_obj.sync_object()
     arm_orient = self.geometry.Orientation_3D( kwargs['orientation'], representation = 'quaternion' )
     self.spr2_obj.set_target( self.np.array(kwargs['position']), arm_orient.matrix() )
-    return self.spr2_obj.arm_target()
+    return self.spr2_obj.arm_target(wait = wait)
 
-  def dummyMoveArmTo( self, **kwargs ):
+  def dummyMoveArmTo( self, wait = True, **kwargs ):
     raise IKSError( 'NO IKS solver is available to PyRIDE' )
 
   def resolveIKS( self ):

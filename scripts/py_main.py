@@ -31,6 +31,9 @@ def nodeStatusUpdate( node_id, priority, text ):
   pass
 
 def timerLapsedActions( id ):
+  timermanager.onTimerLapsed( id )
+
+def timerActions( id ):
   global myMessenger, msgTryTimer
 
   if msgTryTimer == id and myMessenger.checkin():
@@ -38,9 +41,6 @@ def timerLapsedActions( id ):
     msgTryTimer = -1
   else:
     timermanager.onTimerCall( id )
-
-def timerActions( id ):
-  timermanager.onTimerCall( id )
 
 def powerPlugChangeActions( isplugged ):
   global myMessenger
