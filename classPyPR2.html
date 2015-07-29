@@ -106,6 +106,8 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the PR2 head to a specific yaw and pitch position.  <a href="#ad1224e1808e257f13bb53511b253c610"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a89c5dd1292b40dc1be46adfd9dfc849a">pointHeadTo</a> (reference_frame, x, y, z)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Point the PR2 head towards a specific coordinates in a reference frame.  <a href="#a89c5dd1292b40dc1be46adfd9dfc849a"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ade16ad31b8ab1e4c387a3f431530014c">getHeadPos</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current robot head yaw and pitch in radian.  <a href="#ade16ad31b8ab1e4c387a3f431530014c"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8044baa2fb267fc4daa797ab791c2b97">getJointPos</a> (joint_name)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current (angle) position of a joint.  <a href="#a8044baa2fb267fc4daa797ab791c2b97"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8d53fc0a16c6e79531ae24816f8ff20b">getPositionForJoints</a> (joint_names)</td></tr>
@@ -123,7 +125,7 @@ Public Member Functions</h2></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a12079d0eac454eeda76fdc62959d14e2">moveArmTo</a> (position, orientation, use_left_arm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose.  <a href="#a12079d0eac454eeda76fdc62959d14e2"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adf5074da7238403363b9c351a4b7ccb0">moveArmInTrajectory</a> (trajectory, period, left_arm, relative)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified pose.  <a href="#adf5074da7238403363b9c351a4b7ccb0"></a><br/></td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Move a PR2 arm to a specified trajectory.  <a href="#adf5074da7238403363b9c351a4b7ccb0"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a> (left_arm)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current arm pose in task space with respect to base_foot_print TF frame.  <a href="#a0e091e88e66473f4ded76513cdb8d2d7"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2d8ecb78d985e019a87ee85ac1d8710b">moveArmWithJointPos</a> (joint_position, time_to_reach)</td></tr>
@@ -164,19 +166,41 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Pickup a solid object from a location (another solid object) use a specific grasp pose and approaching distance.  <a href="#ae2f278f3d26f1ee7a6198f194db70b8d"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#aa397952d31930fb14c90fba52ada094b">placeObject</a> (name, place, place_position, place_orientation, use_left_arm, distance_from)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Place a solid object to a location (another solid object) use a specific place pose and retreating distance.  <a href="#aa397952d31930fb14c90fba52ada094b"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> (detection_callback, tracking_callback)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications.  <a href="#a3f510a5817e084f3d66320b5c1e37a65"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a23a621f40e9ca7c82d4e04f20befd1ee">recallRhythDMPTrajectory</a> (trajectory_list, use_left_arm)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Request RhythDMP to publish a list of trajectories.  <a href="#a23a621f40e9ca7c82d4e04f20befd1ee"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> (traj_data_callback)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame).  <a href="#ada2ccc68982ac78c5f36dfc9662767fc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#afd5b4f1700e30f8a035109c584c6677a">setTeamMemberID</a> (member_id, team_id)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the ID number of the robot.  <a href="#afd5b4f1700e30f8a035109c584c6677a"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af1db0209c92b8989db2bcdc76cc04ef3">say</a> (text)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Use Text-to-Speech system to say the input text.  <a href="#af1db0209c92b8989db2bcdc76cc04ef3"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ae0c1b0f76c9dec4fc42d57e8f4f71125">sendTeamMessage</a> (message)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Broadcast a message to other robots in the same team (colour).  <a href="#ae0c1b0f76c9dec4fc42d57e8f4f71125"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a> (cmd_id, cmd_text)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a custom command is received from a remote client.  <a href="#ab066ed63929d4f1e7793724fd5401563"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adba214e24866376f3fe3a18bcdfd994e">onUserLogOn</a> (user_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a user logs in through a remote client.  <a href="#adba214e24866376f3fe3a18bcdfd994e"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab7f2071168f860fce1c1337d020dc97d">onUserLogOff</a> (user_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a remote user logs off.  <a href="#ab7f2071168f860fce1c1337d020dc97d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a59d000e6b2f5c2d43c22942656270407">disconnect</a> (username)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnect all remote clients.  <a href="#a59d000e6b2f5c2d43c22942656270407"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab67a1649d2764d9a68209d4cf78ee2a3">blockRemoteExclusiveControl</a> (toblock)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Block or unblock exclusive control of connected remote clients.  <a href="#ab67a1649d2764d9a68209d4cf78ee2a3"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a875c4ebd24897d9e354d6ac09fa23e0c">updateOperationalStatus</a> (op_state, op_text)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Send robot operational status notification to all connected remote clients.  <a href="#a875c4ebd24897d9e354d6ac09fa23e0c"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Timer Management Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8fa658106e30657bb6523ba56c7b4a6d">onTimer</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired.  <a href="#a8fa658106e30657bb6523ba56c7b4a6d"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a140ec5e71ba22485085245ed2bd4e1a8">onTimerLapsed</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired for the last time.  <a href="#a140ec5e71ba22485085245ed2bd4e1a8"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a46c5b5974d8939800c8db11eb7b04837">addTimer</a> (init_start, repeats, interval)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a timer object.  <a href="#a46c5b5974d8939800c8db11eb7b04837"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a timer object.  <a href="#a55104db9aa8af00e96d6d65e00e937d4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2449f339acd1a7bb9ad9c2e5b82432b4">isTimerRunning</a> (timer_id)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether a timer object is still alive.  <a href="#a2449f339acd1a7bb9ad9c2e5b82432b4"></a><br/></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a> ()</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all timer objects in the system.  <a href="#af9bcb81751a454ae9e2e289ffc650490"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Miscellaneous Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5">onSnapshotImage</a> (image_name)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275" title="Take a snapshot for the robot camera(s)">PyPR2.takeCameraSnapshot</a> is called.  <a href="#af8bc1cd49c8ec2faea99608dca5a30e5"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a4aff0325b3e46f1708f734b4517898fc">setToMannequinMode</a> (to_set)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Set PR2 to the mannequin mode.  <a href="#a4aff0325b3e46f1708f734b4517898fc"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab936f344fa76977901ac56a73891e78b">startDataRecording</a> (data_type, output_file)</td></tr>
@@ -199,21 +223,6 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Take a snapshot for the robot camera(s)  <a href="#a7b9410c34ceb40818f13b52211b83275"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#afab550231c059fdc85cd68af7bcd074a">getMyIPAddress</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the IP address of the robot.  <a href="#afab550231c059fdc85cd68af7bcd074a"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5">onSnapshotImage</a> (image_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#a7b9410c34ceb40818f13b52211b83275" title="Take a snapshot for the robot camera(s)">PyPR2.takeCameraSnapshot</a> is called.  <a href="#af8bc1cd49c8ec2faea99608dca5a30e5"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader">Remote Client Access Functions</div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a59d000e6b2f5c2d43c22942656270407">disconnect</a> (username)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Disconnect all remote clients.  <a href="#a59d000e6b2f5c2d43c22942656270407"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab67a1649d2764d9a68209d4cf78ee2a3">blockRemoteExclusiveControl</a> (toblock)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Block or unblock exclusive control of connected remote clients.  <a href="#ab67a1649d2764d9a68209d4cf78ee2a3"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a875c4ebd24897d9e354d6ac09fa23e0c">updateOperationalStatus</a> (op_state, op_text)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Send robot operational status notification to all connected remote clients.  <a href="#a875c4ebd24897d9e354d6ac09fa23e0c"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a> (cmd_id, cmd_text)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a custom command is received from a remote client.  <a href="#ab066ed63929d4f1e7793724fd5401563"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#adba214e24866376f3fe3a18bcdfd994e">onUserLogOn</a> (user_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a user logs in through a remote client.  <a href="#adba214e24866376f3fe3a18bcdfd994e"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#ab7f2071168f860fce1c1337d020dc97d">onUserLogOff</a> (user_name)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a remote user logs off.  <a href="#ab7f2071168f860fce1c1337d020dc97d"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Remote Client User Management Functions</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a26dffe7ef4c1e630adacc15b8db77706">listCurrentUsers</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of users who are currently logged in through remote clients.  <a href="#a26dffe7ef4c1e630adacc15b8db77706"></a><br/></td></tr>
@@ -227,19 +236,6 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove an existing remote user from the system.  <a href="#ae96726d655a09a6fb636defd04bd2466"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a42b4baae87e88a1278a95b65fe614c4b">changeUserPassword</a> (user_name, old_password, new_password)</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Change an existing remote user's password.  <a href="#a42b4baae87e88a1278a95b65fe614c4b"></a><br/></td></tr>
-<tr><td colspan="2"><div class="groupHeader">Timer Management Functions</div></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a46c5b5974d8939800c8db11eb7b04837">addTimer</a> (init_start, repeats, interval)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a timer object.  <a href="#a46c5b5974d8939800c8db11eb7b04837"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove a timer object.  <a href="#a55104db9aa8af00e96d6d65e00e937d4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a2449f339acd1a7bb9ad9c2e5b82432b4">isTimerRunning</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Check whether a timer object is still alive.  <a href="#a2449f339acd1a7bb9ad9c2e5b82432b4"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a> ()</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all timer objects in the system.  <a href="#af9bcb81751a454ae9e2e289ffc650490"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a8fa658106e30657bb6523ba56c7b4a6d">onTimer</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired.  <a href="#a8fa658106e30657bb6523ba56c7b4a6d"></a><br/></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a140ec5e71ba22485085245ed2bd4e1a8">onTimerLapsed</a> (timer_id)</td></tr>
-<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when a timer object is fired for the last time.  <a href="#a140ec5e71ba22485085245ed2bd4e1a8"></a><br/></td></tr>
 <tr><td colspan="2"><div class="groupHeader">Action Callback Functions</div></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#addfbe834b418869407f44a7ff36e6a9f">onHeadActionSuccess</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#a89c5dd1292b40dc1be46adfd9dfc849a" title="Point the PR2 head towards a specific coordinates in a reference frame.">PyPR2.pointHeadTo</a> method call is successful.  <a href="#addfbe834b418869407f44a7ff36e6a9f"></a><br/></td></tr>
@@ -269,6 +265,9 @@ Public Member Functions</h2></td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#ac6d983eb5ce4481444832b4fc411de71" title="Move the PR2 body to a pose at (x,y,theta).">PyPR2.moveBodyTo</a> method call is successful.  <a href="#a55b1d5e512841a5b44bbf1820eb0b629"></a><br/></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a000b6c2f7c892f7a8b2cd2328c787798">onMoveBodyFailed</a> ()</td></tr>
 <tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function when <a class="el" href="classPyPR2.html#ac6d983eb5ce4481444832b4fc411de71" title="Move the PR2 body to a pose at (x,y,theta).">PyPR2.moveBodyTo</a> method call is failed.  <a href="#a000b6c2f7c892f7a8b2cd2328c787798"></a><br/></td></tr>
+<tr><td colspan="2"><div class="groupHeader">Miscellaneous Callback Functions</div></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classPyPR2.html#a55382b7352e5d3710778521bb2523f9d">onNodeStatusUpdate</a> (data)</td></tr>
+<tr><td class="mdescLeft">&#160;</td><td class="mdescRight">Callback function invoked when an external ROS node dispatch status update message to PyRIDE on pyride_pr2/node_status topic.  <a href="#a55382b7352e5d3710778521bb2523f9d"></a><br/></td></tr>
 </table>
 <hr/><a name="details" id="details"></a><h2>Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classPyPR2.html" title="PyPR2 is the main Python extension module of PyRIDE on PR2/ROS system.">PyPR2</a> is the main Python extension module of PyRIDE on PR2/ROS system. </p>
@@ -676,6 +675,25 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ade16ad31b8ab1e4c387a3f431530014c"></a><!-- doxytag: member="PyPR2::getHeadPos" ref="ade16ad31b8ab1e4c387a3f431530014c" args="()" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#ade16ad31b8ab1e4c387a3f431530014c">getHeadPos</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Get the current robot head yaw and pitch in radian. </p>
+<dl class="return"><dt><b>Returns:</b></dt><dd>tuple(head_yaw, head_pitch) </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a8044baa2fb267fc4daa797ab791c2b97"></a><!-- doxytag: member="PyPR2::getJointPos" ref="a8044baa2fb267fc4daa797ab791c2b97" args="(joint_name)" -->
 <div class="memitem">
 <div class="memproto">
@@ -989,7 +1007,7 @@ Public Member Functions</h2></td></tr>
 </div>
 <div class="memdoc">
 
-<p>Move a PR2 arm to a specified pose. </p>
+<p>Move a PR2 arm to a specified trajectory. </p>
 <dl class="params"><dt><b>Parameters:</b></dt><dd>
   <table class="params">
     <tr><td class="paramname">list</td><td>trajectory. A list of way points which consists of arm pose dictionaries { 'position', 'orientation' }. </td></tr>
@@ -1041,6 +1059,7 @@ Public Member Functions</h2></td></tr>
     <tr><td class="paramname">tuple</td><td>position. Target position in (x,y,z) w.r.t to odometry_combined reference frame. </td></tr>
     <tr><td class="paramname">tuple</td><td>orientation. Orientation in quaternion form (w,x,y,z). </td></tr>
     <tr><td class="paramname">bool</td><td>use_left_arm. True to move the left arm; False to use the right arm. </td></tr>
+    <tr><td class="paramname">bool</td><td>wait. True == method blocks; False == method return immediately. (Use this parameter only for S-PR2). </td></tr>
   </table>
   </dd>
 </dl>
@@ -1660,6 +1679,32 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a55382b7352e5d3710778521bb2523f9d"></a><!-- doxytag: member="PyPR2::onNodeStatusUpdate" ref="a55382b7352e5d3710778521bb2523f9d" args="(data)" -->
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classPyPR2.html#a55382b7352e5d3710778521bb2523f9d">onNodeStatusUpdate</a> </td>
+          <td>(</td>
+          <td class="paramtype">data&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div>
+<div class="memdoc">
+
+<p>Callback function invoked when an external ROS node dispatch status update message to PyRIDE on pyride_pr2/node_status topic. </p>
+<dl class="params"><dt><b>Parameters:</b></dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dictionary</td><td>data. node status message in the format of {'node', 'timestamp', 'priority', 'message' }. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="return"><dt><b>Returns:</b></dt><dd>None. </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a34e4ae71b09e6debbdc98c6e89325e69"></a><!-- doxytag: member="PyPR2::onPowerPluggedChange" ref="a34e4ae71b09e6debbdc98c6e89325e69" args="(is_plugged_in)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2067,46 +2112,6 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a23a621f40e9ca7c82d4e04f20befd1ee"></a><!-- doxytag: member="PyPR2::recallRhythDMPTrajectory" ref="a23a621f40e9ca7c82d4e04f20befd1ee" args="(trajectory_list, use_left_arm)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#a23a621f40e9ca7c82d4e04f20befd1ee">recallRhythDMPTrajectory</a> </td>
-          <td>(</td>
-          <td class="paramtype">trajectory_list&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">use_left_arm&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Request RhythDMP to publish a list of trajectories. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">list</td><td>trajectory_list. A list of trajectory dictionaries. Each trajectory dictionary contains {'name', 'amplitude', 'system_freq', 'sample_freq', 'cycle', 'position', 'orientation'} where name is the name of the known DMP trajectory, amplitude is the amplitude ratio of the trajectory (default 1.0), system_freq is the system frequency of (rhythmic) trajectory (default 1.0), and cycles is the number of cycles of (rhythmic) trajectory (default 1). </td></tr>
-    <tr><td class="paramname">bool</td><td>use_left_arm. True == use left arm to perform the trajectory execution, False == use right arm. </td></tr>
-    <tr><td class="paramname">int</td><td>sample_freq. The trajectory sampling frequency (default 20). </td></tr>
-    <tr><td class="paramname">float</td><td>transport_speed. The speed for transportation between trajectories (default 0.1). </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>True == success, False == failure. </dd></dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>uts-specfic. Require RhythDMP module. </dd></dl>
-
-</div>
-</div>
 <a class="anchor" id="a73c49857323bd14f75c3301eca159b6e"></a><!-- doxytag: member="PyPR2::registerBaseScanCallback" ref="a73c49857323bd14f75c3301eca159b6e" args="(laser_data_callback, target_frame)" -->
 <div class="memitem">
 <div class="memproto">
@@ -2141,71 +2146,6 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="a3f510a5817e084f3d66320b5c1e37a65"></a><!-- doxytag: member="PyPR2::registerHumanDetectTracking" ref="a3f510a5817e084f3d66320b5c1e37a65" args="(detection_callback, tracking_callback)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a> </td>
-          <td>(</td>
-          <td class="paramtype">detection_callback&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">tracking_callback&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Register callback functions to receive human detection and tracking information. Currently support only detection and tracking human (object). None object can be used to stop receiving human detection and tracking notifications. </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">callback</td><td>detection_callback. Function that takes inputs of (object_type, detection_id, identification_number, status) </td></tr>
-    <tr><td class="paramname">callback</td><td>tracking_callback (optional). Function that takes a list of dictionaries of { 'object_type', 'track_id', 'bound' (in topleft x, y, width, height), 'est_pos' (in x, y z)}. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>uts-specific. Require pr2ht module. </dd></dl>
-
-</div>
-</div>
-<a class="anchor" id="ada2ccc68982ac78c5f36dfc9662767fc"></a><!-- doxytag: member="PyPR2::registerRawTrajectoryInput" ref="ada2ccc68982ac78c5f36dfc9662767fc" args="(traj_data_callback)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a> </td>
-          <td>(</td>
-          <td class="paramtype">traj_data_callback&#160;</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>Register callback function to receive raw trajectory input with respect to an end effector (and its reference frame). </p>
-<dl class="params"><dt><b>Parameters:</b></dt><dd>
-  <table class="params">
-    <tr><td class="paramname">callback</td><td>traj_data_callback. Function that takes a dictionaries of { 'traj_id', 'step', 'position', 'velocity', 'acceleration' (all in tuples of x,y,z) }. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="return"><dt><b>Returns:</b></dt><dd>None </dd></dl>
-<dl class="note"><dt><b>Note:</b></dt><dd>uts-specific. Require RhythDMP module. </dd></dl>
 
 </div>
 </div>
@@ -2847,9 +2787,10 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 </div>
 <hr/>The documentation for this class was generated from the following files:<ul>
 <li>src/PyPR2Module.cpp</li>
+<li>src/PyModuleStub.cpp</li>
 <li>src/PyModulePyCommon.cpp</li>
 <li>src/PR2ProxyManager.cpp</li>
-<li>src/PyModuleStub.cpp</li>
+<li>src/PyPR2Server.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- window showing the filter options -->
@@ -2869,7 +2810,7 @@ Default output file name path is in the format of /removable/recordings/Ymd_HM_s
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 8 2015 13:03:21 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 29 2015 22:33:30 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>

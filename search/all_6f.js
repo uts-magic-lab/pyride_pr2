@@ -13,6 +13,7 @@ var searchData=
   ['onmovetorsosuccess',['onMoveTorsoSuccess',['../classPyPR2.html#ad1a553ecefd165fa8e2bbba44d3ae602',1,'PyPR2']]],
   ['onnavigatebodyfailed',['onNavigateBodyFailed',['../classPyPR2.html#a795e333656f4b21ead13b10a655ee150',1,'PyPR2']]],
   ['onnavigatebodysuccess',['onNavigateBodySuccess',['../classPyPR2.html#a43f54d79297b621086fb27edbbd61301',1,'PyPR2']]],
+  ['onnodestatusupdate',['onNodeStatusUpdate',['../classPyPR2.html#a55382b7352e5d3710778521bb2523f9d',1,'PyPR2']]],
   ['onpowerpluggedchange',['onPowerPluggedChange',['../classPyPR2.html#a34e4ae71b09e6debbdc98c6e89325e69',1,'PyPR2']]],
   ['onremotecommand',['onRemoteCommand',['../classPyPR2.html#ab066ed63929d4f1e7793724fd5401563',1,'PyPR2']]],
   ['onsnapshotimage',['onSnapshotImage',['../classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5',1,'PyPR2']]],

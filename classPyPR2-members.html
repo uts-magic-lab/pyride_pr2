@@ -94,6 +94,7 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ad34ee9430b52db397f40faaeb1614c8a">getArmJointPositions</a>(left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a0e091e88e66473f4ded76513cdb8d2d7">getArmPose</a>(left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#acdfa8d305b9a6eb75886110fbe4140d1">getBatteryStatus</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ade16ad31b8ab1e4c387a3f431530014c">getHeadPos</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a8044baa2fb267fc4daa797ab791c2b97">getJointPos</a>(joint_name)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a393e3fa09ed5b08ea95c614650135627">getLowPowerThreshold</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#afab550231c059fdc85cd68af7bcd074a">getMyIPAddress</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
@@ -130,6 +131,7 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ad1a553ecefd165fa8e2bbba44d3ae602">onMoveTorsoSuccess</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a795e333656f4b21ead13b10a655ee150">onNavigateBodyFailed</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a43f54d79297b621086fb27edbbd61301">onNavigateBodySuccess</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
+  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a55382b7352e5d3710778521bb2523f9d">onNodeStatusUpdate</a>(data)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a34e4ae71b09e6debbdc98c6e89325e69">onPowerPluggedChange</a>(is_plugged_in)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ab066ed63929d4f1e7793724fd5401563">onRemoteCommand</a>(cmd_id, cmd_text)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#af8bc1cd49c8ec2faea99608dca5a30e5">onSnapshotImage</a>(image_name)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
@@ -141,10 +143,7 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#ae2f278f3d26f1ee7a6198f194db70b8d">pickUpObject</a>(name, place, grasp_position, grasp_orientation, use_left_arm, distance_from)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#aa397952d31930fb14c90fba52ada094b">placeObject</a>(name, place, place_position, place_orientation, use_left_arm, distance_from)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a89c5dd1292b40dc1be46adfd9dfc849a">pointHeadTo</a>(reference_frame, x, y, z)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a23a621f40e9ca7c82d4e04f20befd1ee">recallRhythDMPTrajectory</a>(trajectory_list, use_left_arm)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a73c49857323bd14f75c3301eca159b6e">registerBaseScanCallback</a>(laser_data_callback, target_frame)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classPyPR2.html#a3f510a5817e084f3d66320b5c1e37a65">registerHumanDetectTracking</a>(detection_callback, tracking_callback)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
-  <tr class="memlist"><td><a class="el" href="classPyPR2.html#ada2ccc68982ac78c5f36dfc9662767fc">registerRawTrajectoryInput</a>(traj_data_callback)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a885819cd4436d03ad8990b982a6a8c6f">registerTiltScanCallback</a>(laser_data_callback, target_frame)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#af9bcb81751a454ae9e2e289ffc650490">removeAllTimers</a>()</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
   <tr class="memlist"><td><a class="el" href="classPyPR2.html#a55104db9aa8af00e96d6d65e00e937d4">removeTimer</a>(timer_id)</td><td><a class="el" href="classPyPR2.html">PyPR2</a></td><td></td></tr>
@@ -186,7 +185,7 @@ This is the complete list of members for <a class="el" href="classPyPR2.html">Py
 
 
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Jul 8 2015 13:03:21 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jul 29 2015 22:33:30 for PyRIDE by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.7.6.1
 </small></address>
