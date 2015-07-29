@@ -739,7 +739,7 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  */
 /*! \fn moveArmInTrajectory( trajectory, period, left_arm, relative)
  *  \memberof PyPR2
- *  \brief Move a PR2 arm to a specified pose.
+ *  \brief Move a PR2 arm to a specified trajectory.
  *  \param list trajectory. A list of way points which consists of arm pose dictionaries { 'position', 'orientation' }.
  *  \param float period. The execution period for completing the trajectory.
  *  \param bool left_arm. True to use the left arm; False to use the right arm (default False)
