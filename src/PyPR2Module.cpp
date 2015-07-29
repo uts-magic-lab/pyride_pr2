@@ -421,7 +421,6 @@ static PyObject * PyModule_PR2PointHeadTo( PyObject * self, PyObject * args )
 
 /*! \fn getHeadPos()
  *  \memberof PyPR2
- *  \memberof PyNAO
  *  \brief Get the current robot head yaw and pitch in radian.
  *  \return tuple(head_yaw, head_pitch)
  */

@@ -212,6 +212,9 @@ void PyPR2Server::notifySystemShutdown()
   PyGILState_Release( gstate );
 }
 
+/** @name Miscellaneous Callback Functions
+ *
+ */
 /*! \typedef onNodeStatusUpdate( data )
  *  \memberof PyPR2.
  *  \brief Callback function invoked when an external ROS node dispatch status update message
@@ -219,6 +222,8 @@ void PyPR2Server::notifySystemShutdown()
  *  \param dictionary data. node status message in the format of {'node', 'timestamp', 'priority', 'message' }.
  *  \return None.
  */
+/**@}*/
+
 void PyPR2Server::nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg )
 {
   if (msg->for_console) { // reformat the string using colon separated format and pass directly to console
