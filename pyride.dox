@@ -651,6 +651,7 @@ WARN_LOGFILE           =
 INPUT                  = mainpage.dox \
                          src/PyModulePyCommon.cpp src/PyModuleStub.cpp \
                          src/PyPR2Module.cpp src/PR2ProxyManager.cpp \
+                         src/PyPR2Server.cpp \
                          scripts/embedded_scripts/pr2actions.py
 
 # This tag can be used to specify the character encoding of the source files

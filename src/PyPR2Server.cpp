@@ -212,6 +212,13 @@ void PyPR2Server::notifySystemShutdown()
   PyGILState_Release( gstate );
 }
 
+/*! \typedef onNodeStatusUpdate( data )
+ *  \memberof PyPR2.
+ *  \brief Callback function invoked when an external ROS node dispatch status update message
+ *   to PyRIDE on pyride_pr2/node_status topic.
+ *  \param dictionary data. node status message in the format of {'node', 'timestamp', 'priority', 'message' }.
+ *  \return None.
+ */
 void PyPR2Server::nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg )
 {
   if (msg->for_console) { // reformat the string using colon separated format and pass directly to console
@@ -228,10 +235,31 @@ void PyPR2Server::nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg )
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
-  arg = Py_BuildValue( "(sis)", msg->node_id.c_str(), msg->priority, msg->status_text.c_str() );
+  PyObject * retObj = PyDict_New();
+
+  PyObject * elemObj = PyString_FromString( msg->node_id.c_str() );
+  PyDict_SetItemString( retObj, "node", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyFloat_FromDouble( (double)msg->header.stamp.sec + (double)msg->header.stamp.nsec / 1E9 );
+  PyDict_SetItemString( retObj, "timestamp", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyInt_FromLong( msg->priority );
+  PyDict_SetItemString( retObj, "priority", elemObj );
+  Py_DECREF( elemObj );
+
+  elemObj = PyString_FromString( msg->status_text.c_str() );
+  PyDict_SetItemString( retObj, "message", elemObj );
+  Py_DECREF( elemObj );
+
+  arg = Py_BuildValue( "(O)", retObj );
 
   PyPR2Module::instance()->invokeCallback( "onNodeStatusUpdate", arg );
   
+  Py_DECREF( retObj );
+  Py_DECREF( arg );
+
   PyGILState_Release( gstate );    
 }
 
