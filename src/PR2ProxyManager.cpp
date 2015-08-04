@@ -29,7 +29,7 @@ static const float kTorsoMoveRate = 0.05; // 5cm/s
 static const float kHeadYawRate = 1.0;
 static const float kHeadPitchRate = 1.0;
 static const float kHeadPosTolerance = 0.002; // ~0.1 degree
-static const long   kMotionCommandGapTolerance = 2 * 1000000 / kMotionCommandFreq; // 0.4 sec
+static const float kMotionCommandGapTolerance = 2.0 / (float)kMotionCommandFreq; // 0.4 sec
 static const double kDT = 1.0/double( kPublishFreq );
 static const double kHorizon = 5.0 * kDT;
 static const double kMaxHeadTilt = 1.4;
@@ -2119,10 +2119,10 @@ void PR2ProxyManager::publishCommands()
   else if (mCmd_.linear.x || mCmd_.linear.y || mCmd_.angular.z) {
     // check if we have recent command update from the client
     // if not, assume the worse and do not publish cached commmand
-    if ((ros::Time::now() - cmdTimeStamp_) < ros::Duration( kMotionCommandGapTolerance * 1E6 )) {
+    if ((ros::Time::now() - cmdTimeStamp_).toSec() < kMotionCommandGapTolerance ) {
       mPub_.publish( mCmd_ );
     }
-    else {
+    else { // reduce speed when we are not receiving motion data within time limit.
       bool fire = false;
       if (fabs(mCmd_.linear.x) > 0.05) {
         mCmd_.linear.x *= 0.5;
@@ -2147,6 +2147,9 @@ void PR2ProxyManager::publishCommands()
       }
       if (fire) {
         mPub_.publish( mCmd_ );
+      }
+      else {
+        mCmd_.linear.x = mCmd_.linear.y = mCmd_.angular.z = 0.0;
       }
     }
   }
@@ -2247,7 +2250,7 @@ void PR2ProxyManager::publishCommands()
     }
   }
   else if (headYawRate_ != 0.0 || headPitchRate_ != 0.0) {
-    if ((ros::Time::now() - cmdTimeStamp_) < ros::Duration( kMotionCommandGapTolerance * 1E6 )) {
+    if ((ros::Time::now() - cmdTimeStamp_).toSec() < kMotionCommandGapTolerance) {
       trajectory_msgs::JointTrajectory traj;
       traj.header.stamp = ros::Time::now() + ros::Duration(0.01);
       traj.joint_names.push_back( "head_pan_joint" );
