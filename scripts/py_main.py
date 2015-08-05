@@ -26,8 +26,9 @@ def userLogoff( name ):
 def remoteCommandActions( cmd, arg ):
   pass
 
-def nodeStatusUpdate( node_id, priority, text ):
+def nodeStatusUpdate( data ):
   #process messages from external ROS nodes here.
+  #data['node'] data['priority'] data['message'] data['timestamp']
   pass
 
 def timerLapsedActions( id ):
@@ -90,14 +91,6 @@ def main():
   PyPR2.onPowerPluggedChange = powerPlugChangeActions
   PyPR2.onBatteryChargeChange = batteryChargeChangeActions
   PyPR2.onNodeStatusUpdate = nodeStatusUpdate
-  
-  PyPR2.setProjectorOff = extProcCall.setProjectorOff
-  PyPR2.setToMannequinMode = extProcCall.setToMannequinMode
-  PyPR2.startDataRecording = extProcCall.startDataRecording
-  PyPR2.stopDataRecording = extProcCall.stopDataRecording
-  PyPR2.startJoystickControl = extProcCall.startJoystickControl
-  PyPR2.stopJoystickControl = extProcCall.stopJoystickControl
-  PyPR2.turnOnBaseScanIntensity = extProcCall.setBaseScanIntensityOn
    
   myMessenger = messenger.Messenger()
   if not myMessenger.checkin():

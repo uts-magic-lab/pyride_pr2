@@ -22,6 +22,7 @@ class ProcConduit:
         os.chown( RECORDED_DATA_DIR, -1, 100 )
       except:
         print 'Unable to create data recording directory', RECORDED_DATA_DIR
+    self.setCallbacks()
 
   def spawnProc( self, cmd ):
     # The os.setsid() is passed in the argument preexec_fn so
@@ -131,6 +132,15 @@ class ProcConduit:
       self.killProc( self.joyControl )
       self.joyControl = None
       PyPR2.say( "Stopped joystick control." )
+
+  def setCallbacks( self ):
+    PyPR2.setProjectorOff = self.setProjectorOff
+    PyPR2.setToMannequinMode = self.setToMannequinMode
+    PyPR2.startDataRecording = self.startDataRecording
+    PyPR2.stopDataRecording = self.stopDataRecording
+    PyPR2.startJoystickControl = self.startJoystickControl
+    PyPR2.stopJoystickControl = self.stopJoystickControl
+    PyPR2.turnOnBaseScanIntensity = self.setBaseScanIntensityOn
     
   def fini( self ):
     self.stopJoystickControl()
