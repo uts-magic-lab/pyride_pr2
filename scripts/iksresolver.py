@@ -31,6 +31,7 @@ class IKSResolver( object ):
     self.spr2_obj = None
     self.iks_in_use = 0
     self.np = None
+    self.pint = None
     self.geometry = None
     self.resolveIKS()
     self.useSPR2()
@@ -115,6 +116,10 @@ class IKSResolver( object ):
   def dummyMoveArmTo( self, wait = True, **kwargs ):
     raise IKSError( 'NO IKS solver is available to PyRIDE' )
 
+  def resetMotionCallbacks( self ):
+    if self.iks_in_use == 2:
+      self.pint.set_callback_functions()
+
   def resolveIKS( self ):
     PyPR2.moveArmTo = self.dummyMoveArmTo
     PyPR2.getArmPose = self.getArmPose
@@ -133,6 +138,7 @@ class IKSResolver( object ):
         from math_tools.geometry import trajectory as traj
 
         self.np = np
+        self.pint = pys.pint
         self.geometry = geometry
         self.spr2_obj = pys.PyRide_PR2()
         self.traj = traj
