@@ -5,24 +5,6 @@ import PyPR2
 
 MagiksPR2Path = 'Magiks/magiks/projects/s_pr2'
 
-#convenient function to set orientation
-def quat_mult( q1, q2 ):
-  w1, x1, y1, z1 = q1
-  w2, x2, y2, z2 = q2
-  w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
-  x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
-  y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
-  z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
-  return w, x, y, z
-
-def set_orient( rot_x, rot_y, rot_z ):
-  quat_x = (math.cos(math.radians(rot_x)/2.0), math.sin(math.radians(rot_x)/2.0), 0.0, 0.0)
-  quat_y = (math.cos(math.radians(rot_y)/2.0), 0.0, math.sin(math.radians(rot_y)/2.0), 0.0)
-  quat_z = (math.cos(math.radians(rot_z)/2.0), 0.0, 0.0, math.sin(math.radians(rot_z)/2.0))
-  
-  multp1 = quat_mult(quat_x, quat_y)
-  return quat_mult(multp1, quat_z)
-
 class IKSError( Exception ):
   pass
 
