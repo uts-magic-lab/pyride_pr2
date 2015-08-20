@@ -20,6 +20,7 @@ class IKSResolver( object ):
 
   def getArmPose( self, left_arm ):
     if self.iks_in_use == 2:
+      self.spr2_obj.sync_object()
       pos = None
       orient = None
       if left_arm:
