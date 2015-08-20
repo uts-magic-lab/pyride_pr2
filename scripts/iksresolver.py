@@ -5,24 +5,6 @@ import PyPR2
 
 MagiksPR2Path = 'Magiks/magiks/projects/s_pr2'
 
-#convenient function to set orientation
-def quat_mult( q1, q2 ):
-  w1, x1, y1, z1 = q1
-  w2, x2, y2, z2 = q2
-  w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
-  x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
-  y = w1 * y2 + y1 * w2 + z1 * x2 - x1 * z2
-  z = w1 * z2 + z1 * w2 + x1 * y2 - y1 * x2
-  return w, x, y, z
-
-def set_orient( rot_x, rot_y, rot_z ):
-  quat_x = (math.cos(math.radians(rot_x)/2.0), math.sin(math.radians(rot_x)/2.0), 0.0, 0.0)
-  quat_y = (math.cos(math.radians(rot_y)/2.0), 0.0, math.sin(math.radians(rot_y)/2.0), 0.0)
-  quat_z = (math.cos(math.radians(rot_z)/2.0), 0.0, 0.0, math.sin(math.radians(rot_z)/2.0))
-  
-  multp1 = quat_mult(quat_x, quat_y)
-  return quat_mult(multp1, quat_z)
-
 class IKSError( Exception ):
   pass
 
@@ -31,12 +13,14 @@ class IKSResolver( object ):
     self.spr2_obj = None
     self.iks_in_use = 0
     self.np = None
+    self.pint = None
     self.geometry = None
     self.resolveIKS()
     self.useSPR2()
 
   def getArmPose( self, left_arm ):
     if self.iks_in_use == 2:
+      self.spr2_obj.sync_object()
       pos = None
       orient = None
       if left_arm:
@@ -115,6 +99,10 @@ class IKSResolver( object ):
   def dummyMoveArmTo( self, wait = True, **kwargs ):
     raise IKSError( 'NO IKS solver is available to PyRIDE' )
 
+  def resetMotionCallbacks( self ):
+    if self.iks_in_use == 2:
+      self.pint.set_callback_functions()
+
   def resolveIKS( self ):
     PyPR2.moveArmTo = self.dummyMoveArmTo
     PyPR2.getArmPose = self.getArmPose
@@ -133,6 +121,7 @@ class IKSResolver( object ):
         from math_tools.geometry import trajectory as traj
 
         self.np = np
+        self.pint = pys.pint
         self.geometry = geometry
         self.spr2_obj = pys.PyRide_PR2()
         self.traj = traj
