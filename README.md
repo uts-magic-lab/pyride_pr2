@@ -4,6 +4,7 @@
 Python based Robot Interactive Development Environment (PyRIDE) is a middleware that provides a self-contained development environment for rapid interactive programming of robot skills and behaviours using Python scripting language (see Figure 1). PyRIDE functions as a software integration tool that aggregates disparate robot software modules and exposes their functionalities to an embedded Python interpreter engine through a unified programming interface. Robot programmers can access the embedded Python engine and the unified robot function programming interface using a remote interactive shell service. One can code, perform experiments/test, debug programs interactively in the same way as using the standard Python interactive interpreter. Programs can transit seamlessly from development to deployment through a simple bootstrap mechanism. PyRIDE also provides remote user level accesses of the robot functionalities, e.g. real-time robot camera image data, through a client-server mechanism. You can view a live demonstration video [here](https://www.youtube.com/watch?v=0DTB62lm8z4).
 
 <img src="https://cloud.githubusercontent.com/assets/6646691/9621498/735b65f6-516a-11e5-9f66-e7a628951460.png" width="500">
+
 **Figure 1. PyRIDE System Architecture.**
 
 Finally, PyRIDE is written in portable C++ and can be ported to various robot platform with relative ease. Currently, PyRIDE runs on NAO, ROS/PR2 and iOS/ROMO platforms. This repository contains PyRIDE source code for the ROS/PR2 platform.
@@ -50,6 +51,7 @@ telnet host 27005
 ```
 where ```host``` is the robot/machine PyRIDE is running on. Figure 2 shows the telnet console displays a list of built-in methods available to PyRIDE on PR2. 
 <img src="https://cloud.githubusercontent.com/assets/6646691/9621510/8ebab36a-516a-11e5-81f4-b04c9531ca7d.png" width="500">
+
 **Figure 2. PyRIDE Remote Shell Access.**
 
 **NOTE:** You can turn off the remote shell access by setting *RemotePythonAccess* tag to **disable** in ```pyrideconfig.xml``` configuration
