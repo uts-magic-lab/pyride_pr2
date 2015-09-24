@@ -263,27 +263,24 @@ void PyModuleExtendedCommandHandler::cancelCurrentOperation()
  *  \param str user_name. The name of the user.
  *  \return None.
  */
-bool PyModuleExtendedCommandHandler::onUserLogOn( const unsigned char * authCode, SOCKET_T fd, struct sockaddr_in & addr )
+bool PyModuleExtendedCommandHandler::onUserLogOn( const std::string & username )
 {
   if (!pyExtModule_)
     return false;
   
-  std::string username;
-  if (AppConfigManager::instance()->signInUserWithPassword( authCode, fd, addr, username )) {
-    PyObject * arg = NULL;
-    
-    PyGILState_STATE gstate;
-    gstate = PyGILState_Ensure();
-    
-    arg = Py_BuildValue( "(s)", username.c_str() );
-    
-    pyExtModule_->invokeCallback( "onUserLogOn", arg );
-    Py_DECREF( arg );
-    
-    PyGILState_Release( gstate );
-    return true;
-  }
-  return false;
+  PyObject * arg = NULL;
+
+  PyGILState_STATE gstate;
+  gstate = PyGILState_Ensure();
+
+  arg = Py_BuildValue( "(s)", username.c_str() );
+
+  pyExtModule_->invokeCallback( "onUserLogOn", arg );
+  Py_DECREF( arg );
+
+  PyGILState_Release( gstate );
+  //TODO: return return value from Python callback script call
+  return true;
 }
 
 /*! \typedef onUserLogOff(user_name)
@@ -293,25 +290,23 @@ bool PyModuleExtendedCommandHandler::onUserLogOn( const unsigned char * authCode
  *  \return None.
  */
 /**@}*/
-void PyModuleExtendedCommandHandler::onUserLogOff( SOCKET_T fd )
+void PyModuleExtendedCommandHandler::onUserLogOff( const std::string & username )
 {
   if (!pyExtModule_)
     return;
   
-  std::string username;
-  if (AppConfigManager::instance()->signOutUser( fd, username )) {
-    PyObject * arg = NULL;
-    
-    PyGILState_STATE gstate;
-    gstate = PyGILState_Ensure();
-    
-    arg = Py_BuildValue( "(s)", username.c_str() );
-    
-    pyExtModule_->invokeCallback( "onUserLogOff", arg );
-    Py_DECREF( arg );
-    
-    PyGILState_Release( gstate );
-  }
+  PyObject * arg = NULL;
+
+  PyGILState_STATE gstate;
+  gstate = PyGILState_Ensure();
+
+  arg = Py_BuildValue( "(s)", username.c_str() );
+
+  pyExtModule_->invokeCallback( "onUserLogOff", arg );
+  Py_DECREF( arg );
+
+  PyGILState_Release( gstate );
+
 }
 
 /** @name Timer Management Functions

@@ -9,11 +9,6 @@
 #define PyModuleStub_h_DEFINED
 
 #include "ServerDataProcessor.h"
-#ifdef IOS_BUILD
-#include "iOSAppConfigManager.h"
-#else
-#include "AppConfigManager.h"
-#endif
 
 // Python redefine the following definition
 // and cause compiler warning.
@@ -83,8 +78,8 @@ private:
                             const int optionalDataLength = 0 );
   void cancelCurrentOperation();
   
-  bool onUserLogOn( const unsigned char * authCode, SOCKET_T fd, struct sockaddr_in & addr );
-  void onUserLogOff( SOCKET_T fd );
+  bool onUserLogOn( const std::string & name );
+  void onUserLogOff( const std::string & name );
   void onTimer( const long timerID );
   void onTimerLapsed( const long timerID );
   

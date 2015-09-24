@@ -10,9 +10,13 @@
 #define ServerDataProcessor_h_DEFINED
 
 #include <vector>
+#include <string>
 #include "PyRideNetComm.h"
-
-using namespace std;
+#ifdef IOS_BUILD
+#include "iOSAppConfigManager.h"
+#else
+#include "AppConfigManager.h"
+#endif
 
 namespace pyride {
 
@@ -27,8 +31,8 @@ protected:
                                     const unsigned char * optinalData = NULL,
                                     const int optionalDataLength = 0 ) = 0;
   virtual void cancelCurrentOperation() = 0;
-  virtual bool onUserLogOn( const unsigned char * authCode, SOCKET_T fd, struct sockaddr_in & addr ) { return false; }
-  virtual void onUserLogOff( SOCKET_T fd ) {}
+  virtual bool onUserLogOn( const std::string & name ) { return false; }
+  virtual void onUserLogOff( const std::string & name ) {}
   virtual void onTimer( const long timerID ) {}
   virtual void onTimerLapsed( const long timerID ) {}
 

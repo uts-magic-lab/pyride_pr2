@@ -302,20 +302,30 @@ void ServerDataProcessor::onTimerLapsed( const long timerID )
 bool ServerDataProcessor::onUserLogOn( const unsigned char * authCode, SOCKET_T fd, struct sockaddr_in & addr )
 {
   bool retVal = false;
-  for (PyRideExtendedCommandHandlerList::iterator iter = cmdHandlerList_.begin();
-       iter != cmdHandlerList_.end(); iter++)
-  {
-    retVal |= (*iter)->onUserLogOn( authCode, fd, addr );
+
+  std::string username;
+  if (AppConfigManager::instance()->signInUserWithPassword( authCode, fd, addr, username )) {
+    for (PyRideExtendedCommandHandlerList::iterator iter = cmdHandlerList_.begin();
+         iter != cmdHandlerList_.end(); iter++)
+    {
+      retVal |= (*iter)->onUserLogOn( username );
+    }
+    return retVal;
   }
-  return retVal;
+  else {
+    return false;
+  }
 }
 
 void ServerDataProcessor::onUserLogOff( SOCKET_T fd )
 {
-  for (PyRideExtendedCommandHandlerList::iterator iter = cmdHandlerList_.begin();
-       iter != cmdHandlerList_.end(); iter++)
-  {
-    (*iter)->onUserLogOff( fd );
+  std::string username;
+  if (AppConfigManager::instance()->signOutUser( fd, username )) {
+    for (PyRideExtendedCommandHandlerList::iterator iter = cmdHandlerList_.begin();
+         iter != cmdHandlerList_.end(); iter++)
+    {
+      (*iter)->onUserLogOff( username );
+    }
   }
 }
 

@@ -656,12 +656,12 @@ void PyRideNetComm::processDataInput( ClientItem * client, const unsigned char *
 #ifdef PYRIDE_REMOTE_CLIENT
     case ROBOT_DECLARE:
       if (client->cID) {
-        WARNING_MSG( "Duplicate NAO declaration message. Client %d with (new) ID %d. Ignore.\n",
+        WARNING_MSG( "Duplicate robot declaration message. Client %d with (new) ID %d. Ignore.\n",
                     client->cID, cID );
       }
       else {
         client->cID = cID;
-        client->pushData = true; // on console, we broadcast command to every connected NAO.
+        client->pushData = true; // on console, we broadcast command to every connected robot.
         /*
         char addressStr[50];
         inet_ntop( AF_INET, &client->addr.sin_addr.s_addr, addressStr, INET_ADDRSTRLEN );
@@ -1280,7 +1280,7 @@ void PyRideNetComm::processConsoleCommand( ClientItem * client, int subcommand, 
         if (client->activeVideoObj->start( client->addr, PYRIDE_VIDEO_STREAM_BASE_PORT )) {
           client->pushImage = true;
           if (client->activeAudioObj) {
-            client->activeAudioObj->start( client->addr, PYRIDE_VIDEO_STREAM_BASE_PORT + 2);
+            client->activeAudioObj->start( client->addr, PYRIDE_VIDEO_STREAM_BASE_PORT + 2 );
           }
         }
       }
@@ -1325,7 +1325,7 @@ void PyRideNetComm::processConsoleCommand( ClientItem * client, int subcommand, 
       break;
     case CUSTOM_COMMAND:
       if (dataLen >= 1 && pDataHandler_) {
-        // more hacks to enable execlusive robot control
+        // more hacks to enable exclusive robot control
         unsigned char retData[2];
         PyRideExtendedCommand cmd = (PyRideExtendedCommand) commandData[0];
         retData[0] = cmd;
