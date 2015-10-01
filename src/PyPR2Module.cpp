@@ -1733,7 +1733,7 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   PyObject * detectcb = NULL;
   PyObject * trackcb = NULL;
   
-  if (!PyArg_ParseTuple( args, "O|O", &detectcb, &detectcb )) {
+  if (!PyArg_ParseTuple( args, "O|O", &detectcb, &trackcb )) {
     // PyArg_ParseTuple will set the error status.
     return NULL;
   }
