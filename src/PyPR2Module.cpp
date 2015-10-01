@@ -358,7 +358,6 @@ static PyObject * PyModule_PR2MoveBodyWithSpeed( PyObject * self, PyObject * arg
  *  \param float head_pitch. Must be in radian.
  *  \param bool relative. True == relative angle values; False == absolute angle values. Optional, default is False.
  *  \return bool. True == valid command; False == invalid command.
- *  \todo This function has not been fully tested on PR2 and is still buggy.
  */
 static PyObject * PyModule_PR2MoveHeadTo( PyObject * self, PyObject * args )
 {
@@ -385,6 +384,20 @@ static PyObject * PyModule_PR2MoveHeadTo( PyObject * self, PyObject * args )
     Py_RETURN_TRUE;
   else
     Py_RETURN_FALSE;
+}
+
+static PyObject * PyModule_PR2UpdateHeadPos( PyObject * self, PyObject * args )
+{
+  double yaw = 0.0;
+  double pitch = 0.0;
+
+  if (!PyArg_ParseTuple( args, "dd", &yaw, &pitch )) {
+    // PyArg_ParseTuple will set the error status.
+    return NULL;
+  }
+
+  PR2ProxyManager::instance()->updateHeadPos( yaw, pitch );
+  Py_RETURN_NONE;
 }
 
 /*! \fn pointHeadTo(reference_frame, x, y, z)
@@ -1919,7 +1932,9 @@ static PyMethodDef PyModule_methods[] = {
   { "getRelativeTF", (PyCFunction)PyModule_PR2GetRelativeTF, METH_VARARGS,
     "Get the relative TF between two frames with the first frame as the reference frame." },
   { "moveHeadTo", (PyCFunction)PyModule_PR2MoveHeadTo, METH_VARARGS,
-    "Move PR2 head to a new position (in degree)." },
+    "Move PR2 head to a new position in radian." },
+  { "updateHeadPos", (PyCFunction)PyModule_PR2UpdateHeadPos, METH_VARARGS,
+    "Update PR2 head position with a specific velocity in radian/s." },
   { "moveBodyTo", (PyCFunction)PyModule_PR2MoveBodyTo, METH_VARARGS,
     "Move PR2 base to a new pose." },
   { "moveBodyWithSpeed", (PyCFunction)PyModule_PR2MoveBodyWithSpeed, METH_VARARGS,

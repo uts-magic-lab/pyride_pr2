@@ -102,7 +102,7 @@ public:
 
   bool moveHeadTo( double yaw, double pitch, bool relative = false );
   bool pointHeadTo( const std::string & frame, float x, float y, float z );
-  void updateHeadPose( float yaw, float pitch );
+  void updateHeadPos( float yaw, float pitch );
   
   bool tuckArms( bool tuckleft, bool tuckright );
   bool moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,

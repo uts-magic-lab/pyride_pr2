@@ -1847,7 +1847,7 @@ bool PR2ProxyManager::setTiltLaserTrajCmd( std::vector<double> & positions, std:
   return false;
 }
 
-void PR2ProxyManager::updateHeadPose( float yaw, float pitch )
+void PR2ProxyManager::updateHeadPos( float yaw, float pitch )
 {
   if (headCtrlWithActionClient_ || headCtrlWithOdmetry_)
     return;

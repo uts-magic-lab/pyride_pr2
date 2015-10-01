@@ -135,7 +135,7 @@ bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command,
     {
       float newHeadYaw = *((float *)optionalData);
       float newHeadPitch = *((float *)optionalData+1);
-      PR2ProxyManager::instance()->updateHeadPose( newHeadYaw, newHeadPitch );
+      PR2ProxyManager::instance()->updateHeadPos( newHeadYaw, newHeadPitch );
     }
       break;
     case BODY_MOVE_TO: // position
