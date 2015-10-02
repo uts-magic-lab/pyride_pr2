@@ -1771,6 +1771,7 @@ void PR2ProxyManager::registerHumanDetection( bool toEnable, bool enableTracking
       delete htObjUpdateSub_;
       htObjUpdateSub_ = NULL;
     }
+    ROS_INFO( "Unsubscribe to human detection service." );
   }
 }
 #endif
