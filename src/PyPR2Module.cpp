@@ -1740,7 +1740,7 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   
   if (detectcb == Py_None) {
     PyPR2Module::instance()->setObjectDTCallback( NULL, NULL );
-    PR2ProxyManager::instance()->enableHumanDetection( false );
+    PR2ProxyManager::instance()->registerHumanDetection( false );
     Py_RETURN_NONE;
   }
   
@@ -1756,10 +1756,8 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
 
   PyPR2Module::instance()->setObjectDTCallback( detectcb, trackcb );
   
-  if (PR2ProxyManager::instance()->enableHumanDetection( true, (trackcb != NULL) ))
-    Py_RETURN_TRUE;
-  else
-    Py_RETURN_FALSE;
+  PR2ProxyManager::instance()->registerHumanDetection( true, (trackcb != NULL) );
+  Py_RETURN_NONE;
 }
 #endif
 

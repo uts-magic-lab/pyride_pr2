@@ -13,10 +13,6 @@
 #include <pr2_mechanism_msgs/SwitchController.h>
 #include "PR2ProxyManager.h"
 
-#ifdef WITH_PR2HT
-#include "pr2ht/DetectTrackControl.h"
-#endif
-
 #ifdef WITH_RHYTH_DMP
 #include "rhyth_dmp/RecallTraj.h"
 #endif
@@ -159,12 +155,9 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   jointDataThread_ = new ros::AsyncSpinner( 1, &jointDataQueue_ );
   jointDataThread_->start();
 
-#ifdef WITH_PR2HT
-  htClient_ = mCtrlNode_->serviceClient<pr2ht::DetectTrackControl>( "enable_hdt" );
-
-  if (!htClient_.exists()) {
-    ROS_INFO( "No human detection service is available." );
-  }
+#ifdef WITH_PR2HT // asyncspinner must be started at the beginning regardless.
+  htObjDataThread_ = new ros::AsyncSpinner( 1, &htObjDataQueue_ );
+  htObjDataThread_->start();
 #endif
 
 #ifdef WITH_RHYTH_DMP
@@ -360,6 +353,10 @@ void PR2ProxyManager::fini()
   powerSub_.shutdown();
 
 #ifdef WITH_PR2HT
+  htObjDataThread_->stop();
+  delete htObjDataThread_;
+  htObjDataThread_ = NULL;
+
   if (htObjStatusSub_) {
     htObjStatusSub_->shutdown();
     delete htObjStatusSub_;
@@ -1745,34 +1742,22 @@ bool PR2ProxyManager::setGripperPosition( int whichgripper, double position )
 }
 
 #ifdef WITH_PR2HT
-bool PR2ProxyManager::enableHumanDetection( bool toEnable, bool enableTrackingNotif )
+void PR2ProxyManager::registerHumanDetection( bool toEnable, bool enableTrackingNotif )
 {
-  if (!htClient_.exists()) {
-    return false;
-  }
-  pr2ht::DetectTrackControl srvMsg;
-  
   if (toEnable) {
     if (htObjStatusSub_) {
-      ROS_WARN( "Human detection service is already enabled." );
-      return true;
+      ROS_WARN( "Already subscribed to human detection service." );
     }
-  }
-  else if (!htObjStatusSub_) {
-    ROS_WARN( "Human detection service is already disabled." );
-    return true;
-  }
-
-  srvMsg.request.tostart = toEnable;
-  
-  if (toEnable) {
-    if (htClient_.call( srvMsg ) && srvMsg.response.ret) {
-      htObjStatusSub_ = new ros::Subscriber( mCtrlNode_->subscribe( "/pr2_ht/object_status", 1, &PR2ProxyManager::htObjStatusCB, this ) );
+    else {
+      SubscribeOptions sopts = ros::SubscribeOptions::create<pr2ht::TrackedObjectStatusChange>( "/pr2_ht/object_status",
+          1, boost::bind( &PR2ProxyManager::htObjStatusCB, this, _1 ), ros::VoidPtr(), &htObjDataQueue_ );
+      htObjStatusSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
       if (enableTrackingNotif) {
-        htObjUpdateSub_ = new ros::Subscriber( mCtrlNode_->subscribe( "/pr2_ht/object_update", 1, &PR2ProxyManager::htObjUpdateCB, this ) );
+        SubscribeOptions sopts = ros::SubscribeOptions::create<pr2ht::TrackedObjectUpdate>( "/pr2_ht/object_update",
+            1, boost::bind( &PR2ProxyManager::htObjUpdateCB, this, _1 ), ros::VoidPtr(), &htObjDataQueue_ );
+        htObjUpdateSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
       }
-      ROS_INFO( "Human detection service is eabled." );
-      return true;
+      ROS_INFO( "Subscribe to human detection service." );
     }
   }
   else {
@@ -1786,12 +1771,7 @@ bool PR2ProxyManager::enableHumanDetection( bool toEnable, bool enableTrackingNo
       delete htObjUpdateSub_;
       htObjUpdateSub_ = NULL;
     }
-    if (htClient_.call( srvMsg ) && srvMsg.response.ret) {
-      ROS_INFO( "Human detection service is disabled." );
-    }
-    return true;
   }
-  return false;
 }
 #endif
 

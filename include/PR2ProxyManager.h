@@ -148,7 +148,7 @@ public:
                       const std::vector<double> & orientation );
   
 #ifdef WITH_PR2HT
-  bool enableHumanDetection( bool enable, bool enableTrackingNotif = false );
+  void registerHumanDetection( bool enable, bool enableTrackingNotif = false );
 #endif
   
 #ifdef WITH_RHYTH_DMP
@@ -201,7 +201,8 @@ private:
   Subscriber * htObjStatusSub_;
   Subscriber * htObjUpdateSub_;
 
-  ServiceClient htClient_;
+  AsyncSpinner * htObjDataThread_;
+  CallbackQueue htObjDataQueue_;
 #endif
 
 #ifdef WITH_RHYTH_DMP
