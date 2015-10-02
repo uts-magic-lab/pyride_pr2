@@ -1765,24 +1765,29 @@ bool PR2ProxyManager::enableHumanDetection( bool toEnable, bool enableTrackingNo
 
   srvMsg.request.tostart = toEnable;
   
-  if (htClient_.call( srvMsg ) && srvMsg.response.ret) {
-    if (toEnable) {
+  if (toEnable) {
+    if (htClient_.call( srvMsg ) && srvMsg.response.ret) {
       htObjStatusSub_ = new ros::Subscriber( mCtrlNode_->subscribe( "/pr2_ht/object_status", 1, &PR2ProxyManager::htObjStatusCB, this ) );
       if (enableTrackingNotif) {
         htObjUpdateSub_ = new ros::Subscriber( mCtrlNode_->subscribe( "/pr2_ht/object_update", 1, &PR2ProxyManager::htObjUpdateCB, this ) );
       }
+      ROS_INFO( "Human detection service is eabled." );
+      return true;
     }
-    else {
-      if (htObjStatusSub_) {
-        htObjStatusSub_->shutdown();
-        delete htObjStatusSub_;
-        htObjStatusSub_ = NULL;
-      }
-      if (htObjUpdateSub_) {
-        htObjUpdateSub_->shutdown();
-        delete htObjUpdateSub_;
-        htObjUpdateSub_ = NULL;
-      }
+  }
+  else {
+    if (htObjStatusSub_) {
+      htObjStatusSub_->shutdown();
+      delete htObjStatusSub_;
+      htObjStatusSub_ = NULL;
+    }
+    if (htObjUpdateSub_) {
+      htObjUpdateSub_->shutdown();
+      delete htObjUpdateSub_;
+      htObjUpdateSub_ = NULL;
+    }
+    if (htClient_.call( srvMsg ) && srvMsg.response.ret) {
+      ROS_INFO( "Human detection service is disabled." );
     }
     return true;
   }
