@@ -1828,12 +1828,12 @@ PyPR2Module * PyPR2Module::instance()
   
 void PyPR2Module::invokeBaseScanCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( baseScanCB_, arg );
+  this->invokeCallbackHandler( baseScanCB_, arg );
 }
 
 void PyPR2Module::invokeTiltScanCallback( PyObject * arg )
 {
-  this->InvokeCallbackHandler( tiltScanCB_, arg );
+  this->invokeCallbackHandler( tiltScanCB_, arg );
 }
   
 void PyPR2Module::setBaseScanCallback( PyObject * obj )
