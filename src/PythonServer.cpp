@@ -250,7 +250,13 @@ bool PythonServer::initPyInterpreter()
     ERROR_MSG( "PythonServer: Failed to import sys module\n" );
     return false;
   }
-  
+ 
+  if (!PyObject_HasAttrString( pSysModule_, "argv" )) {
+    PyObject * argObj = PyList_New( 1 );
+    PyList_SetItem( argObj, 0, PyString_FromString( "" ) );
+    PyObject_SetAttrString( pSysModule_, "argv", argObj );
+    Py_DECREF( argObj );
+  } 
   welcomeStr_ = "Welcome to UTS PyRIDE Python Console [Python version ";
   welcomeStr_ += versionStr + "]";
   
