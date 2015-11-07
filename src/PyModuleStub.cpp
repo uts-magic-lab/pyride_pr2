@@ -172,6 +172,34 @@ void PyModuleExtension::invokeCallback( const char * fnName, PyObject * arg )
   Py_DECREF( callbackFn );
 }
 
+void PyModuleExtension::invokeCallback( const char * fnName, PyObject * arg, PyObject * & result )
+{
+  result = NULL;
+  if (!pPyModule_)
+    return;
+
+  //DEBUG_MSG( "Attempt get callback function %s\n", fnName );
+
+  PyObject * callbackFn = PyObject_GetAttrString( pPyModule_, const_cast<char *>(fnName) );
+  if (!callbackFn) {
+    PyErr_Clear();
+    return;
+  }
+  else if (!PyCallable_Check( callbackFn )) {
+    PyErr_Format( PyExc_TypeError, "%s is not callable object", fnName );
+  }
+  else {
+    PyObject * pResult = PyObject_CallObject( callbackFn, arg );
+    if (PyErr_Occurred()) {
+      PyErr_Print();
+    }
+    else {
+      result = pResult; // caller must decrement reference
+    }
+  }
+  Py_DECREF( callbackFn );
+}
+
 // internal helper functions
 void PyModuleExtension::swapCallbackHandler( PyObject * & master, PyObject * newObj )
 {
@@ -269,18 +297,24 @@ bool PyModuleExtendedCommandHandler::onUserLogOn( const std::string & username )
     return false;
   
   PyObject * arg = NULL;
+  PyObject * result = NULL;
+  bool retVal = true; //make it more permissive.
 
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
   arg = Py_BuildValue( "(s)", username.c_str() );
 
-  pyExtModule_->invokeCallback( "onUserLogOn", arg );
+  pyExtModule_->invokeCallback( "onUserLogOn", arg, result );
+  if (result && PyBool_Check( result )) {
+	retVal = PyObject_IsTrue( result );
+  }
   Py_DECREF( arg );
+  Py_XDECREF( result );
 
   PyGILState_Release( gstate );
-  //TODO: return return value from Python callback script call
-  return true;
+
+  return retVal;
 }
 
 /*! \typedef onUserLogOff(user_name)

@@ -45,6 +45,7 @@ public:
 
   PyObject * init( PyOutputWriter * pow );
   void invokeCallback( const char * fnName, PyObject * arg );
+  void invokeCallback( const char * fnName, PyObject * arg, PyObject * & result );
   void write( const char * str );
   
   void sendTeamMessage( const char * mesg );

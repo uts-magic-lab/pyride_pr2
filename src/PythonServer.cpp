@@ -234,9 +234,14 @@ bool PythonServer::initPyInterpreter()
   gstate = PyGILState_Ensure();
 
   // modify existing system path
+  std::string versionStr = strtok( (char*)Py_GetVersion(), " " );
+  std::string packagePath = ":";
+  packagePath += Py_GetPrefix(); packagePath += "/lib/python";
+  packagePath += versionStr.substr( 0, versionStr.find_last_of( '.' ) );
   std::string sysPathStr( Py_GetPath() );
   size_t delpos = sysPathStr.find( ':' );
   sysPathStr.replace( 0, delpos, scriptPath );
+  sysPathStr += packagePath + "/site-packages";
   PySys_SetPath( (char*)sysPathStr.c_str() );
 
   pSysModule_ = PyImport_ImportModule( "sys" );
@@ -246,11 +251,8 @@ bool PythonServer::initPyInterpreter()
     return false;
   }
   
-  char * versionStr = strdup( Py_GetVersion() );
   welcomeStr_ = "Welcome to UTS PyRIDE Python Console [Python version ";
-  welcomeStr_ = welcomeStr_ + strtok( versionStr, " " );
-  welcomeStr_ = welcomeStr_ + "]";
-  free( versionStr );
+  welcomeStr_ += versionStr + "]";
   
   pMainModule_ = PyImport_AddModule( "__main__" );
   Py_INCREF( pMainModule_ );
