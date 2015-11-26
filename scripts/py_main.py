@@ -61,7 +61,7 @@ def batteryChargeChangeActions( batpc, isplugged, time_remain ):
   global myMessenger
   
   if batpc < 20 and not isplugged:
-    PyNAO.say( "I'm low on battery, please put me back on main power." )
+    PyPR2.say( "I'm low on battery, please put me back on main power." )
     
     if myMessenger:
       myMessenger.updatestatus( "I have only %d percent battery power left!" % batpc )
