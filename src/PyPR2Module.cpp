@@ -1750,7 +1750,7 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   }
 
   if (trackcb && !PyCallable_Check( trackcb )) {
-    PyErr_Format( PyExc_ValueError, "Secode input parameter is not a callable object" );
+    PyErr_Format( PyExc_ValueError, "Second input parameter is not a callable object" );
     return NULL;
   }
 
@@ -1904,7 +1904,7 @@ static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObj
 #endif
 
 #define INCLUDE_COMMON_PYMODULE_MEHTODS
-#include "PyModulePyCommon.cpp"
+#include "../pyridecore/PyModulePyCommon.cpp"
 
 static PyMethodDef PyModule_methods[] = {
   { "write", (PyCFunction)PyModule_write, METH_VARARGS,
@@ -2006,7 +2006,7 @@ static PyMethodDef PyModule_methods[] = {
     "Request RhythDMP module to publish a known trajectory." },
 #endif
 #define DEFINE_COMMON_PYMODULE_METHODS
-#include "PyModulePyCommon.cpp"
+#include "../pyridecore/PyModulePyCommon.cpp"
   { NULL, NULL, 0, NULL }           /* sentinel */
 };
 
