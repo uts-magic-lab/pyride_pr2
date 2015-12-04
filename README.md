@@ -49,7 +49,8 @@ via
 ```
 telnet host 27005
 ```
-where ```host``` is the robot/machine PyRIDE is running on. Figure 2 shows the telnet console displays a list of built-in methods available to PyRIDE on PR2. 
+where ```host``` is the robot/machine PyRIDE is running on. Figure 2 shows the telnet console displays a list of built-in methods available to PyRIDE on PR2.
+
 <img src="https://cloud.githubusercontent.com/assets/6646691/9621510/8ebab36a-516a-11e5-81f4-b04c9531ca7d.png" width="500">
 
 **Figure 2. PyRIDE Remote Shell Access.**
