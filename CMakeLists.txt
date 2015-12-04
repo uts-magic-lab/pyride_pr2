@@ -98,6 +98,7 @@ add_definitions(-DROS_BUILD -DUSE_ENCRYPTION)
 # include_directories(include)
 include_directories(
   include
+  pyridecore
   ${PYTHON_INCLUDE_DIRS}
   ${catkin_INCLUDE_DIRS}
 )
@@ -108,15 +109,15 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(pyride_pr2 src/AppConfigManager.cpp
-                          src/PyRideCommon.cpp
-                          src/jdatabufferdst.cpp
-                          src/DeviceController.cpp
-                          src/ServerDataProcessor.cpp
-                          src/PyRideNetComm.cpp
-                          src/PythonServer.cpp
+add_executable(pyride_pr2 pyridecore/AppConfigManager.cpp
+                          pyridecore/PyRideCommon.cpp
+                          pyridecore/jdatabufferdst.cpp
+                          pyridecore/DeviceController.cpp
+                          pyridecore/ServerDataProcessor.cpp
+                          pyridecore/PyRideNetComm.cpp
+                          pyridecore/PythonServer.cpp
+                          pyridecore/PyModuleStub.cpp
                           src/PyPR2Server.cpp
-                          src/PyModuleStub.cpp
                           src/PR2ProxyManager.cpp
                           src/PyPR2Module.cpp
                           src/VideoObject.cpp
