@@ -421,7 +421,6 @@ static PyObject * PyModule_PR2PointHeadTo( PyObject * self, PyObject * args )
 
 /*! \fn getHeadPos()
  *  \memberof PyPR2
- *  \memberof PyNAO
  *  \brief Get the current robot head yaw and pitch in radian.
  *  \return tuple(head_yaw, head_pitch)
  */
@@ -1674,7 +1673,7 @@ static PyObject * PyModule_PR2RegisterRawTrajectoryInput( PyObject * self, PyObj
 #endif
 
 #define INCLUDE_COMMON_PYMODULE_MEHTODS
-#include "PyModulePyCommon.cpp"
+#include "../pyridecore/PyModulePyCommon.cpp"
 
 static PyMethodDef PyModule_methods[] = {
   { "write", (PyCFunction)PyModule_write, METH_VARARGS,
@@ -1768,7 +1767,7 @@ static PyMethodDef PyModule_methods[] = {
     "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },
 #endif
 #define DEFINE_COMMON_PYMODULE_METHODS
-#include "PyModulePyCommon.cpp"
+#include "../pyridecore/PyModulePyCommon.cpp"
   { NULL, NULL, 0, NULL }           /* sentinel */
 };
 
