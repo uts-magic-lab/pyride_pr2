@@ -35,4 +35,10 @@
       <IsActive> Yes </IsActive>
     </Video>
   </DeviceInfo>
+  <UserInfo>
+    <User>
+      <Name> Experimentalist </Name>
+      <Password> t9zN+Rz5ALCiebpRS/yLA4It7A7SBBUcUJxe3H38S5k= </Password>
+    </User>
+  </UserInfo>
 </PyRIDE>
