@@ -2313,7 +2313,7 @@ bool PR2ProxyManager::addSolidObject( const std::string & name, std::vector<doub
   co.operation = moveit_msgs::CollisionObject::ADD;
   co.primitives.resize(1);
   co.primitives[0].type = shape_msgs::SolidPrimitive::BOX;
-  co.primitives[0].dimensions.resize( shape_tools::SolidPrimitiveDimCount<shape_msgs::SolidPrimitive::BOX>::value );
+  co.primitives[0].dimensions.resize( 3 );
   co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_X] = volume[0];
   co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Y] = volume[1];
   co.primitives[0].dimensions[shape_msgs::SolidPrimitive::BOX_Z] = volume[2];

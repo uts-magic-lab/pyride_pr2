@@ -29,7 +29,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 #find_package(Boost REQUIRED COMPONENTS system)
-find_package(PythonLibs)
+find_package(PythonLibs "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}" REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -133,7 +133,7 @@ add_library(celt STATIC IMPORTED)
 set_target_properties(celt PROPERTIES IMPORTED_LOCATION ${PROJECT_SOURCE_DIR}/lib/libcelt0.a)
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pyride_pr2 
-   ccrtp1 ccgnu2
+   ucommon commoncpp ccrtp 
    crypto python2.7
    jpeg tinyxml celt
    ${catkin_LIBRARIES}

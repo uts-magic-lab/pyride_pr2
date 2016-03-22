@@ -48,7 +48,6 @@
 #include <moveit/move_group_interface/move_group.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
-#include <shape_tools/solid_primitive_dims.h>
 
 #ifdef WITH_PR2HT
 #include <pr2ht/TrackedObjectStatusChange.h>
