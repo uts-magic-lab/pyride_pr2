@@ -224,7 +224,7 @@ void PyPR2Server::notifySystemShutdown()
  */
 /**@}*/
 
-void PyPR2Server::nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg )
+void PyPR2Server::nodeStatusCB( const pyride_common_msgs::NodeStatusConstPtr & msg )
 {
   if (msg->for_console) { // reformat the string using colon separated format and pass directly to console
     stringstream ss;
