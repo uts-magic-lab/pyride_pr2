@@ -55,7 +55,7 @@ bool PyPR2Server::init()
     ERROR_MSG( "Unable to find any active robot camera.\n" );
   }
 
-  nodeStatusSub_ = hcNodeHandle_->subscribe( "pyride_pr2/node_status", 1, &PyPR2Server::nodeStatusCB, this );
+  nodeStatusSub_ = hcNodeHandle_->subscribe( "pyride/node_status", 1, &PyPR2Server::nodeStatusCB, this );
 
   PR2ProxyManager::instance()->initWithNodeHandle( hcNodeHandle_, useOptionNodes, useMoveIt );
   ServerDataProcessor::instance()->init( activeVideoDevices_, activeAudioDevices_ );
@@ -224,7 +224,7 @@ void PyPR2Server::notifySystemShutdown()
  */
 /**@}*/
 
-void PyPR2Server::nodeStatusCB( const pyride_pr2::NodeStatusConstPtr & msg )
+void PyPR2Server::nodeStatusCB( const pyride_common_msgs::NodeStatusConstPtr & msg )
 {
   if (msg->for_console) { // reformat the string using colon separated format and pass directly to console
     stringstream ss;

@@ -196,8 +196,8 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   }
   if (!torsoClient_->isServerConnected()) {
     ROS_INFO( "Torso action server is down." );
-    delete tacClient_;
-    tacClient_ = NULL;
+    delete torsoClient_;
+    torsoClient_ = NULL;
   }
 
   trials = 0;
@@ -324,6 +324,10 @@ void PR2ProxyManager::fini()
   if (phClient_) {
     delete phClient_;
     phClient_ = NULL;
+  }
+  if (torsoClient_) {
+    delete torsoClient_;
+    torsoClient_ = NULL;
   }
   if (tacClient_) {
     delete tacClient_;
