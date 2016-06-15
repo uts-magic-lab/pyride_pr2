@@ -1716,7 +1716,6 @@ static PyObject * PyModule_PR2PlaceObject( PyObject * self, PyObject * args, PyO
   return PyModule_PR2PickUpAndPlaceObject( true, self, args, keywds );
 }
 
-#ifdef WITH_PR2HT
 /*! \fn registerHumanDetectTracking( detection_callback, tracking_callback )
  *  \memberof PyPR2
  *  \brief Register callback functions to receive human detection and tracking information.
@@ -1759,7 +1758,6 @@ static PyObject * PyModule_PR2RegisterObjectDetectTracking( PyObject * self, PyO
   PR2ProxyManager::instance()->registerHumanDetection( true, (trackcb != NULL) );
   Py_RETURN_NONE;
 }
-#endif
 
 #ifdef WITH_RHYTH_DMP
 /*! \fn recallRhythDMPTrajectory(trajectory_list, use_left_arm)
@@ -1995,10 +1993,8 @@ static PyMethodDef PyModule_methods[] = {
     "Register (or deregister) a callback function to get base laser scan data. If target frame is not given, raw data is returned." },
   { "registerTiltScanCallback", (PyCFunction)PyModule_PR2RegisterTiltScanData, METH_VARARGS,
     "Register (or deregister) a callback function to get tilt laser scan data. If target frame is not given, raw data is returned." },
-#ifdef WITH_PR2HT
   { "registerHumanDetectTracking", (PyCFunction)PyModule_PR2RegisterObjectDetectTracking, METH_VARARGS,
     "Register (or deregister) callback functions to get human detection and tracking information." },
-#endif
 #ifdef WITH_RHYTH_DMP
   { "registerRawTrajectoryInput", (PyCFunction)PyModule_PR2RegisterRawTrajectoryInput, METH_VARARGS,
     "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },
@@ -2013,9 +2009,7 @@ static PyMethodDef PyModule_methods[] = {
 PyPR2Module::PyPR2Module() : PyModuleExtension( "PyPR2" )
 {
   baseScanCB_ = tiltScanCB_ = NULL;
-#ifdef WITH_PR2HT
   objectDetectCB_ = objectTrackCB_ = NULL;
-#endif
 #ifdef WITH_RHYTH_DMP
   trajInputCB_ = NULL;
 #endif
@@ -2032,7 +2026,6 @@ PyPR2Module::~PyPR2Module()
     tiltScanCB_ = NULL;
   }
 
-#ifdef WITH_PR2HT
   if (objectDetectCB_) {
     Py_DECREF( objectDetectCB_ );
     objectDetectCB_ = NULL;
@@ -2041,7 +2034,6 @@ PyPR2Module::~PyPR2Module()
     Py_DECREF( objectTrackCB_ );
     objectTrackCB_ = NULL;
   }
-#endif
 
 #ifdef WITH_RHYTH_DMP
   if (trajInputCB_) {
@@ -2084,7 +2076,6 @@ void PyPR2Module::setTiltScanCallback( PyObject * obj )
   this->swapCallbackHandler( tiltScanCB_, obj );
 }
 
-#ifdef WITH_PR2HT
 void PyPR2Module::invokeObjectDetectionCallback( PyObject * arg )
 {
   this->invokeCallbackHandler( objectDetectCB_, arg );
@@ -2100,7 +2091,6 @@ void PyPR2Module::setObjectDTCallback( PyObject * detectcb, PyObject * trackcb )
   this->swapCallbackHandler( objectDetectCB_, detectcb );
   this->swapCallbackHandler( objectTrackCB_, trackcb );
 }
-#endif
 
 #ifdef WITH_RHYTH_DMP
 void PyPR2Module::setTrajectoryInputCallback( PyObject * inputcb )
