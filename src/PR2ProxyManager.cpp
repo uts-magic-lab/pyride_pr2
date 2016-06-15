@@ -356,6 +356,9 @@ void PR2ProxyManager::fini()
   delete htObjDataThread_;
   htObjDataThread_ = NULL;
 
+  deregisterForBaseScanData();
+  deregisterForTiltScanData();
+
   if (htObjStatusSub_) {
     htObjStatusSub_->shutdown();
     delete htObjStatusSub_;
