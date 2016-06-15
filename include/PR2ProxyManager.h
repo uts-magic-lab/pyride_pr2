@@ -49,10 +49,8 @@
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <moveit/planning_scene_monitor/planning_scene_monitor.h>
 
-#ifdef WITH_PR2HT
-#include <pr2ht/TrackedObjectStatusChange.h>
-#include <pr2ht/TrackedObjectUpdate.h>
-#endif
+#include <pyride_common_msgs/TrackedObjectStatusChange.h>
+#include <pyride_common_msgs/TrackedObjectUpdate.h>
 
 #ifdef WITH_RHYTH_DMP
 #include <rhyth_dmp/OutputTrajData.h>
@@ -146,9 +144,7 @@ public:
   bool navigateBodyTo( const std::vector<double> & positions,
                       const std::vector<double> & orientation );
   
-#ifdef WITH_PR2HT
   void registerHumanDetection( bool enable, bool enableTrackingNotif = false );
-#endif
   
 #ifdef WITH_RHYTH_DMP
   void subscribeRawTrajInput( bool enable );
@@ -196,13 +192,11 @@ private:
   AsyncSpinner * jointDataThread_;
   CallbackQueue jointDataQueue_;
 
-#ifdef WITH_PR2HT
   Subscriber * htObjStatusSub_;
   Subscriber * htObjUpdateSub_;
 
   AsyncSpinner * htObjDataThread_;
   CallbackQueue htObjDataQueue_;
-#endif
 
 #ifdef WITH_RHYTH_DMP
   Subscriber * dmpTrajDataSub_;
@@ -328,10 +322,8 @@ private:
 
   void restoreJointControllers();
 
-#ifdef WITH_PR2HT
-  void htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConstPtr & msg );
-  void htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & msg );
-#endif
+  void htObjStatusCB( const pyride_common_msgs::TrackedObjectStatusChangeConstPtr & msg );
+  void htObjUpdateCB( const pyride_common_msgs::TrackedObjectUpdateConstPtr & msg );
 
 #ifdef WITH_RHYTH_DMP
   void trajectoryDataInputCB( const rhyth_dmp::OutputTrajDataConstPtr & msg );

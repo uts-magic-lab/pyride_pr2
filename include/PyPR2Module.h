@@ -44,12 +44,10 @@ public:
   void setBaseScanCallback( PyObject * obj );
   void setTiltScanCallback( PyObject * obj );
 
-#ifdef WITH_PR2HT
   void setObjectDTCallback( PyObject * detectcb, PyObject * trackcb );
   
   void invokeObjectDetectionCallback( PyObject * arg );
   void invokeObjectTrackingCallback( PyObject * arg );
-#endif
 
 #ifdef WITH_RHYTH_DMP
   void setTrajectoryInputCallback( PyObject * inputcb );
@@ -62,10 +60,8 @@ private:
   PyObject * baseScanCB_;
   PyObject * tiltScanCB_;
   
-#ifdef WITH_PR2HT
   PyObject * objectDetectCB_;
   PyObject * objectTrackCB_;
-#endif
 
 #ifdef WITH_RHYTH_DMP
   PyObject * trajInputCB_;

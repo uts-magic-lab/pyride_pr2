@@ -81,10 +81,8 @@ PR2ProxyManager * PR2ProxyManager::s_pPR2ProxyManager = NULL;
 PR2ProxyManager::PR2ProxyManager() :
   rawBaseScanSub_( NULL ),
   rawTiltScanSub_( NULL ),
-#ifdef WITH_PR2HT
   htObjStatusSub_( NULL ),
   htObjUpdateSub_( NULL ),
-#endif
 #ifdef WITH_RHYTH_DMP
   dmpTrajDataSub_( NULL ),
 #endif
@@ -155,10 +153,8 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   jointDataThread_ = new ros::AsyncSpinner( 1, &jointDataQueue_ );
   jointDataThread_->start();
 
-#ifdef WITH_PR2HT // asyncspinner must be started at the beginning regardless.
   htObjDataThread_ = new ros::AsyncSpinner( 1, &htObjDataQueue_ );
   htObjDataThread_->start();
-#endif
 
 #ifdef WITH_RHYTH_DMP
   dmpClient_ = mCtrlNode_->serviceClient<rhyth_dmp::RecallTraj>( "/rhyth_dmp/recall_dmp_traj" );
@@ -356,7 +352,6 @@ void PR2ProxyManager::fini()
   jointSub_.shutdown();
   powerSub_.shutdown();
 
-#ifdef WITH_PR2HT
   htObjDataThread_->stop();
   delete htObjDataThread_;
   htObjDataThread_ = NULL;
@@ -371,7 +366,6 @@ void PR2ProxyManager::fini()
     delete htObjUpdateSub_;
     htObjUpdateSub_ = NULL;
   }
-#endif
 
 #ifdef WITH_RHYTH_DMP
   dmpTrajThread_->stop();
@@ -819,8 +813,7 @@ void PR2ProxyManager::tiltScanDataCB( const sensor_msgs::LaserScanConstPtr & msg
   }
 }
 
-#ifdef WITH_PR2HT
-void PR2ProxyManager::htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConstPtr & msg )
+void PR2ProxyManager::htObjStatusCB( const pyride_common_msgs::TrackedObjectStatusChangeConstPtr & msg )
 {
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
@@ -835,7 +828,7 @@ void PR2ProxyManager::htObjStatusCB( const pr2ht::TrackedObjectStatusChangeConst
   PyGILState_Release( gstate );
 }
 
-void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & msg )
+void PR2ProxyManager::htObjUpdateCB( const pyride_common_msgs::TrackedObjectUpdateConstPtr & msg )
 {
     PyGILState_STATE gstate;
     gstate = PyGILState_Ensure();
@@ -845,7 +838,7 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
     PyObject * retList = PyList_New( rsize );
   
     for (size_t i = 0; i < rsize; ++i) {
-      pr2ht::TrackedObjectInfo obj = msg->objects[i];
+      pyride_common_msgs::TrackedObjectInfo obj = msg->objects[i];
       
       PyObject * retObj = PyDict_New();
       PyObject * elemObj = PyInt_FromLong( obj.objtype );
@@ -883,7 +876,6 @@ void PR2ProxyManager::htObjUpdateCB( const pr2ht::TrackedObjectUpdateConstPtr & 
   
     PyGILState_Release( gstate );
 }
-#endif
 
 #ifdef WITH_RHYTH_DMP
 bool PR2ProxyManager::recallRhythDMPTrajectory( const DMPTrajCmdList & cmd_list, bool use_left_arm,
@@ -1745,7 +1737,6 @@ bool PR2ProxyManager::setGripperPosition( int whichgripper, double position )
   return true;
 }
 
-#ifdef WITH_PR2HT
 void PR2ProxyManager::registerHumanDetection( bool toEnable, bool enableTrackingNotif )
 {
   if (toEnable) {
@@ -1753,11 +1744,11 @@ void PR2ProxyManager::registerHumanDetection( bool toEnable, bool enableTracking
       ROS_WARN( "Already subscribed to human detection service." );
     }
     else {
-      SubscribeOptions sopts = ros::SubscribeOptions::create<pr2ht::TrackedObjectStatusChange>( "/pr2_ht/object_status",
+      SubscribeOptions sopts = ros::SubscribeOptions::create<pyride_common_msgs::TrackedObjectStatusChange>( "/pr2_ht/object_status",
           1, boost::bind( &PR2ProxyManager::htObjStatusCB, this, _1 ), ros::VoidPtr(), &htObjDataQueue_ );
       htObjStatusSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
       if (enableTrackingNotif) {
-        SubscribeOptions sopts = ros::SubscribeOptions::create<pr2ht::TrackedObjectUpdate>( "/pr2_ht/object_update",
+        SubscribeOptions sopts = ros::SubscribeOptions::create<pyride_common_msgs::TrackedObjectUpdate>( "/pr2_ht/object_update",
             1, boost::bind( &PR2ProxyManager::htObjUpdateCB, this, _1 ), ros::VoidPtr(), &htObjDataQueue_ );
         htObjUpdateSub_ = new ros::Subscriber( mCtrlNode_->subscribe( sopts ) );
       }
@@ -1778,7 +1769,6 @@ void PR2ProxyManager::registerHumanDetection( bool toEnable, bool enableTracking
     ROS_INFO( "Unsubscribe to human detection service." );
   }
 }
-#endif
 
 #ifdef WITH_RHYTH_DMP
 void PR2ProxyManager::subscribeRawTrajInput( bool enable )

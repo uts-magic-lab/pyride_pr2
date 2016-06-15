@@ -90,7 +90,7 @@ catkin_package(
 ###########
 ## Build ##
 ###########
-add_definitions(-DROS_BUILD -DUSE_ENCRYPTION -DWITH_PR2HT -DWITH_RHYTH_DMP)
+add_definitions(-DROS_BUILD -DUSE_ENCRYPTION -DWITH_RHYTH_DMP)
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
