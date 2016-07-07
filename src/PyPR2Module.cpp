@@ -1716,6 +1716,30 @@ static PyObject * PyModule_PR2PlaceObject( PyObject * self, PyObject * args, PyO
   return PyModule_PR2PickUpAndPlaceObject( true, self, args, keywds );
 }
 
+/*! \fn sendMessageToNode( node_id, message, priority )
+ *  \memberof PyPR2
+ *  \brief send a command text message to a node that is listening on /pyride/node_message.
+ *  \param str node_id. The id of the node. The corresponding node should know its id.
+ *  \param str message. The command message.
+ *  \param int priority. A message priority. optional should be greater than zero.
+ *  \return None.
+ */
+static PyObject * PyModule_PR2SendMessageToNode( PyObject * self, PyObject * args )
+{
+  char * nodeStr = NULL;
+  char * cmdStr = NULL;
+  int priority = 1;
+
+  if (!PyArg_ParseTuple( args, "ss|i", &nodeStr, &cmdStr, &priority ) ||
+      strlen(nodeStr) == 0 || strlen( cmdStr ) == 0 || priority <= 0)
+  {
+    // PyArg_ParseTuple will set the error status.
+    return NULL;
+  }
+  PR2ProxyManager::instance()->sendNodeMessage( nodeStr, cmdStr, priority );
+  Py_RETURN_NONE;
+}
+
 /*! \fn registerHumanDetectTracking( detection_callback, tracking_callback )
  *  \memberof PyPR2
  *  \brief Register callback functions to receive human detection and tracking information.
@@ -1995,6 +2019,8 @@ static PyMethodDef PyModule_methods[] = {
     "Register (or deregister) a callback function to get tilt laser scan data. If target frame is not given, raw data is returned." },
   { "registerHumanDetectTracking", (PyCFunction)PyModule_PR2RegisterObjectDetectTracking, METH_VARARGS,
     "Register (or deregister) callback functions to get human detection and tracking information." },
+  { "sendMessageToNode", (PyCFunction)PyModule_PR2SendMessageToNode, METH_VARARGS,
+    "Send a text command message to a node that is listening to /pyride/node_message." },
 #ifdef WITH_RHYTH_DMP
   { "registerRawTrajectoryInput", (PyCFunction)PyModule_PR2RegisterRawTrajectoryInput, METH_VARARGS,
     "Register (or deregister) callback function to raw trajectory input data w.r.t to an end effector." },

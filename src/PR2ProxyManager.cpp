@@ -6,12 +6,14 @@
  *  Copyright 2012 Galaxy Network. All rights reserved.
  *
  */
+#include "PR2ProxyManager.h"
+
 #include <pr2_msgs/SetPeriodicCmd.h>
 #include <pr2_msgs/SetLaserTrajCmd.h>
 #include <pr2_mechanism_msgs/LoadController.h>
 #include <pr2_mechanism_msgs/UnloadController.h>
 #include <pr2_mechanism_msgs/SwitchController.h>
-#include "PR2ProxyManager.h"
+#include <pyride_common_msgs/NodeMessage.h>
 
 #ifdef WITH_RHYTH_DMP
 #include "rhyth_dmp/RecallTraj.h"
@@ -141,6 +143,7 @@ void PR2ProxyManager::initWithNodeHandle( NodeHandle * nodeHandle, bool useOptio
   mPub_ = mCtrlNode_->advertise<geometry_msgs::Twist>( "cmd_vel", 1 );
   hPub_ = mCtrlNode_->advertise<trajectory_msgs::JointTrajectory>( "head_vel", 1 );
   torsoPub_ = mCtrlNode_->advertise<trajectory_msgs::JointTrajectory>( "torso_vel", 1 );
+  bPub_ = mCtrlNode_->advertise<pyride_common_msgs::NodeMessage>( "pyride/node_message", 1 );
 
   //jointSub_ = mCtrlNode_->subscribe( "joint_states", 1, &PR2ProxyManager::jointStateDataCB, this );
   powerSub_ = mCtrlNode_->subscribe( "power_state", 1, &PR2ProxyManager::powerStateDataCB, this );
@@ -2534,6 +2537,17 @@ bool PR2ProxyManager::findSolidObjectInScene( const std::string & name )
       break;
   }
   return found;
+}
+
+void PR2ProxyManager::sendNodeMessage( const std::string & node, const std::string & command, const int priority )
+{
+  pyride_common_msgs::NodeMessage msg;
+  msg.header.stamp = ros::Time::now();
+  msg.node_id = node;
+  msg.priority = priority;
+  msg.command = command;
+
+  bPub_.publish( msg );
 }
 
 bool PR2ProxyManager::enableJointVelocityControl( bool enable )
