@@ -172,6 +172,8 @@ public:
   bool isTFFrameSupported( const char * frame_name );
 
   bool useMoveIt() const { return (rarmGroup_ != NULL && larmGroup_ != NULL); }
+  void sendNodeMessage( const std::string & node, const std::string & command, const int priority = 10 );
+
   void fini();
 
 private:
@@ -179,6 +181,7 @@ private:
   Publisher mPub_;
   Publisher torsoPub_;
   Publisher hPub_;
+  Publisher bPub_;
   Publisher colObjPub_;
   Subscriber jointSub_;
   Subscriber powerSub_;
