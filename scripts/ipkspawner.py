@@ -1,4 +1,4 @@
-import PyREEM
+import PyPR2
 import json
 import sys
 from threading import Thread
@@ -54,7 +54,7 @@ class IPKSpawner( object ):
     if not self.app:
       return
 
-    PyREEM.sendMessageToNode( 'jupyter', 'start' )
+    PyPR2.sendMessageToNode( 'jupyter', 'start' )
     self.app.start()
     self.app.shell_socket.close()
     self.app.stdin_socket.close()
@@ -62,7 +62,7 @@ class IPKSpawner( object ):
     self.app.iopub_socket.close()
     self.app.heartbeat.socket.close()
     self.kernelapp.IPKernelApp.clear_instance()
-    PyREEM.sendMessageToNode( 'jupyter', 'stop' )
+    PyPR2.sendMessageToNode( 'jupyter', 'stop' )
     print( "reinitiate app instance" )
     self.app = self.kernelapp.IPKernelApp.instance()
     self.is_initialised = None
