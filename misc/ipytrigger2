@@ -1,0 +1,10 @@
+#!/bin/bash
+
+rostopic pub /pyride/node_status pyride_common_msgs/NodeStatus "header:
+  seq: 0
+  stamp: {secs: 0, nsecs: 0}
+  frame_id: ''
+node_id: 'jupyter'
+for_console: false
+priority: 0
+status_text: '$1'" -1

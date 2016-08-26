@@ -1,0 +1,10 @@
+{
+ "display_name": "PyRIDE", 
+ "language": "python", 
+ "argv": [
+  "python", "-m",
+  "/home/pr2/deployed_ws/ipytrigger",
+  "-f",
+  "{connection_file}"
+ ]
+}
