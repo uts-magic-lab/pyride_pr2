@@ -824,8 +824,8 @@ void PR2ProxyManager::htObjStatusCB( const pyride_common_msgs::TrackedObjectStat
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
-  PyObject * arg = Py_BuildValue( "(iiii)", msg->objtype, msg->trackid,
-                                 msg->nameid, msg->status );
+  PyObject * arg = Py_BuildValue( "(iisi)", msg->objtype, msg->trackid,
+                                 msg->name.c_str(), msg->status );
   
   PyPR2Module::instance()->invokeObjectDetectionCallback( arg );
   
