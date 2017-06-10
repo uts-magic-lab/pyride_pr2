@@ -406,8 +406,6 @@ void PR2ProxyManager::fini()
 void PR2ProxyManager::doneHeadAction( const actionlib::SimpleClientGoalState & state,
             const PointHeadResultConstPtr & result )
 {
-  headCtrlWithActionClient_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -419,14 +417,14 @@ void PR2ProxyManager::doneHeadAction( const actionlib::SimpleClientGoalState & s
   }
   PyGILState_Release( gstate );
   
+  headCtrlWithActionClient_ = false;
+
   ROS_INFO("Head action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState & state,
                                         const TuckArmsResultConstPtr & result )
 {
-  tuckArmCtrl_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -438,7 +436,9 @@ void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState 
   }
   
   PyGILState_Release( gstate );
-  
+
+  tuckArmCtrl_ = false;
+
   ROS_INFO( "Tuck arm action finished in state [%s]", state.toString().c_str());
 }
 
@@ -457,8 +457,6 @@ void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState 
 void PR2ProxyManager::doneMoveLArmAction( const actionlib::SimpleClientGoalState & state,
                                         const JointTrajectoryResultConstPtr & result)
 {
-  lArmCtrl_ = false;
-
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
@@ -474,14 +472,14 @@ void PR2ProxyManager::doneMoveLArmAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
 
+  lArmCtrl_ = false;
+
   ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState & state,
                                          const JointTrajectoryResultConstPtr & result)
 {
-  rArmCtrl_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -497,6 +495,8 @@ void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
+  rArmCtrl_ = false;
+
   ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
 }
 
@@ -543,8 +543,6 @@ void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & 
 void PR2ProxyManager::doneNavgiateBodyAction( const actionlib::SimpleClientGoalState & state,
                                              const MoveBaseResultConstPtr & result )
 {
-  bodyCtrlWithNavigation_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -556,6 +554,8 @@ void PR2ProxyManager::doneNavgiateBodyAction( const actionlib::SimpleClientGoalS
   }
   
   PyGILState_Release( gstate );
+
+  bodyCtrlWithNavigation_ = false;
   
   ROS_INFO("nagivate body finished in state [%s]", state.toString().c_str());
 }
@@ -622,8 +622,6 @@ void PR2ProxyManager::moveRArmActionFeedback( const JointTrajectoryFeedbackConst
 void PR2ProxyManager::doneLGripperAction( const actionlib::SimpleClientGoalState & state,
                                          const Pr2GripperCommandResultConstPtr & result )
 {
-  lGripperCtrl_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
@@ -639,14 +637,14 @@ void PR2ProxyManager::doneLGripperAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
+  lGripperCtrl_ = false;
+
   ROS_INFO( "Left gripper action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::doneRGripperAction( const actionlib::SimpleClientGoalState & state,
                                          const Pr2GripperCommandResultConstPtr & result )
 {
-  rGripperCtrl_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -662,6 +660,8 @@ void PR2ProxyManager::doneRGripperAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
+  rGripperCtrl_ = false;
+
   ROS_INFO( "Right gripper action finished in state [%s]", state.toString().c_str());
 }
 

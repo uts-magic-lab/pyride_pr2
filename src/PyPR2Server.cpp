@@ -61,7 +61,8 @@ bool PyPR2Server::init()
   ServerDataProcessor::instance()->init( activeVideoDevices_, activeAudioDevices_ );
   ServerDataProcessor::instance()->addCommandHandler( this );
   ServerDataProcessor::instance()->setClientID( AppConfigManager::instance()->clientID() );
-  ServerDataProcessor::instance()->setDefaultRobotInfo( PR2, AppConfigManager::instance()->startPosition() );
+  ServerDataProcessor::instance()->setDefaultRobotInfo( PR2, AppConfigManager::instance()->startPosition(),
+      (RobotCapability)(MOBILITY|MANIPULATION));
   
   PythonServer::instance()->init( AppConfigManager::instance()->enablePythonConsole(),
       PyPR2Module::instance(), scriptdir.c_str() );
@@ -103,7 +104,7 @@ void PyPR2Server::fini()
   ServerDataProcessor::instance()->fini();
 }
 
-bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command,
+bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command, int & retVal,
                                            const unsigned char * optionalData,
                                            const int optionalDataLength )
 {
@@ -111,6 +112,7 @@ bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command,
   // in PyRideCommon.h
   // for example:
   bool status = true;
+  retVal = 0;
   switch (command) {
     case SPEAK:
     {
@@ -262,8 +264,8 @@ void PyPR2Server::nodeStatusCB( const pyride_common_msgs::NodeStatusConstPtr & m
 
   PyPR2Module::instance()->invokeCallback( "onNodeStatusUpdate", arg );
   
-  Py_DECREF( retObj );
   Py_DECREF( arg );
+  Py_DECREF( retObj );
 
   PyGILState_Release( gstate );    
 }
