@@ -41,6 +41,7 @@ public:
   void continueProcessing( const sensor_msgs::ImageConstPtr& msg );
 
 private:  
+  NodeHandle * imgSubNode_;
   NodeHandle priImgNode_;
   image_transport::ImageTransport imgTrans_;
   image_transport::Subscriber imgSub_;
@@ -49,6 +50,7 @@ private:
   boost::thread * streaming_data_thread_;
 
   boost::mutex mutex_;
+  boost::condition_variable imageCon_;
 
   CallbackQueue imgQueue_;
 

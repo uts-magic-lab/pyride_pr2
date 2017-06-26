@@ -16,6 +16,7 @@
 #include "AppConfigManager.h"
 #include "PyPR2Module.h"
 #include "VideoObject.h"
+#include "AudioObject.h"
 
 PYRIDE_LOGGING_DECLARE( "pyride_pr2.log" );
 
@@ -198,6 +199,32 @@ void PyPR2Server::finiVideoDevices()
     delete videoObj;
   }
   activeVideoDevices_.clear();
+}
+
+bool PyPR2Server::initAudioDevices()
+{
+  AudioDevice * activeAudioObj = new AudioObject();
+  if (activeAudioObj->initDevice()) {
+    activeAudioDevices_.push_back( activeAudioObj );
+  }
+  else {
+    ERROR_MSG( "Failed to activate an audio device.\n" );
+    delete activeAudioObj;
+  }
+
+  return (activeVideoDevices_.size() != 0);
+}
+
+void PyPR2Server::finiAudioDevices()
+{
+  AudioDevice * audioObj = NULL;
+
+  for (size_t i = 0; i < activeAudioDevices_.size(); i++) {
+    audioObj = activeAudioDevices_.at( i );
+    audioObj->finiDevice();
+    delete audioObj;
+  }
+  activeAudioDevices_.clear();
 }
 
 void PyPR2Server::notifySystemShutdown()

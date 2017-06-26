@@ -513,8 +513,6 @@ void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState
 void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & state,
                                       const SingleJointPositionResultConstPtr & result )
 {
-  torsoCtrl_ = false;
-  
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -526,7 +524,9 @@ void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & 
   }
   
   PyGILState_Release( gstate );
-  
+
+  torsoCtrl_ = false;
+
   ROS_INFO( "Torso action finished in state [%s]", state.toString().c_str());
 }
 

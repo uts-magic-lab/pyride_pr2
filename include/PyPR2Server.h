@@ -53,6 +53,9 @@ private:
   bool initVideoDevices();
   void finiVideoDevices();
   
+  bool initAudioDevices();
+  void finiAudioDevices();
+
   void notifySystemShutdown();
 
   bool executeRemoteCommand( PyRideExtendedCommand command, int & retVal,

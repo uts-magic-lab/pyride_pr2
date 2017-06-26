@@ -120,6 +120,7 @@ add_executable(pyride_pr2 pyridecore/AppConfigManager.cpp
                           src/PR2ProxyManager.cpp
                           src/PyPR2Module.cpp
                           src/VideoObject.cpp
+                          src/AudioObject.cpp
                           src/main.cpp)
 
 ## Add cmake target dependencies of the executable/library
