@@ -17,6 +17,8 @@
 #include "PyPR2Module.h"
 #include "VideoObject.h"
 #include "AudioObject.h"
+#include "AudioFeedbackStream.h"
+#include "VideoToWebBridge.h"
 
 PYRIDE_LOGGING_DECLARE( "pyride_pr2.log" );
 
@@ -63,11 +65,13 @@ bool PyPR2Server::init()
   ServerDataProcessor::instance()->addCommandHandler( this );
   ServerDataProcessor::instance()->setClientID( AppConfigManager::instance()->clientID() );
   ServerDataProcessor::instance()->setDefaultRobotInfo( PR2, AppConfigManager::instance()->startPosition(),
-      (RobotCapability)(MOBILITY|MANIPULATION));
+      (RobotCapability)(MOBILITY|VIDEO_FEEBACK|AUDIO_FEEBACK|MANIPULATION) );
   
   PythonServer::instance()->init( AppConfigManager::instance()->enablePythonConsole(),
       PyPR2Module::instance(), scriptdir.c_str() );
   ServerDataProcessor::instance()->discoverConsoles();
+  VideoToWebBridge::instance()->setPyModuleExtension( PyPR2Module::instance() );
+  AudioFeedbackStream::instance()->initWithNode( hcNodeHandle_ );
   return true;
 }
 
@@ -157,6 +161,32 @@ bool PyPR2Server::executeRemoteCommand( PyRideExtendedCommand command, int & ret
       RobotPose newPose;
       memcpy( &newPose, dataPtr, sizeof( RobotPose ) );
       PR2ProxyManager::instance()->updateBodyPose( newPose );
+    }
+      break;
+    case VIDEO_FEEDBACK:
+    {
+      bool ison = (bool)optionalData[0];
+      if (ison) { // only the client with the exclusive control can do video feedback
+        VideoToWebBridge::instance()->start();
+        retVal = 1;
+      }
+      else {
+        VideoToWebBridge::instance()->stop();
+        retVal = 0;
+      }
+    }
+      break;
+    case AUDIO_FEEDBACK:
+    {
+      bool ison = (bool)optionalData[0];
+      if (ison) { // only the client with the exclusive control can do video feedback
+        AudioFeedbackStream::instance()->addClient();
+        retVal = 1;
+      }
+      else {
+        AudioFeedbackStream::instance()->removeClient();
+        retVal = 0;
+      }
     }
       break;
     default:

@@ -24,6 +24,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   topic_tools
+  async_web_server_cpp
 )
 
 ## System dependencies are found with CMake's conventions
@@ -116,11 +117,14 @@ add_executable(pyride_pr2 pyridecore/AppConfigManager.cpp
                           pyridecore/PyRideNetComm.cpp
                           pyridecore/PythonServer.cpp
                           pyridecore/PyModuleStub.cpp
+                          pyridecore/RTPDataReceiver.cpp
+                          pyridecore/VideoToWebBridge.cpp
                           src/PyPR2Server.cpp
                           src/PR2ProxyManager.cpp
                           src/PyPR2Module.cpp
                           src/VideoObject.cpp
                           src/AudioObject.cpp
+                          src/AudioFeedbackStream.cpp
                           src/main.cpp)
 
 ## Add cmake target dependencies of the executable/library
