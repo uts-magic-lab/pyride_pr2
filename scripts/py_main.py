@@ -73,6 +73,12 @@ def batteryChargeChangeActions( batpc, isplugged, time_remain ):
     if myMessenger:
       myMessenger.updatestatus( "I have only %d percent battery power left!" % batpc )
 
+def videoFeedbackActions( is_on ):
+    if is_on:
+        PyPR2.sendMessageToNode( 'joyride_foreground', '{"type": "video", "topic" : "video_feedback"}' )
+    else:
+        PyPR2.sendMessageToNode( 'joyride_foreground', '{"type": "img", "value": "art/CHIP Logo.png"}' )
+
 def systemShutdownActions():
   global myMessenger
   global extProcCall
@@ -100,6 +106,7 @@ def main():
   PyPR2.onPowerPluggedChange = powerPlugChangeActions
   PyPR2.onBatteryChargeChange = batteryChargeChangeActions
   PyPR2.onNodeStatusUpdate = nodeStatusUpdate
+  PyPR2.onVideoFeedback = videoFeedbackActions
 
   myMessenger = messenger.Messenger()
   if not myMessenger.checkin():
