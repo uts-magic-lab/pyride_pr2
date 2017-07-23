@@ -71,7 +71,7 @@ bool PyPR2Server::init()
       PyPR2Module::instance(), scriptdir.c_str() );
   ServerDataProcessor::instance()->discoverConsoles();
   VideoToWebBridge::instance()->setPyModuleExtension( PyPR2Module::instance() );
-  AudioFeedbackStream::instance()->initWithNode( hcNodeHandle_ );
+  AudioFeedbackStream::instance()->initWithNode( hcNodeHandle_, PyPR2Module::instance() );
   return true;
 }
 

@@ -30,6 +30,7 @@ AudioFeedbackStream::AudioFeedbackStream() :
   audioDecoder_( NULL )
 {
   streaming_data_thread_ = NULL;
+  pyExtension_ = NULL;
 }
 
 AudioFeedbackStream::~AudioFeedbackStream()
@@ -45,10 +46,11 @@ AudioFeedbackStream * AudioFeedbackStream::instance()
   return s_pAudioFeedbackStream;
 }
 
-void AudioFeedbackStream::initWithNode( NodeHandle * nodeHandle )
+void AudioFeedbackStream::initWithNode( NodeHandle * nodeHandle, PyModuleExtension * extension )
 {
   mCtrlNode_ = nodeHandle;
   audioPub_ = mCtrlNode_->advertise<audio_common_msgs::AudioData>( "pyride/audio_feedback", 1 );
+  pyExtension_ = extension;
 }
 
 void AudioFeedbackStream::addClient()
@@ -58,6 +60,19 @@ void AudioFeedbackStream::addClient()
   if (!isRunning_) {
     INFO_MSG( "Start the feedback streaming service.\n" );
     this->start();
+
+    if (pyExtension_) {
+      PyGILState_STATE gstate;
+      gstate = PyGILState_Ensure();
+
+      PyObject * arg = Py_BuildValue( "(O)", Py_True );
+
+      pyExtension_->invokeCallback( "onAudioFeedback", arg );
+
+      Py_DECREF( arg );
+
+      PyGILState_Release( gstate );
+    }
   }
 }
 
@@ -72,6 +87,19 @@ void AudioFeedbackStream::removeClient()
   if (clientNo_ == 0) {
     INFO_MSG( "No more client audio, stop the feedback streaming service.\n" );
     this->stop();
+
+    if (pyExtension_) {
+      PyGILState_STATE gstate;
+      gstate = PyGILState_Ensure();
+
+      PyObject * arg = Py_BuildValue( "(O)", Py_False );
+
+      pyExtension_->invokeCallback( "onAudioFeedback", arg );
+
+      Py_DECREF( arg );
+
+      PyGILState_Release( gstate );
+    }
   }
 }
 
@@ -97,7 +125,7 @@ bool AudioFeedbackStream::start()
   audioDecoder_ = celt_decoder_create_custom( celtMode_, 1, NULL );
 
   dataStream_ = new RTPDataReceiver();
-  dataStream_->init( PYRIDE_VIDEO_STREAM_BASE_PORT - 40, true );
+  dataStream_->init( PYRIDE_VIDEO_STREAM_BASE_PORT + 6, true );
 
   isRunning_ = true;
 
@@ -160,12 +188,6 @@ void AudioFeedbackStream::grabAndDispatchAudioStreamData()
       usleep( 100 ); // 1ms
     } while (dataSize == 0 && gcount < 10);
 
-    /*
-    if (dataSize == 0) {
-      continue;
-    }
-    */
-
     audio_common_msgs::AudioData msg;
 
     if (dataSize == 0 || dataSize % PYRIDE_AUDIO_BYTES_PER_PACKET != 0) {
@@ -184,17 +206,9 @@ void AudioFeedbackStream::grabAndDispatchAudioStreamData()
     }
     decodedSize = audioFrames * PYRIDE_AUDIO_FRAME_SIZE * sizeof( short );
 
-    //DEBUG_MSG("Got audio data size %d.\n", decodedSize );
-
     msg.data.resize( decodedSize );
-
     memcpy( &msg.data[0], audioData, decodedSize );
-    /*
-    //DEBUG_MSG("Got raw audio data size %d.\n", dataSize );
-    msg.data.resize( dataSize );
 
-    memcpy( &msg.data[0], data, dataSize );
-    */
     audioPub_.publish( msg );
   }
 

@@ -747,7 +747,7 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \param tuple orientation. Orientation in quaternion form (w,x,y,z).
  *  \param bool use_left_arm. True to move the left arm; False to use the right arm.
  *  \param bool wait. True == method blocks; False == method return immediately. (Use this parameter only for S-PR2).
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  *  \note Must have a working inverse kinematic engine i.e. either MoveIt! or S-PR2.
  */
 /*! \fn moveArmInTrajectory( trajectory, period, left_arm, relative)
@@ -758,7 +758,7 @@ static PyObject * PyModule_PR2NavigateBodyTo( PyObject * self, PyObject * args, 
  *  \param bool left_arm. True to use the left arm; False to use the right arm (default False)
  *  \param bool relative. True means the input trajectory is relative to the current arm pose;
  *   False means the trajectory is with respect to the basefoot_print reference frame.
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  *  \note This function is available only when S-PR2 is in use.
  */
 /*! \fn getArmPose(left_arm)
@@ -836,7 +836,7 @@ static PyObject * PyModule_PR2MoveArmPoseTo( PyObject * self, PyObject * args, P
  *  \param dict joint_position. A dictionary of arm joint positions in radian.
  *  The dictionary must the same structure as the return of PyPR2.getArmJointPositions.
  *  \param float time_to_reach. Timeframe for reaching the pose.
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  */
 static PyObject * PyModule_PR2MoveArmWithJointPos( PyObject * self, PyObject * args, PyObject * keywds )
 {
@@ -877,8 +877,10 @@ static PyObject * PyModule_PR2MoveArmWithJointPos( PyObject * self, PyObject * a
   positions[5] = w_f_j;
   positions[6] = w_r_j;
 
-  PR2ProxyManager::instance()->moveArmWithJointPos( isLeftArm, positions, time_to_reach );
-  Py_RETURN_NONE;
+  if (PR2ProxyManager::instance()->moveArmWithJointPos( isLeftArm, positions, time_to_reach ))
+    Py_RETURN_TRUE;
+
+  Py_RETURN_FALSE;
 }
 
 /*! \fn moveArmWithJointTrajectory(joint_trajectory)
@@ -886,7 +888,7 @@ static PyObject * PyModule_PR2MoveArmWithJointPos( PyObject * self, PyObject * a
  *  \brief Move a PR2 arm to a sequence of waypoints, i.e. joint trajectory.
  *  \param list joint_trajectory. A list of waypoints that contain joint position dictionaries with the same structure
  *  of the PyPR2.moveArmWithJointPos.
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  */
 static PyObject * PyModule_PR2MoveArmWithJointTraj( PyObject * self, PyObject * args )
 {
@@ -969,8 +971,10 @@ static PyObject * PyModule_PR2MoveArmWithJointTraj( PyObject * self, PyObject * 
     }
   }
 
-  PR2ProxyManager::instance()->moveArmWithJointTrajectory( (armsel == 1), trajectory, times_to_reach );
-  Py_RETURN_NONE;
+  if (PR2ProxyManager::instance()->moveArmWithJointTrajectory( (armsel == 1), trajectory, times_to_reach ))
+    Py_RETURN_TRUE;
+
+  Py_RETURN_FALSE;
 }
 
 /*! \fn moveArmWithJointTrajectoryAndSpeed(joint_trajectory)
@@ -979,7 +983,7 @@ static PyObject * PyModule_PR2MoveArmWithJointTraj( PyObject * self, PyObject * 
  *  \param list joint_trajectory. A list of waypoints with the joint data dictionaries structure
  *  of { "joint_name" : { "position" : value, "velocity" : value }, ... }. Each list item, i.e. a waypoint must also
  *  have a time to reach value that is consistent with the joint velocities at the adjacent waypoints.
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  */
 static PyObject * PyModule_PR2MoveArmWithJointTrajAndSpeed( PyObject * self, PyObject * args )
 {
@@ -1079,8 +1083,10 @@ static PyObject * PyModule_PR2MoveArmWithJointTrajAndSpeed( PyObject * self, PyO
     }
   }
   
-  PR2ProxyManager::instance()->moveArmWithJointTrajectoryAndSpeed( (armsel == 1), trajectory, joint_velocities, times_to_reach );
-  Py_RETURN_NONE;
+  if (PR2ProxyManager::instance()->moveArmWithJointTrajectoryAndSpeed( (armsel == 1), trajectory, joint_velocities, times_to_reach ))
+    Py_RETURN_TRUE;
+
+  Py_RETURN_FALSE;
 }
 
 /*! \fn moveArmWithJointVelocity(joint_velocities)
@@ -1088,7 +1094,7 @@ static PyObject * PyModule_PR2MoveArmWithJointTrajAndSpeed( PyObject * self, PyO
  *  \brief Move a PR2 arm with raw joint velocity command
  *  \param list joint_velocities. A joint velocity dictionaries with the same structure
  *  of the PyPR2.moveArmWithJointPos without time_to_reach parameter.
- *  \return None.
+ *  \return bool. True == valid command; False == invalid command.
  *  \note You must enable joint velocity controller by calling PyPR2.useJointVelocityControl
  *  before using this method.
  *  \warning You directly control the joint velocity with this method, PyRIDE provides no
@@ -1132,8 +1138,10 @@ static PyObject * PyModule_PR2MoveArmWithJointVelocity( PyObject * self, PyObjec
   velocities[5] = w_f_j;
   velocities[6] = w_r_j;
 
-  PR2ProxyManager::instance()->moveArmWithJointVelocity( isLeftArm, velocities );
-  Py_RETURN_NONE;
+  if (PR2ProxyManager::instance()->moveArmWithJointVelocity( isLeftArm, velocities ))
+    Py_RETURN_TRUE;
+
+  Py_RETURN_FALSE;
 }
 
 /*! \fn cancelMoveArmAction(is_left_arm)

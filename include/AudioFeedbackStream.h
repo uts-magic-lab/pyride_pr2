@@ -18,6 +18,7 @@
 #include <celt/celt.h>
 
 #include "RTPDataReceiver.h"
+#include "PyModuleStub.h"
 
 namespace pyride {
 
@@ -30,7 +31,7 @@ public:
   static AudioFeedbackStream * instance();
   ~AudioFeedbackStream();
 
-  void initWithNode( NodeHandle * nodeHandle );
+  void initWithNode( NodeHandle * nodeHandle, PyModuleExtension * extension = NULL );
 
   void addClient();
   void removeClient();
@@ -43,6 +44,7 @@ private:
   NodeHandle * mCtrlNode_;
 
   RTPDataReceiver * dataStream_;
+  PyModuleExtension * pyExtension_;
 
   CELTMode * celtMode_;
   CELTDecoder * audioDecoder_;

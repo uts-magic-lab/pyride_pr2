@@ -406,6 +406,8 @@ void PR2ProxyManager::fini()
 void PR2ProxyManager::doneHeadAction( const actionlib::SimpleClientGoalState & state,
             const PointHeadResultConstPtr & result )
 {
+  headCtrlWithActionClient_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -416,8 +418,6 @@ void PR2ProxyManager::doneHeadAction( const actionlib::SimpleClientGoalState & s
     PyPR2Module::instance()->invokeCallback( "onHeadActionFailed", NULL );
   }
   PyGILState_Release( gstate );
-  
-  headCtrlWithActionClient_ = false;
 
   ROS_INFO("Head action finished in state [%s]", state.toString().c_str());
 }
@@ -425,6 +425,8 @@ void PR2ProxyManager::doneHeadAction( const actionlib::SimpleClientGoalState & s
 void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState & state,
                                         const TuckArmsResultConstPtr & result )
 {
+  tuckArmCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -436,8 +438,6 @@ void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState 
   }
   
   PyGILState_Release( gstate );
-
-  tuckArmCtrl_ = false;
 
   ROS_INFO( "Tuck arm action finished in state [%s]", state.toString().c_str());
 }
@@ -457,6 +457,8 @@ void PR2ProxyManager::doneTuckArmAction( const actionlib::SimpleClientGoalState 
 void PR2ProxyManager::doneMoveLArmAction( const actionlib::SimpleClientGoalState & state,
                                         const JointTrajectoryResultConstPtr & result)
 {
+  lArmCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
@@ -472,14 +474,14 @@ void PR2ProxyManager::doneMoveLArmAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
 
-  lArmCtrl_ = false;
-
   ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState & state,
                                          const JointTrajectoryResultConstPtr & result)
 {
+  rArmCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -495,8 +497,6 @@ void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
-  rArmCtrl_ = false;
-
   ROS_INFO("move arm action finished in state [%s]", state.toString().c_str());
 }
 
@@ -513,6 +513,8 @@ void PR2ProxyManager::doneMoveRArmAction( const actionlib::SimpleClientGoalState
 void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & state,
                                       const SingleJointPositionResultConstPtr & result )
 {
+  torsoCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -524,8 +526,6 @@ void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & 
   }
   
   PyGILState_Release( gstate );
-
-  torsoCtrl_ = false;
 
   ROS_INFO( "Torso action finished in state [%s]", state.toString().c_str());
 }
@@ -543,6 +543,8 @@ void PR2ProxyManager::doneTorsoAction( const actionlib::SimpleClientGoalState & 
 void PR2ProxyManager::doneNavgiateBodyAction( const actionlib::SimpleClientGoalState & state,
                                              const MoveBaseResultConstPtr & result )
 {
+  bodyCtrlWithNavigation_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -555,8 +557,6 @@ void PR2ProxyManager::doneNavgiateBodyAction( const actionlib::SimpleClientGoalS
   
   PyGILState_Release( gstate );
 
-  bodyCtrlWithNavigation_ = false;
-  
   ROS_INFO("nagivate body finished in state [%s]", state.toString().c_str());
 }
 
@@ -622,6 +622,8 @@ void PR2ProxyManager::moveRArmActionFeedback( const JointTrajectoryFeedbackConst
 void PR2ProxyManager::doneLGripperAction( const actionlib::SimpleClientGoalState & state,
                                          const Pr2GripperCommandResultConstPtr & result )
 {
+  lGripperCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
 
@@ -637,14 +639,14 @@ void PR2ProxyManager::doneLGripperAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
-  lGripperCtrl_ = false;
-
   ROS_INFO( "Left gripper action finished in state [%s]", state.toString().c_str());
 }
 
 void PR2ProxyManager::doneRGripperAction( const actionlib::SimpleClientGoalState & state,
                                          const Pr2GripperCommandResultConstPtr & result )
 {
+  rGripperCtrl_ = false;
+
   PyGILState_STATE gstate;
   gstate = PyGILState_Ensure();
   
@@ -660,8 +662,6 @@ void PR2ProxyManager::doneRGripperAction( const actionlib::SimpleClientGoalState
   
   PyGILState_Release( gstate );
   
-  rGripperCtrl_ = false;
-
   ROS_INFO( "Right gripper action finished in state [%s]", state.toString().c_str());
 }
 
@@ -1326,10 +1326,10 @@ bool PR2ProxyManager::tuckArms( bool tuckleft, bool tuckright )
   return true;
 }
 
-void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions, float time_to_reach )
+bool PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> & positions, float time_to_reach )
 {
   if (positions.size() != 7 || tuckArmCtrl_ || useJointVelocityControl_) {
-    return;
+    return false;
   }
   
   pr2_controllers_msgs::JointTrajectoryGoal goal;
@@ -1337,11 +1337,11 @@ void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> &
   // First, the joint names, which apply to all waypoints
   if (isLeftArm) {
     if (!mlacClient_) {
-      return;
+      return false;
     }
     if (lArmCtrl_) {
       ROS_WARN( "Left arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "l_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "l_shoulder_lift_joint" );
@@ -1354,11 +1354,11 @@ void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> &
   }
   else {
     if (!mracClient_) {
-      return;
+      return false;
     }
     if (rArmCtrl_) {
       ROS_WARN( "Right arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "r_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "r_shoulder_lift_joint" );
@@ -1400,13 +1400,14 @@ void PR2ProxyManager::moveArmWithJointPos( bool isLeftArm, std::vector<double> &
                           TrajectoryClient::SimpleActiveCallback(),
                           boost::bind( &PR2ProxyManager::moveRArmActionFeedback, this, _1 ) );
   }
+  return true;
 }
 
-void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< std::vector<double> > & trajectory,
+bool PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< std::vector<double> > & trajectory,
                                                   std::vector<float> & times_to_reach )
 {
   if (tuckArmCtrl_ || useJointVelocityControl_) {
-    return;
+    return false;
   }
   
   pr2_controllers_msgs::JointTrajectoryGoal goal;
@@ -1414,11 +1415,11 @@ void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< s
   // First, the joint names, which apply to all waypoints
   if (isLeftArm) {
     if (!mlacClient_) {
-      return;
+      return false;
     }
     if (lArmCtrl_) {
       ROS_WARN( "Left arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "l_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "l_shoulder_lift_joint" );
@@ -1431,11 +1432,11 @@ void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< s
   }
   else {
     if (!mracClient_) {
-      return;
+      return false;
     }
     if (rArmCtrl_) {
       ROS_WARN( "Right arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "r_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "r_shoulder_lift_joint" );
@@ -1478,15 +1479,16 @@ void PR2ProxyManager::moveArmWithJointTrajectory( bool isLeftArm, std::vector< s
                           TrajectoryClient::SimpleActiveCallback(),
                           boost::bind( &PR2ProxyManager::moveRArmActionFeedback, this, _1 ) );
   }
+  return true;
 }
 
-void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
+bool PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
                                         std::vector< std::vector<double> > & trajectory,
                                         std::vector< std::vector<double> > & joint_velocities,
                                         std::vector<float> & times_to_reach )
 {
   if (tuckArmCtrl_ || useJointVelocityControl_) {
-    return;
+    return false;
   }
   
   pr2_controllers_msgs::JointTrajectoryGoal goal;
@@ -1494,11 +1496,11 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
   // First, the joint names, which apply to all waypoints
   if (isLeftArm) {
     if (!mlacClient_) {
-      return;
+      return false;
     }
     if (lArmCtrl_) {
       ROS_WARN( "Left arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "l_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "l_shoulder_lift_joint" );
@@ -1511,11 +1513,11 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
   }
   else {
     if (!mracClient_) {
-      return;
+      return false;
     }
     if (rArmCtrl_) {
       ROS_WARN( "Right arm is in motion." );
-      return;
+      return false;
     }
     goal.trajectory.joint_names.push_back( "r_shoulder_pan_joint" );
     goal.trajectory.joint_names.push_back( "r_shoulder_lift_joint" );
@@ -1558,6 +1560,7 @@ void PR2ProxyManager::moveArmWithJointTrajectoryAndSpeed( bool isLeftArm,
                           TrajectoryClient::SimpleActiveCallback(),
                           boost::bind( &PR2ProxyManager::moveRArmActionFeedback, this, _1 ) );
   }
+  return true;
 }
 
 bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> & position,
@@ -1629,10 +1632,10 @@ bool PR2ProxyManager::moveArmWithGoalPose( bool isLeftArm, std::vector<double> &
   return true;
 }
 
-void PR2ProxyManager::moveArmWithJointVelocity( bool isLeftArm, std::vector<double> & velocities )
+bool PR2ProxyManager::moveArmWithJointVelocity( bool isLeftArm, std::vector<double> & velocities )
 {
   if (velocities.size() != 7 || tuckArmCtrl_ || !useJointVelocityControl_) {
-    return;
+    return false;
   }
 
   // First, the joint names, which apply to all waypoints
@@ -1645,6 +1648,7 @@ void PR2ProxyManager::moveArmWithJointVelocity( bool isLeftArm, std::vector<doub
     msg.data = velocities[i];
     jointVelocityPublishers_[i+start_pos]->publish( msg );
   }
+  return true;
 }
 
 void PR2ProxyManager::cancelArmMovement( bool isLeftArm )
