@@ -79,6 +79,12 @@ def videoFeedbackActions( is_on ):
     else:
         PyPR2.sendMessageToNode( 'joyride_foreground', '{"type": "img", "value": "art/CHIP Logo.png"}' )
 
+def audioFeedbackActions( is_on ):
+    if is_on:
+        PyPR2.sendMessageToNode( 'audio_stream_play', 'start' )
+    else:
+        PyPR2.sendMessageToNode( 'audio_stream_play', 'stop' )
+
 def systemShutdownActions():
   global myMessenger
   global extProcCall
@@ -107,6 +113,7 @@ def main():
   PyPR2.onBatteryChargeChange = batteryChargeChangeActions
   PyPR2.onNodeStatusUpdate = nodeStatusUpdate
   PyPR2.onVideoFeedback = videoFeedbackActions
+  PyPR2.onAudioFeedback = audioFeedbackActions
 
   myMessenger = messenger.Messenger()
   if not myMessenger.checkin():
